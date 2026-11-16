@@ -485,6 +485,323 @@
       "merged_at": null,
       "maintainer_can_modify": false,
       "body_pending_update": false
+    },
+    {
+      "name": "duplicate-sidecar-ids",
+      "title": "Reject conflicting metadata sidecars instead of silently overwriting them",
+      "branch": "fix/duplicate-sidecar-ids-20261116",
+      "sources": [
+        "packages/catalog-builder/src/metadata.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/metadata.test.ts"
+      ],
+      "expected_baseline_failures": 3,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "a368a2d3f1c2b34b4a02a36776da25e6dac26c8c",
+      "head_sha": "e1773721df65e91bd89dd84d51a09af9d07ef92a",
+      "status": "ready_to_publish",
+      "evidence": [
+        {
+          "id": 133283601902,
+          "name": "contracts (duplicate-sidecar-ids, 24, e1773721df65e91bd89dd84d51a09af9d07ef92a, packages/catalog-...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:01:30.1839140Z {\"baselineFailed\":3,\"baselinePassed\":4}",
+            "2026-11-16T12:01:33.6509551Z Catalog entries: 9846",
+            "2026-11-16T12:01:33.6542221Z Catalog errors: 0",
+            "2026-11-16T12:01:35.8463237Z {\"candidateFailed\":0,\"candidatePassed\":96,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133283602083,
+          "name": "contracts (duplicate-sidecar-ids, 20, e1773721df65e91bd89dd84d51a09af9d07ef92a, packages/catalog-...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:01:29.0846525Z {\"baselineFailed\":3,\"baselinePassed\":4}",
+            "2026-11-16T12:01:32.6442938Z Catalog entries: 9846",
+            "2026-11-16T12:01:32.6443597Z Catalog errors: 0",
+            "2026-11-16T12:01:35.2137530Z {\"candidateFailed\":0,\"candidatePassed\":96,\"candidatePending\":0}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nTwo metadata sidecars can resolve to the same server ID, through explicit IDs or a filename-derived fallback. The loader silently lets the later filename overwrite the earlier metadata, so renaming a file can change the published server configuration.\n\n## Change\n\nReject duplicate IDs and include both source paths in the error. Distinct explicit and filename-derived IDs keep their existing behavior; unrelated non-JSON files are ignored.\n\n## Validation\n\nThe unchanged loader produces **3 failures and 4 passes** in the focused suite. On Node.js 20 and 24, the fix passes the full **96-test suite**, real catalog generation, profile generation, TypeScript checking, and package builds. The existing 9,846-entry catalog has no conflicting sidecars and still builds with zero errors.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43862791585/job/133283602083)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43862791585/job/133283601902)\n",
+      "validation_runs": [
+        43862791585
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/duplicate-sidecar-ids-20261116?expand=1&title=Reject%20conflicting%20metadata%20sidecars%20instead%20of%20silently%20overwriting%20them&body=%23%23%20Problem%0A%0ATwo%20metadata%20sidecars%20can%20resolve%20to%20the%20same%20server%20ID%2C%20through%20explicit%20IDs%20or%20a%20filename-derived%20fallback.%20The%20loader%20silently%20lets%20the%20later%20filename%20overwrite%20the%20earlier%20metadata%2C%20so%20renaming%20a%20file%20can%20change%20the%20published%20server%20configuration.%0A%0A%23%23%20Change%0A%0AReject%20duplicate%20IDs%20and%20include%20both%20source%20paths%20in%20the%20error.%20Distinct%20explicit%20and%20filename-derived%20IDs%20keep%20their%20existing%20behavior%3B%20unrelated%20non-JSON%20files%20are%20ignored.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20loader%20produces%20**3%20failures%20and%204%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**96-test%20suite**%2C%20real%20catalog%20generation%2C%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20existing%209%2C846-entry%20catalog%20has%20no%20conflicting%20sidecars%20and%20still%20builds%20with%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283602083)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601902)%0A"
+    },
+    {
+      "name": "decoded-registry-paths",
+      "title": "Resolve encoded server identifiers and reject malformed URL escapes",
+      "branch": "fix/decoded-registry-paths-20261116",
+      "sources": [
+        "packages/registry-api/src/server.ts"
+      ],
+      "regressions": [
+        "packages/registry-api/test/server.test.ts"
+      ],
+      "expected_baseline_failures": 18,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "6cc2115624c5eb8237850095dd3116f91264832f",
+      "head_sha": "14348fbb200683827f2a4eaaf7e351f621da5546",
+      "status": "ready_to_publish",
+      "evidence": [
+        {
+          "id": 133283601365,
+          "name": "contracts (decoded-registry-paths, 20, 14348fbb200683827f2a4eaaf7e351f621da5546, packages/registr...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:01:24.1894518Z {\"baselineFailed\":18,\"baselinePassed\":18}",
+            "2026-11-16T12:01:28.7439956Z Catalog entries: 9846",
+            "2026-11-16T12:01:28.7454767Z Catalog errors: 0",
+            "2026-11-16T12:01:32.4101747Z {\"candidateFailed\":0,\"candidatePassed\":112,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133283601922,
+          "name": "contracts (decoded-registry-paths, 24, 14348fbb200683827f2a4eaaf7e351f621da5546, packages/registr...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:01:35.2109980Z {\"baselineFailed\":18,\"baselinePassed\":18}",
+            "2026-11-16T12:01:38.5290454Z Catalog entries: 9846",
+            "2026-11-16T12:01:38.5290953Z Catalog errors: 0",
+            "2026-11-16T12:01:40.6504029Z {\"candidateFailed\":0,\"candidatePassed\":112,\"candidatePending\":0}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nRegistry routes pass percent-encoded path segments directly to server lookup. Encoded IDs such as `postgres%2Dmcp`, names containing spaces, and encoded `owner%2Frepository` aliases fail to resolve even though the decoded identifier is supported. Malformed escapes are also treated as missing servers.\n\n## Change\n\nDecode each path segment after splitting the pathname, preserving an encoded slash within one server identifier. Return a JSON 400 response for malformed escapes. Decode only once.\n\nTests compare actual HTTP responses for three encoded identifier forms across JSON profiles, HTML profiles, both badge routes, and installation configuration. They also cover malformed escapes, subsequent health requests, unresolved aliases, and double-encoded input.\n\n## Validation\n\nThe unchanged server produces **18 failures and 18 passes** in the focused suite. On Node.js 20 and 24, the fix passes the full **112-test suite**, catalog and profile generation, TypeScript checking, and package builds.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43862791585/job/133283601365)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43862791585/job/133283601922)\n",
+      "validation_runs": [
+        43862791585
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/decoded-registry-paths-20261116?expand=1&title=Resolve%20encoded%20server%20identifiers%20and%20reject%20malformed%20URL%20escapes&body=%23%23%20Problem%0A%0ARegistry%20routes%20pass%20percent-encoded%20path%20segments%20directly%20to%20server%20lookup.%20Encoded%20IDs%20such%20as%20%60postgres%252Dmcp%60%2C%20names%20containing%20spaces%2C%20and%20encoded%20%60owner%252Frepository%60%20aliases%20fail%20to%20resolve%20even%20though%20the%20decoded%20identifier%20is%20supported.%20Malformed%20escapes%20are%20also%20treated%20as%20missing%20servers.%0A%0A%23%23%20Change%0A%0ADecode%20each%20path%20segment%20after%20splitting%20the%20pathname%2C%20preserving%20an%20encoded%20slash%20within%20one%20server%20identifier.%20Return%20a%20JSON%20400%20response%20for%20malformed%20escapes.%20Decode%20only%20once.%0A%0ATests%20compare%20actual%20HTTP%20responses%20for%20three%20encoded%20identifier%20forms%20across%20JSON%20profiles%2C%20HTML%20profiles%2C%20both%20badge%20routes%2C%20and%20installation%20configuration.%20They%20also%20cover%20malformed%20escapes%2C%20subsequent%20health%20requests%2C%20unresolved%20aliases%2C%20and%20double-encoded%20input.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20server%20produces%20**18%20failures%20and%2018%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**112-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601365)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601922)%0A"
+    },
+    {
+      "name": "registry-cli-special-paths",
+      "title": "Start the registry API from paths containing URL punctuation",
+      "branch": "fix/registry-cli-special-paths-20261116",
+      "sources": [
+        "packages/registry-api/src/server.ts"
+      ],
+      "regressions": [
+        "packages/registry-api/test/cliPaths.test.ts"
+      ],
+      "expected_baseline_failures": 3,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "b6e2ce9a2519a8912b6ec1c103e7e45cd877425f",
+      "head_sha": "9f5fa499cea5a5238a760f0691c8796f27c8590a",
+      "status": "ready_to_publish",
+      "previous_head": "cabad3bd2c2cfaeda0957222180f09d6b44fffad",
+      "evidence": [
+        {
+          "id": 133286044795,
+          "name": "contracts (registry-cli-special-paths, 20, 9f5fa499cea5a5238a760f0691c8796f27c8590a, packages/reg...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:06:21.8383125Z {\"baselineFailed\":3,\"baselinePassed\":2}",
+            "2026-11-16T12:06:25.7125491Z Catalog entries: 9846",
+            "2026-11-16T12:06:25.7125868Z Catalog errors: 0",
+            "2026-11-16T12:06:30.9133836Z {\"candidateFailed\":0,\"candidatePassed\":97,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133286045158,
+          "name": "contracts (registry-cli-special-paths, 24, 9f5fa499cea5a5238a760f0691c8796f27c8590a, packages/reg...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:06:17.6490530Z {\"baselineFailed\":3,\"baselinePassed\":2}",
+            "2026-11-16T12:06:22.0631247Z Catalog entries: 9846",
+            "2026-11-16T12:06:22.0633844Z Catalog errors: 0",
+            "2026-11-16T12:06:27.7949814Z {\"candidateFailed\":0,\"candidatePassed\":97,\"candidatePending\":0}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nThe API entrypoint constructs a file URL by concatenating `file://` with a filesystem path. A checkout path containing `#`, `?`, or literal percent escapes is interpreted as URL syntax, so the direct-run comparison fails and the production API exits without starting.\n\n## Change\n\nConvert `import.meta.url` to a filesystem path with `fileURLToPath` before comparing it to the resolved entrypoint path.\n\nRegression tests compile the project and launch the actual production Node entrypoint from temporary directories containing those characters, plus ordinary and space-containing controls. The child process must report a listening API and loaded catalog before cleanup.\n\n## Validation\n\nThe unchanged entrypoint produces **3 failures and 2 passes** in the focused suite. On Node.js 20 and 24, the fix passes the full **97-test suite**, catalog and profile generation, TypeScript checking, and package builds.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863499933/job/133286044795)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863499933/job/133286045158)\n",
+      "validation_runs": [
+        43863499933
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/registry-cli-special-paths-20261116?expand=1&title=Start%20the%20registry%20API%20from%20paths%20containing%20URL%20punctuation&body=%23%23%20Problem%0A%0AThe%20API%20entrypoint%20constructs%20a%20file%20URL%20by%20concatenating%20%60file%3A%2F%2F%60%20with%20a%20filesystem%20path.%20A%20checkout%20path%20containing%20%60%23%60%2C%20%60%3F%60%2C%20or%20literal%20percent%20escapes%20is%20interpreted%20as%20URL%20syntax%2C%20so%20the%20direct-run%20comparison%20fails%20and%20the%20production%20API%20exits%20without%20starting.%0A%0A%23%23%20Change%0A%0AConvert%20%60import.meta.url%60%20to%20a%20filesystem%20path%20with%20%60fileURLToPath%60%20before%20comparing%20it%20to%20the%20resolved%20entrypoint%20path.%0A%0ARegression%20tests%20compile%20the%20project%20and%20launch%20the%20actual%20production%20Node%20entrypoint%20from%20temporary%20directories%20containing%20those%20characters%2C%20plus%20ordinary%20and%20space-containing%20controls.%20The%20child%20process%20must%20report%20a%20listening%20API%20and%20loaded%20catalog%20before%20cleanup.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20entrypoint%20produces%20**3%20failures%20and%202%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**97-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863499933%2Fjob%2F133286044795)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863499933%2Fjob%2F133286045158)%0A"
+    },
+    {
+      "name": "balanced-catalog-link-destinations",
+      "title": "Preserve balanced and escaped parentheses in catalog URLs",
+      "branch": "fix/balanced-catalog-link-destinations-20261116",
+      "sources": [
+        "packages/catalog-builder/src/parseMarkdown.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/parseMarkdown.test.ts"
+      ],
+      "expected_baseline_failures": 9,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "a95e1dedbd69a7f27d061deb3507005b930d33ff",
+      "head_sha": "9044b88661087989097fe32ad0fd82db32c41f0e",
+      "status": "ready_to_publish",
+      "evidence": [
+        {
+          "id": 133285082383,
+          "name": "contracts (balanced-catalog-link-destinations, 20, 9044b88661087989097fe32ad0fd82db32c41f0e, pack...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:04:19.9732468Z {\"baselineFailed\":9,\"baselinePassed\":13}",
+            "2026-11-16T12:04:23.7289263Z Catalog entries: 9846",
+            "2026-11-16T12:04:23.7289663Z Catalog errors: 0",
+            "2026-11-16T12:04:26.7896795Z {\"candidateFailed\":0,\"candidatePassed\":102,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133285082428,
+          "name": "contracts (balanced-catalog-link-destinations, 24, 9044b88661087989097fe32ad0fd82db32c41f0e, pack...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:04:26.9806933Z {\"baselineFailed\":9,\"baselinePassed\":13}",
+            "2026-11-16T12:04:30.3249443Z Catalog entries: 9846",
+            "2026-11-16T12:04:30.3250387Z Catalog errors: 0",
+            "2026-11-16T12:04:32.4797033Z {\"candidateFailed\":0,\"candidatePassed\":102,\"candidatePending\":0}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nThe Markdown entry expression stops a link destination at the first closing parenthesis. Valid URLs with balanced parentheses are truncated, and escaped parentheses remain incorrect. The shortened URL then changes the catalog link and its stable identifier.\n\n## Change\n\nScan the destination while tracking nested parentheses and escaped delimiters. Preserve the complete URL and reject unfinished destinations. Existing descriptions and source line numbers keep their current handling.\n\nTests cover nested pairs, query values, escaped opening and closing parentheses, encoded-parenthesis controls, incomplete destinations, and the resulting catalog URL and identifier. Balanced and escaped parentheses are valid link destinations under the [CommonMark link rules](https://spec.commonmark.org/0.31.2/#link-destination).\n\n## Validation\n\nThe unchanged parser produces **9 failures and 13 passes** in the focused suite. On Node.js 20 and 24, the fix passes the full **102-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog still builds with 9,846 entries and zero errors.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863220510/job/133285082383)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863220510/job/133285082428)\n",
+      "validation_runs": [
+        43863220510
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/balanced-catalog-link-destinations-20261116?expand=1&title=Preserve%20balanced%20and%20escaped%20parentheses%20in%20catalog%20URLs&body=%23%23%20Problem%0A%0AThe%20Markdown%20entry%20expression%20stops%20a%20link%20destination%20at%20the%20first%20closing%20parenthesis.%20Valid%20URLs%20with%20balanced%20parentheses%20are%20truncated%2C%20and%20escaped%20parentheses%20remain%20incorrect.%20The%20shortened%20URL%20then%20changes%20the%20catalog%20link%20and%20its%20stable%20identifier.%0A%0A%23%23%20Change%0A%0AScan%20the%20destination%20while%20tracking%20nested%20parentheses%20and%20escaped%20delimiters.%20Preserve%20the%20complete%20URL%20and%20reject%20unfinished%20destinations.%20Existing%20descriptions%20and%20source%20line%20numbers%20keep%20their%20current%20handling.%0A%0ATests%20cover%20nested%20pairs%2C%20query%20values%2C%20escaped%20opening%20and%20closing%20parentheses%2C%20encoded-parenthesis%20controls%2C%20incomplete%20destinations%2C%20and%20the%20resulting%20catalog%20URL%20and%20identifier.%20Balanced%20and%20escaped%20parentheses%20are%20valid%20link%20destinations%20under%20the%20%5BCommonMark%20link%20rules%5D(https%3A%2F%2Fspec.commonmark.org%2F0.31.2%2F%23link-destination).%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20parser%20produces%20**9%20failures%20and%2013%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**102-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20real%20catalog%20still%20builds%20with%209%2C846%20entries%20and%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082383)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082428)%0A"
+    },
+    {
+      "name": "catalog-grouped-tool-counts",
+      "title": "Parse complete grouped tool counts without truncating numeric values",
+      "branch": "fix/catalog-grouped-tool-counts-20261116",
+      "sources": [
+        "packages/catalog-builder/src/buildCatalog.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/buildCatalog.test.ts"
+      ],
+      "expected_baseline_failures": 13,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "f36e59345b41f9764da0e995ee353a38c9d4b7e6",
+      "head_sha": "f229fc785d210cc15aaf0f951f06c8fce2cbdc63",
+      "status": "ready_to_publish",
+      "evidence": [
+        {
+          "id": 133285082440,
+          "name": "contracts (catalog-grouped-tool-counts, 24, f229fc785d210cc15aaf0f951f06c8fce2cbdc63, packages/ca...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:04:18.3772126Z {\"baselineFailed\":13,\"baselinePassed\":18}",
+            "2026-11-16T12:04:21.1895788Z Catalog entries: 9846",
+            "2026-11-16T12:04:21.1896685Z Catalog errors: 0",
+            "2026-11-16T12:04:23.3801993Z {\"candidateFailed\":0,\"candidatePassed\":111,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133285082476,
+          "name": "contracts (catalog-grouped-tool-counts, 20, f229fc785d210cc15aaf0f951f06c8fce2cbdc63, packages/ca...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:04:23.9557849Z {\"baselineFailed\":13,\"baselinePassed\":18}",
+            "2026-11-16T12:04:27.4655901Z Catalog entries: 9846",
+            "2026-11-16T12:04:27.4656521Z Catalog errors: 0",
+            "2026-11-16T12:04:30.0109651Z {\"candidateFailed\":0,\"candidatePassed\":111,\"candidatePending\":0}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nTool-count inference accepts a suffix of a numeric expression: `1,234 tools` becomes 234, and `1.5 tools` becomes 5. Oversized integers also lose precision when converted to JavaScript numbers.\n\n## Change\n\nRecognize complete nonnegative integers, including correctly grouped thousands separators. Reject decimal, malformed grouping, signed, range, and unsafe-integer values instead of publishing a misleading count. Preserve ordinary and zero counts, singular/plural forms, and explicit metadata precedence.\n\n## Validation\n\nThe unchanged implementation produces **13 failures and 18 passes** in the focused suite. On Node.js 20 and 24, the fix passes the complete **111-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog still builds with 9,846 entries and zero errors.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863220510/job/133285082476)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863220510/job/133285082440)\n",
+      "validation_runs": [
+        43863220510
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/catalog-grouped-tool-counts-20261116?expand=1&title=Parse%20complete%20grouped%20tool%20counts%20without%20truncating%20numeric%20values&body=%23%23%20Problem%0A%0ATool-count%20inference%20accepts%20a%20suffix%20of%20a%20numeric%20expression%3A%20%601%2C234%20tools%60%20becomes%20234%2C%20and%20%601.5%20tools%60%20becomes%205.%20Oversized%20integers%20also%20lose%20precision%20when%20converted%20to%20JavaScript%20numbers.%0A%0A%23%23%20Change%0A%0ARecognize%20complete%20nonnegative%20integers%2C%20including%20correctly%20grouped%20thousands%20separators.%20Reject%20decimal%2C%20malformed%20grouping%2C%20signed%2C%20range%2C%20and%20unsafe-integer%20values%20instead%20of%20publishing%20a%20misleading%20count.%20Preserve%20ordinary%20and%20zero%20counts%2C%20singular%2Fplural%20forms%2C%20and%20explicit%20metadata%20precedence.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20implementation%20produces%20**13%20failures%20and%2018%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20complete%20**111-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20real%20catalog%20still%20builds%20with%209%2C846%20entries%20and%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082476)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082440)%0A"
+    },
+    {
+      "name": "registry-head-method",
+      "title": "Support HEAD requests and advertise allowed registry methods",
+      "branch": "fix/registry-head-method-20261116",
+      "sources": [
+        "packages/registry-api/src/server.ts"
+      ],
+      "regressions": [
+        "packages/registry-api/test/server.test.ts"
+      ],
+      "expected_baseline_failures": 20,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "d677d9f42d0315142272f761c599491b19bfe68b",
+      "head_sha": "aae74bf4afe2e5c4679f039a627ff87c32e8ac0e",
+      "status": "ready_to_publish",
+      "evidence": [
+        {
+          "id": 133285082143,
+          "name": "contracts (registry-head-method, 24, aae74bf4afe2e5c4679f039a627ff87c32e8ac0e, packages/registry-...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:04:30.2473300Z {\"baselineFailed\":20,\"baselinePassed\":16}",
+            "2026-11-16T12:04:33.6485233Z Catalog entries: 9846",
+            "2026-11-16T12:04:33.6485762Z Catalog errors: 0",
+            "2026-11-16T12:04:35.8221005Z {\"candidateFailed\":0,\"candidatePassed\":112,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133285082443,
+          "name": "contracts (registry-head-method, 20, aae74bf4afe2e5c4679f039a627ff87c32e8ac0e, packages/registry-...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:04:24.7492521Z {\"baselineFailed\":20,\"baselinePassed\":16}",
+            "2026-11-16T12:04:28.2436470Z Catalog entries: 9846",
+            "2026-11-16T12:04:28.2436871Z Catalog errors: 0",
+            "2026-11-16T12:04:30.7506687Z {\"candidateFailed\":0,\"candidatePassed\":112,\"candidatePending\":0}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nEvery HEAD request currently returns 405, including requests for working health, search, profile, badge, and installation endpoints. Method-rejection responses also omit the `Allow` header.\n\n## Change\n\nRoute HEAD through the same handlers as GET; Node suppresses the response body. Advertise GET, HEAD, and OPTIONS consistently in CORS responses and the `Allow` header for OPTIONS and 405 responses. Document the supported behavior.\n\nThe HTTP integration tests compare status and representation headers for 15 routes, including error responses, and verify empty HEAD bodies, preflight behavior, and rejected methods. These changes follow [HTTP method and Allow semantics](https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.1).\n\n## Validation\n\nThe unchanged server produces **20 failures and 16 passes** in the focused suite. On Node.js 20 and 24, the fix passes the full **112-test suite**, catalog and profile generation, TypeScript checking, and package builds.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863220510/job/133285082443)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863220510/job/133285082143)\n",
+      "validation_runs": [
+        43863220510
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/registry-head-method-20261116?expand=1&title=Support%20HEAD%20requests%20and%20advertise%20allowed%20registry%20methods&body=%23%23%20Problem%0A%0AEvery%20HEAD%20request%20currently%20returns%20405%2C%20including%20requests%20for%20working%20health%2C%20search%2C%20profile%2C%20badge%2C%20and%20installation%20endpoints.%20Method-rejection%20responses%20also%20omit%20the%20%60Allow%60%20header.%0A%0A%23%23%20Change%0A%0ARoute%20HEAD%20through%20the%20same%20handlers%20as%20GET%3B%20Node%20suppresses%20the%20response%20body.%20Advertise%20GET%2C%20HEAD%2C%20and%20OPTIONS%20consistently%20in%20CORS%20responses%20and%20the%20%60Allow%60%20header%20for%20OPTIONS%20and%20405%20responses.%20Document%20the%20supported%20behavior.%0A%0AThe%20HTTP%20integration%20tests%20compare%20status%20and%20representation%20headers%20for%2015%20routes%2C%20including%20error%20responses%2C%20and%20verify%20empty%20HEAD%20bodies%2C%20preflight%20behavior%2C%20and%20rejected%20methods.%20These%20changes%20follow%20%5BHTTP%20method%20and%20Allow%20semantics%5D(https%3A%2F%2Fwww.rfc-editor.org%2Frfc%2Frfc9110.html%23section-10.2.1).%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20server%20produces%20**20%20failures%20and%2016%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**112-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082443)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082143)%0A"
+    },
+    {
+      "name": "bounded-search-ranking",
+      "title": "Keep only the requested best matches while ranking catalog searches",
+      "branch": "perf/bounded-search-ranking-20261116",
+      "sources": [
+        "packages/registry-api/src/search.ts"
+      ],
+      "regressions": [
+        "packages/registry-api/test/search.test.ts"
+      ],
+      "expected_baseline_failures": 0,
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "96783d4b188763fd7f9ec3eead1c1eee647f1bc3",
+      "head_sha": "edace3dd202c5aafa4a0290f07625b4c393c8a49",
+      "status": "ready_to_publish",
+      "evidence": [
+        {
+          "id": 133286687376,
+          "name": "contracts (bounded-search-ranking, 24, edace3dd202c5aafa4a0290f07625b4c393c8a49, packages/registr...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:07:33.2705988Z {\"baselineFailed\":0,\"baselinePassed\":24}",
+            "2026-11-16T12:07:37.4176021Z Catalog entries: 9846",
+            "2026-11-16T12:07:37.4178630Z Catalog errors: 0",
+            "2026-11-16T12:07:40.6567109Z {\"candidateFailed\":0,\"candidatePassed\":106,\"candidatePending\":0}"
+          ]
+        },
+        {
+          "id": 133286688010,
+          "name": "contracts (bounded-search-ranking, 20, edace3dd202c5aafa4a0290f07625b4c393c8a49, packages/registr...",
+          "conclusion": "success",
+          "lines": [
+            "2026-11-16T12:07:42.0985408Z {\"baselineFailed\":0,\"baselinePassed\":24}",
+            "2026-11-16T12:07:45.6649999Z Catalog entries: 9846",
+            "2026-11-16T12:07:45.6650513Z Catalog errors: 0",
+            "2026-11-16T12:07:48.3094817Z {\"candidateFailed\":0,\"candidatePassed\":106,\"candidatePending\":0}",
+            "2026-11-16T12:08:02.8905251Z {\"exactResults\":true,\"entries\":9846,\"comparisons\":[{\"query\":\"\",\"limit\":1,\"beforeMs\":3.073511599999995,\"afterMs\":0.3229221000000024,\"speedup\":9.517811261601397},{\"query\":\"\",\"limit\":5,\"beforeMs\":3.1010278000000087,\"afterMs\":0.20993710000000193,\"speedup\":14.771223380717272},{\"query\":\"\",\"limit\":25,\"beforeMs\":3.057554800000003,\"afterMs\":0.22982499999999959,\"speedup\":13.30383900794086},{\"query\":\"\",\"limit\":100,\"beforeMs\":3.1174526000000014,\"afterMs\":0.3472634000000028,\"speedup\":8.977198864032248},{\"query\":\"mcp\",\"limit\":1,\"beforeMs\":6.895012599999996,\"afterMs\":3.2938523999999973,\"speedup\":2.093297380295487},{\"query\":\"mcp\",\"limit\":5,\"beforeMs\":6.914325599999984,\"afterMs\":3.2982401999999977,\"speedup\":2.096368117761705},{\"query\":\"mcp\",\"limit\":25,\"beforeMs\":6.8904107000000065,\"afterMs\":3.3315200000000003,\"speedup\":2.0682483370953815},{\"query\":\"mcp\",\"limit\":100,\"beforeMs\":6.919286499999998,\"afterMs\":3.4612628000000085,\"speedup\":1.999064185475885},{\"query\":\"search\",\"limit\":1,\"beforeMs\":4.955928700000004,\"afterMs\":3.93116950000001,\"speedup\":1.2606754046092368},{\"query\":\"search\",\"limit\":5,\"beforeMs\":5.069598000000042,\"afterMs\":3.9397602000000007,\"speedup\":1.2867783171168745},{\"query\":\"search\",\"limit\":25,\"beforeMs\":5.054487299999982,\"afterMs\":3.9868889000000083,\"speedup\":1.2677773137846835},{\"query\":\"search\",\"limit\":100,\"beforeMs\":5.076543099999981,\"afterMs\":4.104212099999995,\"speedup\":1.2369105144444135},{\"query\":\"postgres\",\"limit\":1,\"beforeMs\":3.999954200000002,\"afterMs\":3.5644272,\"speedup\":1.1221870936233462},{\"query\":\"postgres\",\"limit\":5,\"beforeMs\":4.001331100000016,\"afterMs\":3.5698589000000083,\"speedup\":1.1208653372826602},{\"query\":\"postgres\",\"limit\":25,\"beforeMs\":4.015506500000038,\"afterMs\":3.59018430000001,\"speedup\":1.1184680686169863},{\"query\":\"postgres\",\"limit\":100,\"beforeMs\":4.038217600000007,\"afterMs\":3.6528543000000355,\"speedup\":1.1054964880477078},{\"query\":\"search mcp\",\"limit\":1,\"beforeMs\":8.975913199999923,\"afterMs\":5.292540499999996,\"speedup\":1.6959555056782143},{\"query\":\"search mcp\",\"limit\":5,\"beforeMs\":9.000700899999993,\"afterMs\":5.309849399999985,\"speedup\":1.6950953260557668},{\"query\":\"search mcp\",\"limit\":25,\"beforeMs\":8.935662400000002,\"afterMs\":5.36472990000002,\"speedup\":1.6656313675735974},{\"query\":\"search mcp\",\"limit\":100,\"beforeMs\":8.964821500000017,\"afterMs\":5.542519399999992,\"speedup\":1.6174632604804289}]}"
+          ]
+        }
+      ],
+      "body": "## Problem\n\nCatalog search scores and sorts every matching entry before returning at most 100 results. Common queries and unfiltered listings therefore retain and sort thousands of entries that cannot appear in the response.\n\n## Change\n\nKeep a sorted result list bounded by the normalized request limit. Skip candidates that cannot improve the current results and use binary insertion for candidates that can. Preserve scoring, filtering, category/name ordering, and original order for exact ties.\n\n## Validation\n\nThe focused ordering suite passes all **24 tests** on the unchanged and modified implementations. It checks result limits, ranked and unfiltered ordering, exact ties, filters, and unchanged input order. The complete **106-test suite**, catalog/profile generation, TypeScript checking, and package builds pass on Node.js 20 and 24.\n\nA Node.js 20 benchmark uses the real **9,846-entry catalog**, five query forms, and limits 1, 5, 25, and 100. All 20 result sets have exactly the same serialized summaries before and after. Each measurement uses five warmup calls, then five samples of ten calls.\n\nFor the default limit of 25:\n\n| Query | Before | After |\n| --- | ---: | ---: |\n| Empty query | 3.058 ms | 0.230 ms |\n| mcp | 6.890 ms | 3.332 ms |\n| search | 5.054 ms | 3.987 ms |\n| postgres | 4.016 ms | 3.590 ms |\n| search mcp | 8.936 ms | 5.365 ms |\n\nThese are in-process search times on the validation runner, excluding network latency.\n\n- [Node.js 20 tests and full benchmark](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863688716/job/133286688010)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43863688716/job/133286687376)\n",
+      "validation_runs": [
+        43863688716
+      ],
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:perf/bounded-search-ranking-20261116?expand=1&title=Keep%20only%20the%20requested%20best%20matches%20while%20ranking%20catalog%20searches&body=%23%23%20Problem%0A%0ACatalog%20search%20scores%20and%20sorts%20every%20matching%20entry%20before%20returning%20at%20most%20100%20results.%20Common%20queries%20and%20unfiltered%20listings%20therefore%20retain%20and%20sort%20thousands%20of%20entries%20that%20cannot%20appear%20in%20the%20response.%0A%0A%23%23%20Change%0A%0AKeep%20a%20sorted%20result%20list%20bounded%20by%20the%20normalized%20request%20limit.%20Skip%20candidates%20that%20cannot%20improve%20the%20current%20results%20and%20use%20binary%20insertion%20for%20candidates%20that%20can.%20Preserve%20scoring%2C%20filtering%2C%20category%2Fname%20ordering%2C%20and%20original%20order%20for%20exact%20ties.%0A%0A%23%23%20Validation%0A%0AThe%20focused%20ordering%20suite%20passes%20all%20**24%20tests**%20on%20the%20unchanged%20and%20modified%20implementations.%20It%20checks%20result%20limits%2C%20ranked%20and%20unfiltered%20ordering%2C%20exact%20ties%2C%20filters%2C%20and%20unchanged%20input%20order.%20The%20complete%20**106-test%20suite**%2C%20catalog%2Fprofile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds%20pass%20on%20Node.js%2020%20and%2024.%0A%0AA%20Node.js%2020%20benchmark%20uses%20the%20real%20**9%2C846-entry%20catalog**%2C%20five%20query%20forms%2C%20and%20limits%201%2C%205%2C%2025%2C%20and%20100.%20All%2020%20result%20sets%20have%20exactly%20the%20same%20serialized%20summaries%20before%20and%20after.%20Each%20measurement%20uses%20five%20warmup%20calls%2C%20then%20five%20samples%20of%20ten%20calls.%0A%0AFor%20the%20default%20limit%20of%2025%3A%0A%0A%7C%20Query%20%7C%20Before%20%7C%20After%20%7C%0A%7C%20---%20%7C%20---%3A%20%7C%20---%3A%20%7C%0A%7C%20Empty%20query%20%7C%203.058%20ms%20%7C%200.230%20ms%20%7C%0A%7C%20mcp%20%7C%206.890%20ms%20%7C%203.332%20ms%20%7C%0A%7C%20search%20%7C%205.054%20ms%20%7C%203.987%20ms%20%7C%0A%7C%20postgres%20%7C%204.016%20ms%20%7C%203.590%20ms%20%7C%0A%7C%20search%20mcp%20%7C%208.936%20ms%20%7C%205.365%20ms%20%7C%0A%0AThese%20are%20in-process%20search%20times%20on%20the%20validation%20runner%2C%20excluding%20network%20latency.%0A%0A-%20%5BNode.js%2020%20tests%20and%20full%20benchmark%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863688716%2Fjob%2F133286688010)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863688716%2Fjob%2F133286687376)%0A"
     }
   ],
   "validation_batch3": {
@@ -498,5 +815,21 @@
     "tree": "fc9cef9388a5fa25d312b8954122a32b7b5d6380",
     "branch": "validation/registry-core-batch4-20261116"
   },
-  "updated_at": "2026-11-16T11:59:16.095Z"
+  "updated_at": "2026-11-16T12:16:29.769Z",
+  "validation_batch5": {
+    "head": "1e9de25824b8aebcedafb1fb55f152905ab906c8",
+    "tree": "771740a470b8865ff87ffa9fe78ec357903fdd06",
+    "branch": "validation/registry-core-batch5-20261116"
+  },
+  "validation_batch6": {
+    "head": "ce12cd3c898ca63aed6349de857109e9ee782679",
+    "tree": "57dcea398c8ebcc4593fcf0bbe13372a10a96dca",
+    "branch": "validation/registry-core-batch6-20261116"
+  },
+  "validation_batch7": {
+    "head": "bcc11f67e2f82a0269bbe2ae3027b3cee22ad3ed",
+    "tree": "588cb05c7cd5ee897f92798efe00221859c59b04",
+    "branch": "validation/registry-core-batch7-20261116"
+  },
+  "submission_blocker": "Cloud browser tool calls are timing out before submission; ready candidates have verified commits, full CI evidence, bodies and prefilled compare links. GitHub connector PR creation previously returned 403."
 }
