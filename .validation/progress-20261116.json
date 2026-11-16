@@ -192,6 +192,75 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "980a9dc5e140eadfbf11d031af7aba07c0409b9f",
       "head_sha": "df1d436f86e71a71f2c303659cf47efc39a41aaa"
+    },
+    {
+      "name": "catalog-inline-code-commands",
+      "title": "Extract installation commands from complete inline-code spans",
+      "branch": "fix/catalog-inline-code-commands-20261116",
+      "sources": [
+        "packages/catalog-builder/src/buildCatalog.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/buildCatalog.test.ts"
+      ],
+      "expected_baseline_failures": 6,
+      "tree": "6b02cbe5c1b8e341c5ac4a6bbc276836e881ff05",
+      "head_sha": "b769238778a1e09e61779c012847553db66cff38",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+    },
+    {
+      "name": "catalog-repository-endpoints",
+      "title": "Avoid inferring GitHub repository pages as remote MCP endpoints",
+      "branch": "fix/catalog-repository-endpoints-20261116",
+      "sources": [
+        "packages/catalog-builder/src/buildCatalog.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/buildCatalog.test.ts"
+      ],
+      "expected_baseline_failures": 7,
+      "tree": "733c7ddfff6b9cb21b98d40a750d112311747c43",
+      "head_sha": "56faa92f1d4eecb334a360145c9130fb6ed531b1",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+    },
+    {
+      "name": "catalog-gnu-license-identifiers",
+      "title": "Preserve GNU license version-choice suffixes in catalog metadata",
+      "branch": "fix/catalog-gnu-license-identifiers-20261116",
+      "sources": [
+        "packages/catalog-builder/src/buildCatalog.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/buildCatalog.test.ts"
+      ],
+      "expected_baseline_failures": 8,
+      "tree": "f96c6ca54de39d9b6ec65b791555cf3f990894e7",
+      "head_sha": "0034b4ffa21aa46bfdd3b6bd4032d55930b645b6",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+    },
+    {
+      "name": "incremental-profile-writes",
+      "title": "Preserve unchanged profile files during catalog rebuilds",
+      "branch": "perf/incremental-profile-writes-20261116",
+      "sources": [
+        "packages/profile-renderer/src/renderProfiles.ts"
+      ],
+      "regressions": [
+        "packages/profile-renderer/test/renderProfiles.test.ts"
+      ],
+      "expected_baseline_failures": 2,
+      "tree": "fe8bde66435c7d09fb857665835dc585b8963f6e",
+      "head_sha": "e8d1f42a6c77f53947c4b1fdeb0b3861e40ddd6a",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
     }
-  ]
+  ],
+  "validation_batch3": {
+    "head": "59e438b65109bdd0021f0f041d927f76bd926a77",
+    "tree": "9f071eb18383756e6e491818a1544c9838c7d442",
+    "branch": "validation/registry-core-batch3-20261116"
+  }
 }
