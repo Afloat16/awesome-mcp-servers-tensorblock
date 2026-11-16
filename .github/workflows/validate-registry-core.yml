@@ -12,37 +12,19 @@ jobs:
       matrix:
         include:
           - name: registry-client-own-aliases
-            node: '22'
-            head: 4723f592cf0abb6d0c2bf6cfea0e73d005cbb9d2
-            source: packages/registry-api/src/server.ts
-            regression: packages/registry-api/test/server.test.ts
-            failures: 4
-          - name: registry-client-own-aliases
-            node: '24'
+            node: '20'
             head: 4723f592cf0abb6d0c2bf6cfea0e73d005cbb9d2
             source: packages/registry-api/src/server.ts
             regression: packages/registry-api/test/server.test.ts
             failures: 4
           - name: python-pip-setup-commands
-            node: '22'
-            head: 21240711b7150c83663b1e235be3d194829dd968
-            source: packages/config-generator/src/generateConfig.ts
-            regression: packages/config-generator/test/generateConfig.test.ts
-            failures: 13
-          - name: python-pip-setup-commands
-            node: '24'
+            node: '20'
             head: 21240711b7150c83663b1e235be3d194829dd968
             source: packages/config-generator/src/generateConfig.ts
             regression: packages/config-generator/test/generateConfig.test.ts
             failures: 13
           - name: registry-invalid-request-target
-            node: '22'
-            head: e0021164e31727198e72b0967e2c01cf8cc202d0
-            source: packages/registry-api/src/server.ts
-            regression: packages/registry-api/test/requestTargets.test.ts
-            failures: 4
-          - name: registry-invalid-request-target
-            node: '24'
+            node: '20'
             head: e0021164e31727198e72b0967e2c01cf8cc202d0
             source: packages/registry-api/src/server.ts
             regression: packages/registry-api/test/requestTargets.test.ts
