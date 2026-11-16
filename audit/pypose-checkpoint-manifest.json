@@ -1,0 +1,193 @@
+{
+  "encoding": "base64(gzip(JSON mapping paths to UTF-8 text))",
+  "history_note": "Source contents are identified by upstream Git blob SHA and SHA-256; method variants are retained separately.",
+  "files": [
+    {
+      "path": "audit/benchmark_pypose_imu_reuse.py",
+      "bytes": 5598,
+      "sha256": "85a8d00804ce93aab0d2a97a0b51b5c77477db5aea54d3d1de55564155c668e6"
+    },
+    {
+      "path": "audit/index_pypose_paths.py",
+      "bytes": 2593,
+      "sha256": "af2ef7e33e0b9838e053dd8fc2d469df41885aad0896a6ee331c9583f5000dc0"
+    },
+    {
+      "path": "audit/pypose-cauchy-candidate-source.py",
+      "bytes": 10847,
+      "sha256": "fb042693947bc639737aaa3eb1933219d61f540f074f21101fb90711a38592f2"
+    },
+    {
+      "path": "audit/pypose-cauchy-method-audit.json",
+      "bytes": 8869,
+      "sha256": "086e287b699b979dc425d130eb130bc97739e82f126b1b387d45b2e45ce4ea26"
+    },
+    {
+      "path": "audit/pypose-cauchy-ratio-before.log",
+      "bytes": 8095,
+      "sha256": "60d88b75f481208055fa244dfd3528f4d949bc6ad03b00cc2b470db2d5c8cefb"
+    },
+    {
+      "path": "audit/pypose-cauchy-ratio-body.txt",
+      "bytes": 1939,
+      "sha256": "352dc09e684cc475f8e6e60597f47aa312b64c4e8f5c6ecba6b86cee6989b3e9"
+    },
+    {
+      "path": "audit/pypose-cauchy-ratio-config.json",
+      "bytes": 2403,
+      "sha256": "2546c60edfb8d9bbfadf31f7e11d3dc3f0574aa2c70a88e745724eaf77e351e9"
+    },
+    {
+      "path": "audit/pypose-cauchy-ratio-focused.log",
+      "bytes": 99,
+      "sha256": "a6e05e5632b9994ca944b884248bcb0929acfb9a2625bc9c32bd648840d99041"
+    },
+    {
+      "path": "audit/pypose-cauchy-ratio-full.log",
+      "bytes": 5580,
+      "sha256": "08dd5663b01e9478d288a5a1a1e3dd1b4a25fba5dae186be56a5844b8c964649"
+    },
+    {
+      "path": "audit/pypose-cauchy-ratio-payload.json",
+      "bytes": 15460,
+      "sha256": "dbc7daa6e04988769665b788a13b98532f8556f00c95c851f36770005fe010fa"
+    },
+    {
+      "path": "audit/pypose-excluded-candidates.json",
+      "bytes": 1830,
+      "sha256": "d7246252676716aefd3d57d44e890b237d3ce7a21d302e6faeb24a195b4e9503"
+    },
+    {
+      "path": "audit/pypose-filter-covariance-method-audit.json",
+      "bytes": 8067,
+      "sha256": "6bf921a363a97e3df62bbd0773e6af4da86b6d5dbf087d723023651ddff60422"
+    },
+    {
+      "path": "audit/pypose-geometry-method-audit.json",
+      "bytes": 17737,
+      "sha256": "64c3819ff8326c9d6c55533c3ffde2599b6e1429e2d52306b12dc1b778206886"
+    },
+    {
+      "path": "audit/pypose-imu-cov-method-audit.json",
+      "bytes": 32426,
+      "sha256": "d2b099e08a5c1a62f1315485e4b8af2fe2bac34a6f1b4c4a55f467c89e8ef55c"
+    },
+    {
+      "path": "audit/pypose-imu-cov-profile.log",
+      "bytes": 673,
+      "sha256": "ab8f018aff6b782e0eda38670ad60789000b4bddceab99eab760ba0274926d2d"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-benchmark.json",
+      "bytes": 11957,
+      "sha256": "67747932b5c805b2c0909531f55d443af5dfceb2c056241df6ea1974ae27dab0"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-benchmark.log",
+      "bytes": 1284,
+      "sha256": "672760511ad88fa5382a4604cfc67cc511c1a8d1540e2cbbce9199e01b1810b1"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-body.txt",
+      "bytes": 2095,
+      "sha256": "3d45101c388ab926f9917c6e245124890c9a98830c288c2a57798dbfcad0e3ca"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-config.json",
+      "bytes": 3047,
+      "sha256": "5149f91504960a27d6178376a107f58111d70fb6d6b265689398f4897b3ac5ad"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-full.log",
+      "bytes": 5904,
+      "sha256": "e360756cce684f3c9d95ac1115d64ecd22e20400946eac7ab4c6f2ef4fc411ca"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-job-0.json",
+      "bytes": 5479,
+      "sha256": "27314c45eb2288fc916066be555da563cb0b158ff11d010ab25a74fb1aa42d10"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-job-0.log.gz.b64",
+      "bytes": 22028,
+      "sha256": "ca35a8318977dc5137227994051cbd840cee343531a5063b09a36672993a3b0f"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-job-1.json",
+      "bytes": 5483,
+      "sha256": "6b18095cbf69690b4103c158118e2006ef007ff1ba54757eb151aa4e0935c212"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-job-1.log.gz.b64",
+      "bytes": 21320,
+      "sha256": "f1d108224fd0d5ecf55e8275beb823d88169c9768739e8c6364362eb9828d14e"
+    },
+    {
+      "path": "audit/pypose-imu-reuse-validation.yml",
+      "bytes": 1785,
+      "sha256": "f2c86c63deac05a4d31482024d7fe3258a7953b78c10aa1fae2866bb7fb00bb3"
+    },
+    {
+      "path": "audit/pypose-new-history-index.json",
+      "bytes": 376173,
+      "sha256": "7419e82863874b4d1027dd8d7a941455d5e29c7542286bbb98162c06b86c3ab4"
+    },
+    {
+      "path": "audit/pypose-skew-before.log",
+      "bytes": 4636,
+      "sha256": "2384009bf9424e3a145461897a9c98c18e9b74868ed45fd908fcf3a0be614184"
+    },
+    {
+      "path": "audit/pypose-skew-body.txt",
+      "bytes": 1533,
+      "sha256": "60ce48308062b63d20f70589cfee90cf7370417fc477bc9c41f2d569993c05d8"
+    },
+    {
+      "path": "audit/pypose-skew-config.json",
+      "bytes": 1909,
+      "sha256": "e3cabc8272c493d8874c1696a68495f42d099f7f4fad83f58e6f1279e52b3814"
+    },
+    {
+      "path": "audit/pypose-skew-full.log",
+      "bytes": 5619,
+      "sha256": "94da391163009b8e701e9cab1e31b592f4b99f5156b32e7061838ea87924e057"
+    },
+    {
+      "path": "audit/pypose-svd-device-before.log",
+      "bytes": 11776,
+      "sha256": "385c53b707d0550df5e830b71646c394771c39ea2ccb151545a09a93b26d2a6c"
+    },
+    {
+      "path": "audit/pypose-svd-device-body.txt",
+      "bytes": 1587,
+      "sha256": "01030ca4cc351ac31327f7e839d51dafeed12f74dc94f2dd917a6ad2d5292c7b"
+    },
+    {
+      "path": "audit/pypose-svd-device-config.json",
+      "bytes": 1978,
+      "sha256": "80007201f780e913c5c423492b4244e726988bf0c5e8de6822c90eccd9bf4723"
+    },
+    {
+      "path": "audit/pypose-svd-device-full.log",
+      "bytes": 7596,
+      "sha256": "5ede24dd06526a878260adad2d5525c405faa1798a4b2d5add492948085fe221"
+    },
+    {
+      "path": "audit/pypose-svd-svdstf-device-seed0-full.log",
+      "bytes": 5597,
+      "sha256": "e173539c9841728fc8347c9eca19354c232e5da30434019c12c3e40a42b499d4"
+    },
+    {
+      "path": "audit/pypose-svd-validation-base-seed0-full.log",
+      "bytes": 5880,
+      "sha256": "8d79bf3825bba9b3b5fc851ba5b0842d4ba1fbb5a9ac5723b848894193b1540f"
+    },
+    {
+      "path": "audit/pypose-weight-normalization-method-audit.json",
+      "bytes": 16145,
+      "sha256": "393ff81bd37e8d6998fba316691ca97f16462c879823b20101158edb132d4ee5"
+    }
+  ],
+  "bundle_bytes": 261549,
+  "bundle_sha256": "d1fe514adc585ca647088c24d251e4dea069d22a84332458ff8e3babb6045bb6"
+}
