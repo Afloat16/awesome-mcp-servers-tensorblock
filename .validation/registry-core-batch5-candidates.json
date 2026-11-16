@@ -1,0 +1,50 @@
+[
+  {
+    "name": "duplicate-sidecar-ids",
+    "title": "Reject conflicting metadata sidecars instead of silently overwriting them",
+    "branch": "fix/duplicate-sidecar-ids-20261116",
+    "sources": [
+      "packages/catalog-builder/src/metadata.ts"
+    ],
+    "regressions": [
+      "packages/catalog-builder/test/metadata.test.ts"
+    ],
+    "expected_baseline_failures": 3,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "a368a2d3f1c2b34b4a02a36776da25e6dac26c8c",
+    "head_sha": "e1773721df65e91bd89dd84d51a09af9d07ef92a",
+    "status": "candidate"
+  },
+  {
+    "name": "decoded-registry-paths",
+    "title": "Resolve encoded server identifiers and reject malformed URL escapes",
+    "branch": "fix/decoded-registry-paths-20261116",
+    "sources": [
+      "packages/registry-api/src/server.ts"
+    ],
+    "regressions": [
+      "packages/registry-api/test/server.test.ts"
+    ],
+    "expected_baseline_failures": 18,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "6cc2115624c5eb8237850095dd3116f91264832f",
+    "head_sha": "14348fbb200683827f2a4eaaf7e351f621da5546",
+    "status": "candidate"
+  },
+  {
+    "name": "registry-cli-special-paths",
+    "title": "Start the registry API from paths containing URL punctuation",
+    "branch": "fix/registry-cli-special-paths-20261116",
+    "sources": [
+      "packages/registry-api/src/server.ts"
+    ],
+    "regressions": [
+      "packages/registry-api/test/cliPaths.test.ts"
+    ],
+    "expected_baseline_failures": 3,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "323b8078f24a9bea031997b7c8f768f65a1bb7c5",
+    "head_sha": "cabad3bd2c2cfaeda0957222180f09d6b44fffad",
+    "status": "candidate"
+  }
+]
