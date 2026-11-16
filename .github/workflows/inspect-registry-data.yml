@@ -1,0 +1,24 @@
+name: Inspect existing registry data for correctness gaps
+on:
+  push:
+    branches: ['validation/registry-data-inspection-20261116']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run catalog:build
+      - run: node --import tsx .github/inspect-registry.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: registry-data-inspection
+          path: inspection.json
