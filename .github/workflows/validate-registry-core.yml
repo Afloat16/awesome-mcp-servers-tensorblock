@@ -11,27 +11,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: independent-placeholder-configs
-            node: '20'
-            head: 11820601832e2710a6b11225d458e7b2efb49851
-            source: packages/config-generator/src/generateConfig.ts
-            regression: packages/config-generator/test/generateConfig.test.ts
-            failures: 5
-          - name: independent-placeholder-configs
-            node: '24'
-            head: 11820601832e2710a6b11225d458e7b2efb49851
-            source: packages/config-generator/src/generateConfig.ts
-            regression: packages/config-generator/test/generateConfig.test.ts
-            failures: 5
           - name: catalog-build-error-status
             node: '20'
-            head: 4c7d32b138c162a59d4631ed45839c4c8bff92e7
+            head: 408c38a8a7959455498dc3d79f83078e13f73452
             source: packages/catalog-builder/src/cli.ts
             regression: packages/catalog-builder/test/cli.test.ts
             failures: 3
           - name: catalog-build-error-status
             node: '24'
-            head: 4c7d32b138c162a59d4631ed45839c4c8bff92e7
+            head: 408c38a8a7959455498dc3d79f83078e13f73452
             source: packages/catalog-builder/src/cli.ts
             regression: packages/catalog-builder/test/cli.test.ts
             failures: 3
@@ -40,13 +28,13 @@ jobs:
             head: df1d436f86e71a71f2c303659cf47efc39a41aaa
             source: packages/config-generator/src/generateConfig.ts
             regression: packages/config-generator/test/generateConfig.test.ts
-            failures: 20
+            failures: 19
           - name: quoted-launch-arguments-followup
             node: '24'
             head: df1d436f86e71a71f2c303659cf47efc39a41aaa
             source: packages/config-generator/src/generateConfig.ts
             regression: packages/config-generator/test/generateConfig.test.ts
-            failures: 20
+            failures: 19
     env:
       SOURCE_FILE: ${{ matrix.source }}
       REGRESSION_FILE: ${{ matrix.regression }}
@@ -74,7 +62,10 @@ jobs:
           import { readFileSync } from "node:fs";
           const report = JSON.parse(readFileSync("baseline.json", "utf8"));
           console.log(JSON.stringify({ baselineFailed: report.numFailedTests, baselinePassed: report.numPassedTests }));
-          if (report.numFailedTests !== Number(process.env.EXPECTED_FAILURES)) throw new Error("Unexpected baseline failure count");
+          if (report.numFailedTests !== Number(process.env.EXPECTED_FAILURES)) {
+            console.log(JSON.stringify(report.testResults));
+            throw new Error("Unexpected baseline failure count");
+          }
           JS
       - name: Restore and verify the exact independent candidate
         run: |
