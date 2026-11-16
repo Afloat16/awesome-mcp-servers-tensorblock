@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-16 23:26:50 UTC",
+  "updated_at": "2026-11-16 23:32:27 UTC",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "counts": {
-    "actual": 319,
-    "ready_open": 295,
+    "actual": 320,
+    "ready_open": 296,
     "draft": 3,
     "merged": 12,
     "closed_unmerged": 9,
     "prepared_not_created": 28,
     "target": 730,
-    "remaining_ready_or_merged": 423,
-    "open_total": 298,
-    "effective_ready_or_merged": 307,
+    "remaining_ready_or_merged": 422,
+    "open_total": 299,
+    "effective_ready_or_merged": 308,
     "remaining_merged_to_target": 718
   },
   "scope": {
@@ -389,14 +389,14 @@
         "repository": "thedotmack/claude-mem",
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
-        "actual": 2,
-        "ready": 2,
+        "actual": 3,
+        "ready": 3,
         "draft": 0,
         "merged": 0,
         "closed_unmerged": 0,
-        "effective": 2,
+        "effective": 3,
         "prepared_not_created": 0,
-        "remaining_to_target": 18
+        "remaining_to_target": 17
       },
       {
         "repository": "carla-simulator/carla",
@@ -599,10 +599,10 @@
     {
       "owner": "repository_rules",
       "repository": "Afloat16/Edge0",
-      "commit": "3a662fa3fe4d01014febf99caa0e5d6206691a5a",
+      "commit": "58f036d140a0e7ae230260a61389aec64c881d31",
       "path": "repository-rules-portfolio.json",
-      "count": 92,
-      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/3a662fa3fe4d01014febf99caa0e5d6206691a5a/repository-rules-portfolio.json"
+      "count": 93,
+      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/58f036d140a0e7ae230260a61389aec64c881d31/repository-rules-portfolio.json"
     }
   ],
   "prepared_relative_path": "prepared-submissions.json",

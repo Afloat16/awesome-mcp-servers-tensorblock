@@ -1,13 +1,16 @@
 # 开源改进任务进度
 
-更新时间：2026-11-16 23:26:50 UTC
+更新时间：2026-11-16 23:32:27 UTC
 
-任务仍在进行。当前已实际创建 **319 条 PR**：**295 条 Open / 非 Draft、3 条 Draft、12 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **12**。
+任务仍在进行。当前已实际创建 **320 条 PR**：**296 条 Open / 非 Draft、3 条 Draft、12 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **12**。
 
-按已核实的仓库限额，当前提交计划为 730 项，Ready / Merged 覆盖 **307 / 730**，还差 **423**。这只是提交状态统计，不代表已经合并；按 Merged 统计仍为 **12**。另有 **28 项 Prepared** 尚未创建上游 PR。
+按已核实的仓库限额，当前提交计划为 730 项，Ready / Merged 覆盖 **308 / 730**，还差 **422**。这只是提交状态统计，不代表已经合并；按 Merged 统计仍为 **12**。另有 **28 项 Prepared** 尚未创建上游 PR。
 
 ## 最新实质结果
 
+- [claude-mem #6232](https://github.com/thedotmack/claude-mem/pull/6232)：并发刷新逆序返回时，保留已经成功写入的较新上下文。14 个真实 HTTP / 文件场景从原版 4 项失败变为全部通过，相关 43 项测试、类型检查和构建通过。仅覆盖同一 worker 进程内的重叠刷新；官方 CI 状态单独记录。
+- [claude-mem #6231](https://github.com/thedotmack/claude-mem/pull/6231)：正确解析 Aider 流式 YAML 列表中的引号与逗号路径；6 个真实安装、重装、状态和卸载场景保持精确文件列表。
+- [ECC #3953](https://github.com/affaan-m/ECC/pull/3953)：会话别名只访问自身键，修复合法特殊名称的误判、丢失与继承对象修改。新增 17 项测试、5 个平台配置和 490 个测试文件通过。
 - [ECC #3951](https://github.com/affaan-m/ECC/pull/3951)：Codex 会话切换模型后报告最后一个有效模型。三个 Node 版本回归通过，原版与候选各 488 个测试文件通过。
 - [ECC #3952](https://github.com/affaan-m/ECC/pull/3952)：磁盘部分写入失败时保留已保存的会话历史。Linux / Windows / macOS 故障回归通过，候选 490 个测试文件全部通过。原版 1 项 claude-settings 失败独立记录。
 - [claude-mem #6230](https://github.com/thedotmack/claude-mem/pull/6230)：按 Aider 实际优先级处理工作目录配置，解决安装报告成功但配置无效的问题。原版 2 失败 / 1 通过变为相关 63 项通过；真实 worker CLI 与配置解析验证完成。
@@ -46,7 +49,7 @@
 | [storytold/craft-anything](https://github.com/storytold/craft-anything) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [JetBrains/thinkrail](https://github.com/JetBrains/thinkrail) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
-| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 2 | 2 | 0 | 0 | 0 | 0 | 18 |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 3 | 3 | 0 | 0 | 0 | 0 | 17 |
 | [carla-simulator/carla](https://github.com/carla-simulator/carla) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [ranxianglei/billion-context](https://github.com/ranxianglei/billion-context) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [milind-soni/OpenMausBot](https://github.com/milind-soni/OpenMausBot) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
