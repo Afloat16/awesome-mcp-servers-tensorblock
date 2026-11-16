@@ -43,8 +43,9 @@
     ],
     "expected_baseline_failures": 3,
     "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
-    "tree": "323b8078f24a9bea031997b7c8f768f65a1bb7c5",
-    "head_sha": "cabad3bd2c2cfaeda0957222180f09d6b44fffad",
-    "status": "candidate"
+    "tree": "b6e2ce9a2519a8912b6ec1c103e7e45cd877425f",
+    "head_sha": "9f5fa499cea5a5238a760f0691c8796f27c8590a",
+    "status": "candidate",
+    "previous_head": "cabad3bd2c2cfaeda0957222180f09d6b44fffad"
   }
 ]

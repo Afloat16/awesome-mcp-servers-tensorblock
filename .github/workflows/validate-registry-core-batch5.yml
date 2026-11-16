@@ -11,39 +11,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: duplicate-sidecar-ids
-            node: '20'
-            head: e1773721df65e91bd89dd84d51a09af9d07ef92a
-            source: packages/catalog-builder/src/metadata.ts
-            regression: packages/catalog-builder/test/metadata.test.ts
-            failures: 3
-          - name: duplicate-sidecar-ids
-            node: '24'
-            head: e1773721df65e91bd89dd84d51a09af9d07ef92a
-            source: packages/catalog-builder/src/metadata.ts
-            regression: packages/catalog-builder/test/metadata.test.ts
-            failures: 3
-          - name: decoded-registry-paths
-            node: '20'
-            head: 14348fbb200683827f2a4eaaf7e351f621da5546
-            source: packages/registry-api/src/server.ts
-            regression: packages/registry-api/test/server.test.ts
-            failures: 18
-          - name: decoded-registry-paths
-            node: '24'
-            head: 14348fbb200683827f2a4eaaf7e351f621da5546
-            source: packages/registry-api/src/server.ts
-            regression: packages/registry-api/test/server.test.ts
-            failures: 18
           - name: registry-cli-special-paths
             node: '20'
-            head: cabad3bd2c2cfaeda0957222180f09d6b44fffad
+            head: 9f5fa499cea5a5238a760f0691c8796f27c8590a
             source: packages/registry-api/src/server.ts
             regression: packages/registry-api/test/cliPaths.test.ts
             failures: 3
           - name: registry-cli-special-paths
             node: '24'
-            head: cabad3bd2c2cfaeda0957222180f09d6b44fffad
+            head: 9f5fa499cea5a5238a760f0691c8796f27c8590a
             source: packages/registry-api/src/server.ts
             regression: packages/registry-api/test/cliPaths.test.ts
             failures: 3
