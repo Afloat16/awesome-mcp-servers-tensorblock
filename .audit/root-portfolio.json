@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16T21:40:13.066Z",
+  "as_of": "2026-11-16T22:22:32.591372+00:00",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -3806,7 +3806,7 @@
       "number": 17499,
       "url": "https://github.com/QwenLM/qwen-code/pull/17499",
       "title": "fix(sdk-python): isolate initialization from caller cancellation",
-      "body": "## What this PR does\n\nKeep the Python SDK's shared initialization alive when one waiting control call is cancelled. Other waiting calls, later calls and prompt input can continue after the initialization reply. Query-owned shutdown still stops those continuations before they write another prompt or control request.\n\n## Why it's needed\n\nEvery initialization waiter currently awaits the same task directly. Cancelling one public call therefore cancels the shared handshake, an unrelated waiting call and prompt input. The transport remains open, but the query can no longer make useful progress. Isolating caller cancellation also requires checking whether the query closed during the handshake, so an initialization error cannot let waiting work resume after shutdown.\n\n## Reviewer Test Plan\n\n### How to verify\n\n1. Delay the initialization reply, start two independent control calls and cancel only one. Deliver a successful initialization reply. The cancelled call should report cancellation, the other call and a later call should receive their own responses, and the prompt should be sent once.\n2. Repeat with both a string prompt and asynchronous input. Include an uncancelled control to verify normal startup behavior.\n3. Close the query during initialization, then separately reject initialization. Waiting controls must terminate and neither input form may write after shutdown. Background input must not produce an unhandled exception.\n\n### Evidence (Before & After)\n\nThe eight new regression cases report **4 failed, 4 passed** on the unchanged base and **8 passed** with this change. The complete local Python SDK suite reports **195 passed, 26 skipped**, with Python linting and the configured type check passing. An independent rerun of the original four-case reproduction reports **4 passed** against the exact proposed commit: cancellation stays with the selected caller, unrelated and later calls succeed, each input form writes one prompt, and the input task is not cancelled.\n\n[Official upstream CI](https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965234) now passes the selected Linux workspace build and static checks. [Python SDK checks](https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908711) pass on Python 3.10, 3.11 and 3.12. The two selected Linux unit-test shards are still running in the latest observed check snapshot. The earlier local build attempts ended during CLI TypeScript compilation with status 137. The complete preflight and official CLI end-to-end coverage remain unverified, so this PR stays Draft; a successful selected CI job is not evidence that the skipped integration jobs ran.\n\n### Tested on\n\n| OS | Status |\n| --- | --- |\n| 🍏 macOS | ⚠️ Not tested |\n| 🪟 Windows | ⚠️ Not tested |\n| 🐧 Linux | ✅ Local Python SDK tests; official Linux build/static checks and Python 3.10–3.12 checks |\n\n### Environment (optional)\n\nPython 3.12.14 on Linux. Node.js 24.22.1 and the pinned pnpm 11.24.0 were used for the attempted workspace build.\n\n## Risk & Scope\n\n- Main risk or tradeoff: isolating cancellation must preserve query-owned shutdown and initialization failure. The regression cases check both outcomes and require that no prompt or control is written after shutdown.\n- Not validated / out of scope: official CLI end-to-end behavior, macOS, Windows and the complete repository preflight.\n- Breaking changes / migration notes: no public API or protocol change. Cancelling one waiting call no longer cancels unrelated calls or input.\n\n## Linked Issues\n\nFixes #17496.\n\n<details>\n<summary>中文说明</summary>\n\n## 本次修改\n\n取消一个等待初始化的控制调用时，保留 Python SDK 的共享初始化任务。初始化成功后，其他等待中的调用、后续调用和提示输入均可继续。查询自身关闭时，这些任务会在写入新的提示或控制请求前停止。\n\n## 修改原因\n\n目前所有初始化等待者都会直接等待同一个任务，因此取消一个公开调用会连带取消共享握手、其他等待中的调用以及提示输入。此时传输仍然打开，但查询已无法继续正常工作。隔离调用者取消后，还需要检查查询是否已在握手期间关闭，避免初始化失败后等待中的任务继续向已关闭的传输写入。\n\n## 审查者验证计划\n\n### 验证方式\n\n1. 延迟初始化回复，启动两个独立控制调用，然后只取消其中一个。发送初始化成功回复后，被取消的调用应收到取消结果，另一调用和后续调用应分别成功收到自己的回复，提示应只发送一次。\n2. 分别使用字符串提示和异步输入重复测试，并加入没有取消操作的对照，检查正常启动行为。\n3. 分别在初始化期间关闭查询、拒绝初始化。等待中的控制调用必须结束，两种输入都不应在关闭后继续写入，后台输入也不应产生未处理异常。\n\n### 修改前后证据\n\n新增八个回归用例在未修改基线上的结果为 **4 失败、4 通过**，修改后为 **8 通过**。完整本地 Python SDK 测试结果为 **195 通过、26 跳过**，Python lint 和配置的类型检查均通过。独立重新运行原始四例复现脚本，在拟提交的精确版本上得到 **4 通过**：取消仅影响指定调用，其他调用和后续调用均成功，两种输入分别发送一条提示，输入任务没有被取消。\n\n[上游官方 CI](https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965234) 已通过选定的 Linux 工作区构建和静态检查；[Python SDK 检查](https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908711) 在 Python 3.10、3.11 和 3.12 上均通过。最新观察的检查快照中，选定的两个 Linux 单元测试分片仍在运行。此前本地构建尝试在 CLI 的 TypeScript 编译阶段以状态码 137 结束。完整 preflight 和官方 CLI 端到端覆盖仍未建立，因此本 PR 保持 Draft；选定 CI 检查通过不能证明已跳过的集成测试执行过。\n\n### 测试平台\n\n| 系统 | 状态 |\n| --- | --- |\n| 🍏 macOS | ⚠️ 未测试 |\n| 🪟 Windows | ⚠️ 未测试 |\n| 🐧 Linux | ✅ 本地 Python SDK 测试；官方 Linux 构建、静态检查与 Python 3.10–3.12 检查 |\n\n### 环境\n\nLinux 上的 Python 3.12.14。工作区构建尝试使用 Node.js 24.22.1 和仓库固定的 pnpm 11.24.0。\n\n## 风险与范围\n\n- 主要风险或取舍：隔离调用者取消时，仍须保留查询自身关闭和初始化失败的行为。回归用例覆盖两种情况，并要求关闭后没有新的提示或控制请求写入。\n- 未验证或不在范围内：官方 CLI 端到端行为、macOS、Windows 和完整的全仓 preflight。\n- 破坏性变更或迁移：不改变公开 API 或协议。取消一个等待中的调用不再连带取消其他调用或输入。\n\n## 关联问题\n\n修复 #17496。\n\n</details>\n",
+      "body": "## What this PR does\n\nKeep the Python SDK's shared initialization alive when one waiting control call is cancelled. Other waiting calls, later calls and prompt input can continue after the initialization reply. Query-owned shutdown still stops those continuations before they write another prompt or control request.\n\n## Why it's needed\n\nEvery initialization waiter currently awaits the same task directly. Cancelling one public call therefore cancels the shared handshake, an unrelated waiting call and prompt input. The transport remains open, but the query can no longer make useful progress. Isolating caller cancellation also requires checking whether the query closed during the handshake, so an initialization error cannot let waiting work resume after shutdown.\n\n## Reviewer Test Plan\n\n### How to verify\n\n1. Delay the initialization reply, start two independent control calls and cancel only one. Deliver a successful initialization reply. The cancelled call should report cancellation, the other call and a later call should receive their own responses, and the prompt should be sent once.\n2. Repeat with both a string prompt and asynchronous input. Include an uncancelled control to verify normal startup behavior.\n3. Close the query during initialization, then separately reject initialization. Waiting controls must terminate and neither input form may write after shutdown. Background input must not produce an unhandled exception.\n\n### Evidence (Before & After)\n\nThe eight new regression cases report **4 failed, 4 passed** on the unchanged base and **8 passed** with this change. The complete local Python SDK suite reports **195 passed, 26 skipped**, with Python linting and the configured type check passing. An independent rerun of the original four-case reproduction reports **4 passed** against the exact proposed commit: cancellation stays with the selected caller, unrelated and later calls succeed, each input form writes one prompt, and the input task is not cancelled.\n\n[Official upstream CI](https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965234) now passes the selected Linux workspace build and static checks. [Python SDK checks](https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908711) pass on Python 3.10, 3.11 and 3.12. Both selected Linux unit-test shards now pass. The latest check snapshot contains 20 successful checks and 26 skipped checks, with none still running. The earlier local build attempts ended during CLI TypeScript compilation with status 137. The complete preflight and official CLI end-to-end coverage remain unverified, so this PR stays Draft; a successful selected CI job is not evidence that the skipped integration jobs ran.\n\n### Tested on\n\n| OS | Status |\n| --- | --- |\n| 🍏 macOS | ⚠️ Not tested |\n| 🪟 Windows | ⚠️ Not tested |\n| 🐧 Linux | ✅ Local Python SDK tests; official Linux build/static checks and Python 3.10–3.12 checks |\n\n### Environment (optional)\n\nPython 3.12.14 on Linux. Node.js 24.22.1 and the pinned pnpm 11.24.0 were used for the attempted workspace build.\n\n## Risk & Scope\n\n- Main risk or tradeoff: isolating cancellation must preserve query-owned shutdown and initialization failure. The regression cases check both outcomes and require that no prompt or control is written after shutdown.\n- Not validated / out of scope: official CLI end-to-end behavior, macOS, Windows and the complete repository preflight.\n- Breaking changes / migration notes: no public API or protocol change. Cancelling one waiting call no longer cancels unrelated calls or input.\n\n## Linked Issues\n\nFixes #17496.\n\n<details>\n<summary>中文说明</summary>\n\n## 本次修改\n\n取消一个等待初始化的控制调用时，保留 Python SDK 的共享初始化任务。初始化成功后，其他等待中的调用、后续调用和提示输入均可继续。查询自身关闭时，这些任务会在写入新的提示或控制请求前停止。\n\n## 修改原因\n\n目前所有初始化等待者都会直接等待同一个任务，因此取消一个公开调用会连带取消共享握手、其他等待中的调用以及提示输入。此时传输仍然打开，但查询已无法继续正常工作。隔离调用者取消后，还需要检查查询是否已在握手期间关闭，避免初始化失败后等待中的任务继续向已关闭的传输写入。\n\n## 审查者验证计划\n\n### 验证方式\n\n1. 延迟初始化回复，启动两个独立控制调用，然后只取消其中一个。发送初始化成功回复后，被取消的调用应收到取消结果，另一调用和后续调用应分别成功收到自己的回复，提示应只发送一次。\n2. 分别使用字符串提示和异步输入重复测试，并加入没有取消操作的对照，检查正常启动行为。\n3. 分别在初始化期间关闭查询、拒绝初始化。等待中的控制调用必须结束，两种输入都不应在关闭后继续写入，后台输入也不应产生未处理异常。\n\n### 修改前后证据\n\n新增八个回归用例在未修改基线上的结果为 **4 失败、4 通过**，修改后为 **8 通过**。完整本地 Python SDK 测试结果为 **195 通过、26 跳过**，Python lint 和配置的类型检查均通过。独立重新运行原始四例复现脚本，在拟提交的精确版本上得到 **4 通过**：取消仅影响指定调用，其他调用和后续调用均成功，两种输入分别发送一条提示，输入任务没有被取消。\n\n[上游官方 CI](https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965234) 已通过选定的 Linux 工作区构建和静态检查；[Python SDK 检查](https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908711) 在 Python 3.10、3.11 和 3.12 上均通过。选定的两个 Linux 单元测试分片现均已通过。最新检查快照包含 20 项成功、26 项跳过，没有仍在运行的检查。此前本地构建尝试在 CLI 的 TypeScript 编译阶段以状态码 137 结束。完整 preflight 和官方 CLI 端到端覆盖仍未建立，因此本 PR 保持 Draft；选定 CI 检查通过不能证明已跳过的集成测试执行过。\n\n### 测试平台\n\n| 系统 | 状态 |\n| --- | --- |\n| 🍏 macOS | ⚠️ 未测试 |\n| 🪟 Windows | ⚠️ 未测试 |\n| 🐧 Linux | ✅ 本地 Python SDK 测试；官方 Linux 构建、静态检查与 Python 3.10–3.12 检查 |\n\n### 环境\n\nLinux 上的 Python 3.12.14。工作区构建尝试使用 Node.js 24.22.1 和仓库固定的 pnpm 11.24.0。\n\n## 风险与范围\n\n- 主要风险或取舍：隔离调用者取消时，仍须保留查询自身关闭和初始化失败的行为。回归用例覆盖两种情况，并要求关闭后没有新的提示或控制请求写入。\n- 未验证或不在范围内：官方 CLI 端到端行为、macOS、Windows 和完整的全仓 preflight。\n- 破坏性变更或迁移：不改变公开 API 或协议。取消一个等待中的调用不再连带取消其他调用或输入。\n\n## 关联问题\n\n修复 #17496。\n\n</details>\n",
       "head": "70fa8a1518861d4b7846f758bbbd388792da56e0",
       "head_ref": "fix/python-initialization-cancellation",
       "state": "open",
@@ -4128,7 +4128,348 @@
           }
         ]
       },
-      "updated_at": "2026-11-16T21:23:31Z"
+      "updated_at": "2026-11-16T21:55:17Z",
+      "official_checks_snapshot": {
+        "observed_at": "2026-11-16T22:22:32.591372+00:00",
+        "head": "70fa8a1518861d4b7846f758bbbd388792da56e0",
+        "total": 47,
+        "counts": {
+          "success": 21,
+          "skipped": 26
+        },
+        "checks": [
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43964917937/job/133641706797",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Test (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133635724356",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43959623398/job/133623219169",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Integration Tests (no-AK, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619525369",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "web-shell E2E Smoke (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619525224",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Integration Tests (no-AK, shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619524873",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "web-shell E2E Smoke (shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619524376",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Linux unit tests (shard 2/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619522398",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Linux unit tests (shard 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619522349",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "fallback-comment",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290959",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-resolution",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290314",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "review-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290101",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "ack-review-request",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290015",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "resolve-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609289757",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "delay-automatic-review",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609289411",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609236500",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609213248",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609212182",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-tmux",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609212138",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609212031",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "tmux-testing",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609211249",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609211152",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609145784",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Java (none)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496326/job/133609131546",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Managed Agent gate",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496326/job/133609129632",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "OpenTUI no-flicker gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133609008838",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "TUI parity snapshots (ink vs opentui)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133609008821",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Test (windows-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608969781",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Test (macos-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608969691",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Integration Tests (CLI, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608968539",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "macOS unit tests (${{ matrix.group }} ${{ matrix.shard }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608968442",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Build unit-test tree (Linux, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965234",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Lint & Static (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965181",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Python (3.11)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908742",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Python (3.12)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908711",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Python (3.10)",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908642",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "review-config",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133608867642",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133608866720",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133608864303",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "assign",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955495671/job/133608862384",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955495677/job/133608860898",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Installed npm global and npx (${{ matrix.target }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133608860547",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Installed npm Node26 private Bun acceptance",
+            "status": "completed",
+            "conclusion": "skipped",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133608860291",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Select the Managed Agent tier",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496326/job/133608859595",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Check TUI impact",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133608857906",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608857782",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608857331",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          }
+        ],
+        "limitation": "Selected official Linux build, static, unit shards and Python SDK checks pass. Full preflight and CLI E2E remain unverified; keep Draft."
+      }
     },
     {
       "repo": "pypose/pypose",
@@ -4188,6 +4529,38 @@
           "memory_scope": "Cumulative positive self CPU allocation accounting from profiler events, not peak memory.",
           "timing_scope": "CPU float32/float64; 12 permuted measurements per implementation; two identical baseline controls."
         }
+      },
+      "official_status_snapshot": {
+        "observed_at": "2026-11-16T22:22:32.591372+00:00",
+        "head": "23853bda897abc44180471cc050c5c9f50abd0d9",
+        "state": "success",
+        "total": 4,
+        "statuses": [
+          {
+            "context": "ci/circleci: linux_build_wheel",
+            "state": "success",
+            "target_url": "https://app.circleci.com/workflow/b6a49b77-a7f6-4411-a6c9-b4bea79a84d6/job/ed20e69f-811b-44cb-a4cf-0562bbe41fbe",
+            "updated_at": "2026-11-16T21:40:13Z"
+          },
+          {
+            "context": "docs/readthedocs.org:pypose",
+            "state": "success",
+            "target_url": "https://pypose--541.org.readthedocs.build/541/",
+            "updated_at": "2026-11-16T21:41:27Z"
+          },
+          {
+            "context": "ci/circleci: build_docs",
+            "state": "success",
+            "target_url": "https://app.circleci.com/workflow/b6a49b77-a7f6-4411-a6c9-b4bea79a84d6/job/ccc71313-b6e0-4754-87a7-abc418358774",
+            "updated_at": "2026-11-16T21:41:48Z"
+          },
+          {
+            "context": "ci/circleci: run_tests",
+            "state": "success",
+            "target_url": "https://app.circleci.com/workflow/b6a49b77-a7f6-4411-a6c9-b4bea79a84d6/job/e2462d12-c872-4d07-a868-3b49bbd8a2d4",
+            "updated_at": "2026-11-16T21:44:17Z"
+          }
+        ]
       }
     }
   ],

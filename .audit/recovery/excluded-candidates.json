@@ -1,0 +1,87 @@
+[
+  {
+    "repository": "pypose/pypose",
+    "candidate": "complex Hermitian CG inner products",
+    "status": "excluded_historical_equivalent",
+    "actual_pr": false,
+    "decision": {
+      "status": "excluded_historical_equivalent",
+      "base": "298e9f0862cb228b0e8851b2616e682ccdca6a32",
+      "baseline_torch_versions": [
+        "2.5.1",
+        "2.6.0"
+      ],
+      "baseline_tests": 30,
+      "baseline_failed": 21,
+      "baseline_passed": 9,
+      "independent_reference": "SciPy CG and analytic Hermitian SPD system",
+      "history_summary": {
+        "refs": 513,
+        "fork_branches": 69,
+        "upstream_pr_heads": 343,
+        "source_blobs": 29,
+        "cg_blobs": 20
+      },
+      "historical_equivalents": [
+        {
+          "blob": "eb37138129e1894f123ef1766f61588cfd793e30",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "715d53fe2be7b68d90be8f56308b1d0615e156fa",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "4aa6cd4ca04212a56dd1c5bf888d435aaf4f1de9",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "d23a8f86e0c072079fe8392a1e5d01f8c15a492e",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "c4be0c2fdae45b82400d26a3fcdfcd33011da300",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "dc6a69292ce8b9593a3a0544aa5a149c694867d6",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "1028ee4eee40a8c3288ba95667e2c3c04f1800a2",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "158e3b1395d601acc0f5f9cb7967d1c3f8e80f33",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        },
+        {
+          "blob": "7765bf2981541f8bcca78959285430a52b49dfba",
+          "path": "pypose/optim/solver.py",
+          "evidence": "dotprod = torch.linalg.vecdot; rho_cur = dotprod(r,z); alpha denominator = dotprod(p,q)"
+        }
+      ],
+      "reason": "The current complex arithmetic defect is real, but equivalent conjugate inner products already appeared in prior CG implementations. Excluded from this strictly novel contribution batch.",
+      "production_change": false,
+      "issue_created": false,
+      "pr_created": false
+    },
+    "history_run": "https://github.com/Afloat16/pypose/actions/runs/43966982634"
+  },
+  {
+    "repository": "affaan-m/ECC",
+    "candidate": "macOS stocktake native file mtime",
+    "status": "excluded_false_hypothesis",
+    "actual_pr": false,
+    "reason": "Apple current date.c accepts a file operand after -r via stat; no platform defect established.",
+    "source": "https://github.com/apple-oss-distributions/shell_cmds/blob/main/date/date.c"
+  }
+]

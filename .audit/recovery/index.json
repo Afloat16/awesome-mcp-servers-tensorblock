@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-16T21:47:53.303Z",
+  "updated_at": "2026-11-16T22:22:32.591372+00:00",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "counts": {
@@ -9,7 +9,7 @@
     "draft": 3,
     "merged": 12,
     "closed_unmerged": 9,
-    "prepared_not_created": 23,
+    "prepared_not_created": 25,
     "target": 730,
     "remaining_ready_or_merged": 428,
     "open_total": 293,
@@ -128,7 +128,7 @@
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 0,
-        "prepared_not_created": 0,
+        "prepared_not_created": 1,
         "remaining_to_target": 20
       },
       {
@@ -199,7 +199,7 @@
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 2,
-        "prepared_not_created": 0,
+        "prepared_not_created": 1,
         "remaining_to_target": 18
       },
       {
@@ -605,5 +605,5 @@
   ],
   "prepared_relative_path": "prepared-submissions.json",
   "full_combined_relative_path": "portfolio-20261116.json",
-  "fetch_note": "The combined file exceeds the connector raw-file size limit. For resumption, read this small index, the relative root portfolio, the three immutable source portfolios, and prepared-submissions.json. All are individually readable."
+  "fetch_note": "The full portfolio exceeds the GitHub connector raw file size limit. Read this index and the four source portfolios, or use the Git-backed local checkpoint. Prepared materials and exclusions are separate files."
 }
