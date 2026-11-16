@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-16T22:40:58.320385+00:00",
+  "updated_at": "2026-11-16T22:58:55.026600+00:00",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "counts": {
-    "actual": 315,
-    "ready_open": 291,
+    "actual": 317,
+    "ready_open": 293,
     "draft": 3,
     "merged": 12,
     "closed_unmerged": 9,
-    "prepared_not_created": 26,
+    "prepared_not_created": 28,
     "target": 730,
-    "remaining_ready_or_merged": 427,
-    "open_total": 294,
-    "effective_ready_or_merged": 303
+    "remaining_ready_or_merged": 425,
+    "open_total": 296,
+    "effective_ready_or_merged": 305,
+    "remaining_merged_to_target": 718
   },
   "scope": {
     "eligible_repositories": 40,
@@ -128,7 +129,7 @@
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 0,
-        "prepared_not_created": 1,
+        "prepared_not_created": 2,
         "remaining_to_target": 20
       },
       {
@@ -199,7 +200,7 @@
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 2,
-        "prepared_not_created": 1,
+        "prepared_not_created": 2,
         "remaining_to_target": 18
       },
       {
@@ -388,14 +389,14 @@
         "repository": "thedotmack/claude-mem",
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
-        "actual": 0,
-        "ready": 0,
+        "actual": 1,
+        "ready": 1,
         "draft": 0,
         "merged": 0,
         "closed_unmerged": 0,
-        "effective": 0,
+        "effective": 1,
         "prepared_not_created": 0,
-        "remaining_to_target": 20
+        "remaining_to_target": 19
       },
       {
         "repository": "carla-simulator/carla",
@@ -539,16 +540,16 @@
           "window_minutes": 20,
           "max_created_per_window": 5,
           "source": "https://github.com/affaan-m/ECC/blob/d4b97e60dd7d8cdf01962881776a758769c0ba85/CONTRIBUTING.md",
-          "current_open_author_prs": 1
+          "current_open_author_prs": 2
         },
-        "actual": 1,
-        "ready": 1,
+        "actual": 2,
+        "ready": 2,
         "draft": 0,
         "merged": 0,
         "closed_unmerged": 0,
-        "effective": 1,
+        "effective": 2,
         "prepared_not_created": 0,
-        "remaining_to_target": 9
+        "remaining_to_target": 8
       },
       {
         "repository": "microsoft/onnxruntime",
@@ -577,7 +578,7 @@
       "owner": "root",
       "relative_path": "../root-portfolio.json",
       "array_key": "prs",
-      "expected_records": 75
+      "expected_records": 76
     },
     {
       "owner": "merged_inventory",
@@ -598,10 +599,10 @@
     {
       "owner": "repository_rules",
       "repository": "Afloat16/Edge0",
-      "commit": "66c22590a469e75e31914e4dd7094f305e11f6d6",
+      "commit": "11c1030eaebf9bd2b8bdf996db2c4a8c7fee43b2",
       "path": "repository-rules-portfolio.json",
-      "count": 90,
-      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/66c22590a469e75e31914e4dd7094f305e11f6d6/repository-rules-portfolio.json"
+      "count": 91,
+      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/11c1030eaebf9bd2b8bdf996db2c4a8c7fee43b2/repository-rules-portfolio.json"
     }
   ],
   "prepared_relative_path": "prepared-submissions.json",

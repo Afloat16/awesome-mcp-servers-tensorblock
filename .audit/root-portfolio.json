@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16T22:40:58.320385+00:00",
+  "as_of": "2026-11-16T22:58:55.026600+00:00",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -4618,6 +4618,140 @@
         },
         "local_full_suite": "Node 24 completed with 11 failing hook/install/fixture files; no local all-pass claim.",
         "independent_review": "Source and regression review completed; no findings."
+      },
+      "evidence_checkpoint": {
+        "repository": "Afloat16/ECC",
+        "commit": "070f8658b63c573527ff0c0c910ff2338c8b4bcf",
+        "path": ".audit/ecc-codex-latest-model/verification.json",
+        "branch": "audit/ecc-codex-model-3951-20261116"
+      }
+    },
+    {
+      "repo": "affaan-m/ECC",
+      "number": 3952,
+      "url": "https://github.com/affaan-m/ECC/pull/3952",
+      "title": "fix(session): preserve recordings when fallback writes fail",
+      "head": "0083c6e8ec334e3875e621540ce62420f7a999d0",
+      "head_ref": "fix/atomic-session-recordings-20261116",
+      "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "created_at": "2026-11-16T22:56:17Z",
+      "updated_at": "2026-11-16T22:56:29Z",
+      "merged_at": null,
+      "body": "## What Changed\n\nPublish fallback canonical-session JSON recordings through the existing atomic writer, so readers see a complete snapshot and a failed write keeps the previously saved session history.\n\nThe writer gains an opt-in `preserveExistingMode` option. Recording files keep their existing POSIX read/write/execute permission bits; newly created recordings retain the previous `0666 & ~umask` behavior. Other atomic-writer callers keep their current defaults. Recording reads also use the existing bounded Windows sharing retry.\n\n## Why This Change\n\nThe fallback currently writes directly to the published JSON file. If a write partially succeeds and then fails, for example with `ENOSPC`, the previous recording has already been truncated. A later save treats the invalid JSON as a missing recording and loses the accumulated history. During an initial write, readers can also observe an incomplete file.\n\nThe regression tests inject a failure after writing actual partial bytes. They check visibility during the write, preservation after failure, temporary-file cleanup, and recovery on the next successful save for both fallback entry paths.\n\n## Testing Done\n\n- Linux Node 18, 20 and 22, macOS Node 22, and Windows Node 22: all four partial-write regressions fail against exact base `8abdf329` and pass against candidate `0083c6e8`.\n- The POSIX permission control passes before and after the change on Linux and macOS, including creation umask and replacement of files with `0600`, `0640`, and `0660` permissions.\n- Full `npm test` on clean Ubuntu / Node 22: candidate **490/490 test files pass**, with complete execution integrity. The runner reports 9,998 passing assertions.\n- The exact-base full run completes **488 passed / 1 failed**. Its failure is `lib/claude-settings.test.js`, “atomic settings updates reject parent replacement at rename,” at the staging-descriptor assertion. That test and its settings implementation are unchanged by this PR; this is not claimed as a fix for that failure.\n- Changed-file ESLint passes. Six related test files pass. Combined changed-source coverage is **97.35% lines/statements, 85.15% branches, 100% functions**.\n- Local focused tests and the same six-file coverage run pass.\n- [Exact-base/candidate full suites and five platform/runtime jobs](https://github.com/Afloat16/ECC/actions/runs/43973080665).\n\n- [ ] Manual testing completed\n- [ ] Automated full suite passes locally (`node tests/run-all.js`)\n- [x] Edge cases considered and tested\n\n## Type of Change\n\n- [x] `fix:` Bug fix\n\n## Security & Quality Checklist\n\n- [x] No secrets or API keys committed\n- [x] No sensitive data exposed in regression fixtures\n- [x] Follows conventional commits format\n- [x] Independent code and regression-test review completed\n\nAtomic publication does not serialize multiple concurrent read/modify/write operations; multi-writer history merging is outside this change. The existing handling of a permanently unreadable or invalid recording remains unchanged.\n\nThe three-file patch has no dependency, package manifest, shell-script, or published-path changes.\n",
+      "maintainer_can_modify": false,
+      "batch_owner": "root",
+      "fork_validation_urls": [
+        "https://github.com/Afloat16/ECC/actions/runs/43973080665"
+      ],
+      "validation_summary": {
+        "repository": "affaan-m/ECC",
+        "pr": 3952,
+        "url": "https://github.com/affaan-m/ECC/pull/3952",
+        "production_head": "0083c6e8ec334e3875e621540ce62420f7a999d0",
+        "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
+        "validation_head": "dfec3fba0230916e3838893baf0d1a63d62f4471",
+        "validation_run": "https://github.com/Afloat16/ECC/actions/runs/43973080665",
+        "regressions": {
+          "ubuntu_node_versions": [
+            18,
+            20,
+            22
+          ],
+          "macos_node_version": 22,
+          "windows_node_version": 22,
+          "baseline_fault_cases": {
+            "failed": 4,
+            "passed": 0
+          },
+          "candidate_fault_cases": {
+            "failed": 0,
+            "passed": 4
+          },
+          "posix_permission_control": "passes before and after on Linux and macOS; omitted on Windows"
+        },
+        "full": {
+          "base": {
+            "counts": {
+              "planned": 489,
+              "attempted": 489,
+              "completed": 489,
+              "passed": 488,
+              "failed": 1
+            },
+            "integrity": {
+              "ok": true,
+              "errors": []
+            }
+          },
+          "candidate": {
+            "counts": {
+              "planned": 490,
+              "attempted": 490,
+              "completed": 490,
+              "passed": 490,
+              "failed": 0
+            },
+            "integrity": {
+              "ok": true,
+              "errors": []
+            }
+          },
+          "baseline_failures": [
+            {
+              "file": "lib/claude-settings.test.js",
+              "phase": "pool",
+              "attemptedAt": "2026-11-16T22:47:17.434Z",
+              "completedAt": "2026-11-16T22:47:17.553Z",
+              "durationMs": 119.05213999999978,
+              "exitCode": 1,
+              "signal": null,
+              "error": "exited with status 1",
+              "outcome": "failed"
+            }
+          ],
+          "candidate_reported_assertions": 9998,
+          "baseline_reported_assertions": {
+            "passed": 9992,
+            "failed": 1
+          },
+          "assertion_count_limitation": "The legacy test runner may not count every assertion format. Complete executed-file counts and integrity checks are the full-suite evidence."
+        },
+        "related_suite": {
+          "counts": {
+            "planned": 6,
+            "attempted": 6,
+            "completed": 6,
+            "passed": 6,
+            "failed": 0
+          },
+          "integrity": {
+            "ok": true,
+            "errors": []
+          }
+        },
+        "coverage": {
+          "lines": 97.35,
+          "statements": 97.35,
+          "branches": 85.15,
+          "functions": 100
+        },
+        "eslint": "passed",
+        "independent_review": "Permission preservation issue fixed; existing read/write/execute bits retained without reapplying umask; special set-ID bits intentionally not reinstated. No other blocking findings.",
+        "limits": [
+          "Atomic publication does not serialize concurrent read/modify/write transactions.",
+          "Permanent read-error handling is unchanged.",
+          "A full local suite was not claimed. Clean Ubuntu / Node22 full candidate suite is verified."
+        ]
+      },
+      "evidence_checkpoint": {
+        "repository": "Afloat16/ECC",
+        "branch": "audit/ecc-atomic-recording-3952-20261116",
+        "commit": "164cfca93066fd63715ee372637741eb785b06b2",
+        "tree": "e11f979d066e4b11d02adf637b1161eab2e0400e",
+        "path": ".audit/ecc-atomic-session-recording/verification.json"
       }
     }
   ],
