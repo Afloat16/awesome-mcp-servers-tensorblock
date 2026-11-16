@@ -1,0 +1,158 @@
+name: Validate isolated registry correctness fixes
+on:
+  push:
+    branches: ['validation/registry-core-batch4-20261116']
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: catalog-inline-code-commands
+            node: '20'
+            head: b769238778a1e09e61779c012847553db66cff38
+            source: packages/catalog-builder/src/buildCatalog.ts
+            regression: packages/catalog-builder/test/buildCatalog.test.ts
+            failures: 6
+          - name: catalog-inline-code-commands
+            node: '24'
+            head: b769238778a1e09e61779c012847553db66cff38
+            source: packages/catalog-builder/src/buildCatalog.ts
+            regression: packages/catalog-builder/test/buildCatalog.test.ts
+            failures: 6
+          - name: catalog-repository-endpoints
+            node: '20'
+            head: 56faa92f1d4eecb334a360145c9130fb6ed531b1
+            source: packages/catalog-builder/src/buildCatalog.ts
+            regression: packages/catalog-builder/test/buildCatalog.test.ts
+            failures: 7
+          - name: catalog-repository-endpoints
+            node: '24'
+            head: 56faa92f1d4eecb334a360145c9130fb6ed531b1
+            source: packages/catalog-builder/src/buildCatalog.ts
+            regression: packages/catalog-builder/test/buildCatalog.test.ts
+            failures: 7
+          - name: catalog-gnu-license-identifiers
+            node: '20'
+            head: 0034b4ffa21aa46bfdd3b6bd4032d55930b645b6
+            source: packages/catalog-builder/src/buildCatalog.ts
+            regression: packages/catalog-builder/test/buildCatalog.test.ts
+            failures: 8
+          - name: catalog-gnu-license-identifiers
+            node: '24'
+            head: 0034b4ffa21aa46bfdd3b6bd4032d55930b645b6
+            source: packages/catalog-builder/src/buildCatalog.ts
+            regression: packages/catalog-builder/test/buildCatalog.test.ts
+            failures: 8
+          - name: incremental-profile-writes
+            node: '20'
+            head: e8d1f42a6c77f53947c4b1fdeb0b3861e40ddd6a
+            source: packages/profile-renderer/src/renderProfiles.ts
+            regression: packages/profile-renderer/test/renderProfiles.test.ts
+            failures: 2
+          - name: incremental-profile-writes
+            node: '24'
+            head: e8d1f42a6c77f53947c4b1fdeb0b3861e40ddd6a
+            source: packages/profile-renderer/src/renderProfiles.ts
+            regression: packages/profile-renderer/test/renderProfiles.test.ts
+            failures: 2
+    env:
+      SOURCE_FILE: ${{ matrix.source }}
+      REGRESSION_FILE: ${{ matrix.regression }}
+      EXPECTED_FAILURES: ${{ matrix.failures }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.head }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Reproduce the regression on unchanged production code
+        run: |
+          git restore --source=9b8152c14c7b14249128868d2c2e8ef0a2e20acb -- "$SOURCE_FILE"
+          set +e
+          npx vitest run "$REGRESSION_FILE" --reporter=json --outputFile=baseline.json
+          result=$?
+          set -e
+          test "$result" -eq 1
+          node --input-type=module <<'JS'
+          import { readFileSync } from "node:fs";
+          const report = JSON.parse(readFileSync("baseline.json", "utf8"));
+          console.log(JSON.stringify({ baselineFailed: report.numFailedTests, baselinePassed: report.numPassedTests }));
+          if (report.numFailedTests !== Number(process.env.EXPECTED_FAILURES)) throw new Error("Unexpected baseline failure count");
+          JS
+      - name: Restore and verify the exact independent candidate
+        run: |
+          git restore --source=${{ matrix.head }} -- "$SOURCE_FILE"
+          git diff --exit-code -- packages
+          npm run catalog:build
+          npm run profiles:build
+          npm test -- --reporter=json --outputFile=candidate.json
+          node --input-type=module <<'JS'
+          import { readFileSync } from "node:fs";
+          const report = JSON.parse(readFileSync("candidate.json", "utf8"));
+          console.log(JSON.stringify({ candidateFailed: report.numFailedTests, candidatePassed: report.numPassedTests, candidatePending: report.numPendingTests }));
+          if (report.numFailedTests !== 0) throw new Error("Candidate regressions failed");
+          JS
+          npm run typecheck
+          npm run build
+          git diff --exit-code -- packages
+      - name: Measure incremental writes on the full existing catalog
+        if: matrix.name == 'incremental-profile-writes' && matrix.node == '20'
+        run: |
+          cat > profile-benchmark.mjs <<'JS'
+          import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
+          import { tmpdir } from "node:os";
+          import { join } from "node:path";
+          import { createHash } from "node:crypto";
+          import { performance } from "node:perf_hooks";
+          import { writeProfiles } from "./packages/profile-renderer/src/renderProfiles.ts";
+          const catalog = JSON.parse(readFileSync("data/catalog.json", "utf8"));
+          const output = mkdtempSync(join(tmpdir(), "profile-benchmark-"));
+          const baseUrl = "https://tensorblock.co/mcp/servers";
+          const fixedTime = new Date("2000-01-01T00:00:00Z");
+          const digest = () => {
+            const hash = createHash("sha256");
+            for (const file of readdirSync(output).sort()) hash.update(file).update(readFileSync(join(output, file)));
+            return hash.digest("hex");
+          };
+          try {
+            writeProfiles(catalog, baseUrl, output);
+            const before = digest();
+            const milliseconds = [];
+            const rewritten = [];
+            for (let repeat = 0; repeat < 3; repeat += 1) {
+              for (const file of readdirSync(output)) utimesSync(join(output, file), fixedTime, fixedTime);
+              const start = performance.now();
+              const count = writeProfiles(catalog, baseUrl, output);
+              milliseconds.push(performance.now() - start);
+              if (count !== catalog.length || digest() !== before) throw new Error("Profile bytes or count changed");
+              rewritten.push(readdirSync(output).filter(file => statSync(join(output, file)).mtimeMs !== fixedTime.getTime()).length);
+            }
+            const result = { phase: process.argv[2], profiles: catalog.length, milliseconds, medianMilliseconds: [...milliseconds].sort((a, b) => a - b)[1], rewritten, sha256: before };
+            console.log(JSON.stringify(result));
+            writeFileSync("benchmark-" + process.argv[2] + ".json", JSON.stringify(result, null, 2));
+          } finally {
+            rmSync(output, { recursive: true, force: true });
+          }
+          JS
+          git restore --source=9b8152c14c7b14249128868d2c2e8ef0a2e20acb -- "$SOURCE_FILE"
+          node --import tsx profile-benchmark.mjs baseline
+          git restore --source=${{ matrix.head }} -- "$SOURCE_FILE"
+          node --import tsx profile-benchmark.mjs candidate
+          git diff --exit-code -- packages
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: registry-${{ matrix.name }}-node${{ matrix.node }}
+          path: |
+            baseline.json
+            candidate.json
+            benchmark-*.json
