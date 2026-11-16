@@ -141,6 +141,57 @@
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6106",
       "merged_at": null,
       "maintainer_can_modify": false
+    },
+    {
+      "name": "independent-placeholder-configs",
+      "title": "Keep placeholder configurations independent across callers",
+      "branch": "fix/independent-placeholder-configs-20261116",
+      "sources": [
+        "packages/config-generator/src/generateConfig.ts"
+      ],
+      "regressions": [
+        "packages/config-generator/test/generateConfig.test.ts"
+      ],
+      "expected_baseline_failures": 5,
+      "tree": "c94970690020bbf13f7c300e55ffb5f423880477",
+      "head_sha": "11820601832e2710a6b11225d458e7b2efb49851",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+    },
+    {
+      "name": "catalog-build-error-status",
+      "title": "Fail the catalog build when validation reports errors",
+      "branch": "fix/catalog-build-error-status-20261116",
+      "sources": [
+        "packages/catalog-builder/src/cli.ts"
+      ],
+      "regressions": [
+        "packages/catalog-builder/test/cli.test.ts"
+      ],
+      "expected_baseline_failures": 3,
+      "tree": "6c52956a2d045412f34c8fc7aa5674ad76585814",
+      "head_sha": "4c7d32b138c162a59d4631ed45839c4c8bff92e7",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+    },
+    {
+      "name": "quoted-launch-arguments-followup",
+      "title": "Accept quoted dependency constraints without allowing shell operators",
+      "branch": "validation/quoted-shell-operators-20261116",
+      "sources": [
+        "packages/config-generator/src/generateConfig.ts"
+      ],
+      "regressions": [
+        "packages/config-generator/test/generateConfig.test.ts"
+      ],
+      "expected_baseline_failures": 20,
+      "target_pr": 6110,
+      "target_branch": "fix/quoted-launch-arguments-20261116",
+      "previous_head": "bf4be0bdeac150a2864b05b6e2da085e1e2b0e58",
+      "status": "validation_pending",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "tree": "980a9dc5e140eadfbf11d031af7aba07c0409b9f",
+      "head_sha": "df1d436f86e71a71f2c303659cf47efc39a41aaa"
     }
   ]
 }
