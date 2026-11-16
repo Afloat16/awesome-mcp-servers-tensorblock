@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-16T22:22:32.591372+00:00",
+  "updated_at": "2026-11-16T22:40:58.320385+00:00",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "scope": {
@@ -502,7 +502,7 @@
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 9,
-        "prepared_not_created": 1,
+        "prepared_not_created": 2,
         "remaining_to_target": 11
       },
       {
@@ -526,16 +526,17 @@
           "existing_open": 0,
           "window_minutes": 20,
           "max_created_per_window": 5,
-          "source": "https://github.com/affaan-m/ECC/blob/d4b97e60dd7d8cdf01962881776a758769c0ba85/CONTRIBUTING.md"
+          "source": "https://github.com/affaan-m/ECC/blob/d4b97e60dd7d8cdf01962881776a758769c0ba85/CONTRIBUTING.md",
+          "current_open_author_prs": 1
         },
-        "actual": 0,
-        "ready": 0,
+        "actual": 1,
+        "ready": 1,
         "draft": 0,
         "merged": 0,
         "closed_unmerged": 0,
-        "effective": 0,
+        "effective": 1,
         "prepared_not_created": 0,
-        "remaining_to_target": 10
+        "remaining_to_target": 9
       },
       {
         "repository": "microsoft/onnxruntime",
@@ -554,16 +555,16 @@
     "capped_with_new_capacity": 1
   },
   "counts": {
-    "actual": 314,
-    "ready_open": 290,
+    "actual": 315,
+    "ready_open": 291,
     "draft": 3,
     "merged": 12,
     "closed_unmerged": 9,
-    "prepared_not_created": 25,
+    "prepared_not_created": 26,
     "target": 730,
-    "remaining_ready_or_merged": 428,
-    "open_total": 293,
-    "effective_ready_or_merged": 302
+    "remaining_ready_or_merged": 427,
+    "open_total": 294,
+    "effective_ready_or_merged": 303
   },
   "counting_rules": {
     "actual": "A PR with an existing upstream URL. Draft and closed-unmerged are included only in the actual-created total.",
@@ -4843,7 +4844,7 @@
       "updated_at": "2026-11-16T21:55:17Z",
       "batch_owner": "root",
       "official_checks_snapshot": {
-        "observed_at": "2026-11-16T22:22:32.591372+00:00",
+        "observed_at": "2026-11-16T22:40:58.320385+00:00",
         "head": "70fa8a1518861d4b7846f758bbbd388792da56e0",
         "total": 47,
         "counts": {
@@ -5245,7 +5246,7 @@
       },
       "batch_owner": "root",
       "official_status_snapshot": {
-        "observed_at": "2026-11-16T22:22:32.591372+00:00",
+        "observed_at": "2026-11-16T22:40:58.320385+00:00",
         "head": "23853bda897abc44180471cc050c5c9f50abd0d9",
         "state": "success",
         "total": 4,
@@ -16337,6 +16338,63 @@
       "repo": "Edge0-AI/Edge0",
       "batch_owner": "repository_rules",
       "merged_at": null
+    },
+    {
+      "repo": "affaan-m/ECC",
+      "number": 3951,
+      "url": "https://github.com/affaan-m/ECC/pull/3951",
+      "title": "fix(session): report the latest model from Codex rollouts",
+      "head": "087686af59d7efa077354c2659e9b823c3ccb029",
+      "head_ref": "fix/codex-current-session-model-20261116",
+      "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "created_at": "2026-11-16T22:37:46Z",
+      "updated_at": "2026-11-16T22:37:55Z",
+      "merged_at": null,
+      "body": "## What Changed\n\nRead Codex `turn_context` records from the end of the rollout when deriving the session model. The latest valid model now reaches `workers[0].artifacts.model` in the canonical snapshot.\n\nThe existing metadata-model / provider / null fallbacks remain unchanged. Unrelated records, empty or non-string models, and a partially written final JSON line are still ignored.\n\n## Why This Change\n\nAfter switching models or resuming a session with a different model, `session-inspect` continues to report the first model in the append-only rollout. Reopening or refreshing the adapter does not correct it because `deriveModel` always scans from the beginning.\n\nThe new regression opens one session, appends a model change, and checks both the refreshed snapshot and direct parser result.\n\n## Testing Done\n\n- Node 18, 20 and 22: the same regression suite changes from **12 passed / 2 failed** on the base to **14 passed / 0 failed** with this fix.\n- Full `npm test` on clean Ubuntu / Node 22: **488/488 test files pass** on both the exact base and candidate. The runner reports 9,991 passing assertions before and 9,996 after.\n- Changed-file ESLint passes. Changed-source coverage: **94.38% lines/statements, 83.84% branches, 100% functions**.\n- Cases include repeated snapshot reads after an append, invalid trailing models, unrelated records, partial JSON, metadata fallbacks, and unchanged rollout file contents.\n- [Baseline regressions](https://github.com/Afloat16/ECC/actions/runs/43967246271) · [Node 18/20/22 regressions](https://github.com/Afloat16/ECC/actions/runs/43969989051) · [Full base/candidate validation](https://github.com/Afloat16/ECC/actions/runs/43970310489).\n\nThe full comparison uses base `d4b97e60` and candidate `087686af`. Main subsequently received CI/dependency updates in `8abdf329`; neither changed file overlaps this patch.\n\nLocal Node 24 focused tests and coverage also pass. The local full suite completed with 11 hook/install/fixture test files failing; the clean Node 22 baseline/candidate comparison above is the full-suite passing result.\n\n- [ ] Manual testing completed\n- [ ] Automated full suite passes locally (`node tests/run-all.js`)\n- [x] Edge cases considered and tested\n\n## Type of Change\n\n- [x] `fix:` Bug fix\n\n## Security & Quality Checklist\n\n- [x] No secrets or API keys committed\n- [x] No sensitive data exposed in the regression fixtures\n- [x] Follows conventional commits format\n- [x] Independent code and regression-test review completed\n\nNo dependency, package manifest, shell-script, or published-path changes are included. The two-file change does not require catalog regeneration or documentation updates.\n",
+      "maintainer_can_modify": false,
+      "batch_owner": "root",
+      "fork_validation_urls": [
+        "https://github.com/Afloat16/ECC/actions/runs/43967246271",
+        "https://github.com/Afloat16/ECC/actions/runs/43969989051",
+        "https://github.com/Afloat16/ECC/actions/runs/43970310489"
+      ],
+      "validation_summary": {
+        "base": "d4b97e60dd7d8cdf01962881776a758769c0ba85",
+        "candidate": "087686af59d7efa077354c2659e9b823c3ccb029",
+        "regression_node_versions": [
+          18,
+          20,
+          22
+        ],
+        "baseline_regression": {
+          "passed": 12,
+          "failed": 2
+        },
+        "candidate_regression": {
+          "passed": 14,
+          "failed": 0
+        },
+        "full_npm_test": {
+          "base_files_passed": 488,
+          "candidate_files_passed": 488,
+          "files_failed": 0,
+          "base_reported_assertions": 9991,
+          "candidate_reported_assertions": 9996,
+          "environment": "clean Ubuntu / Node 22",
+          "execution_integrity": true
+        },
+        "coverage": {
+          "lines": 94.38,
+          "statements": 94.38,
+          "branches": 83.84,
+          "functions": 100
+        },
+        "local_full_suite": "Node 24 completed with 11 failing hook/install/fixture files; no local all-pass claim.",
+        "independent_review": "Source and regression review completed; no findings."
+      }
     }
   ],
   "prepared_submissions": [
@@ -17585,15 +17643,267 @@
         "path": "contribution-validation/tdmpc-warm-start/ready.json",
         "url": "https://github.com/Afloat16/lerobot/blob/7d7cdf0f2474a0aa4b45c540f663a3077825d0bf/contribution-validation/tdmpc-warm-start/ready.json"
       }
+    },
+    {
+      "checkpoint_head": "66c22590a469e75e31914e4dd7094f305e11f6d6",
+      "batch": 11,
+      "repository": "Edge0-AI/Edge0",
+      "base": "f6bfa5546bcf89919f86946ec669bcc7f4cd526d",
+      "base_tree": "827cb6bd8872ebd304a5f24d92030c9df9394f84",
+      "title": "fix(server): account complete delegated SSE events",
+      "status": "prepared_waiting_platform_checks",
+      "published": false,
+      "files": [
+        "edge0-infer/tools/cli/serve_delegate_status.cpp",
+        "edge0-infer/tests/unit/cli/strata_registry_test.cpp",
+        "edge0-infer/tests/integration/fake_strata.py",
+        "edge0-infer/tests/integration/serve_strata_test.py"
+      ],
+      "validation_branch": "validation/sse-event-framing-20261116",
+      "validation_head": "523a0b1c0206a570783bd49df44cc54e1ad8e8e5",
+      "validation_tree": "f5faacd105c468ba89b3b66ad5ce38c3edfea5a8",
+      "validation_run": 43967469449,
+      "validation_url": "https://github.com/Afloat16/Edge0/actions/runs/43967469449",
+      "specification": "https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream",
+      "contract": "Join data fields with LF; dispatch at a blank line; incomplete event data at EOF is not dispatched. Handle LF, CRLF and CR line endings as one event-framing issue.",
+      "dedupe": {
+        "all_author_prs": 126,
+        "all_current_fork_branches": 43,
+        "pre_task_fork_branches": 21,
+        "reachable_commits": 425,
+        "relevant_source_blobs": 15,
+        "status_cpp_versions": 6,
+        "distinct_account_sse_implementations": 2,
+        "renamed_aliases": [],
+        "history_job": 133637634318,
+        "history_conclusion": "success",
+        "history_log": "validation-evidence/sse-history.log",
+        "review": "Read both distinct historical parser bodies; each parses individual data lines and erases them immediately. All historical proxy variants pass raw chunks directly to account_sse. No equivalent event grouping fix was found.",
+        "pr249_native_parser_blob": "64312a2ab51cc81411ee131eacc628fe9231cd43",
+        "pr249_scope": "Desktop TS terminal lifecycle only; native parser blob identical to upstream.",
+        "pr255_control": "The existing #255 fix still reproduces all12 HTTP failures; three single-line controls pass."
+      },
+      "validation_state": "Final Linux native and real HTTP verification passed with only the three measured upstream baseline failures. The earlier slots failure was independently reproduced on exact upstream source and its unchanged binary hash verified; final slots and weights tests passed. macOS cancelled before steps, unverified. Keep draft until required platform checks run.",
+      "pending_revision": null,
+      "production_branch_created": true,
+      "first_validation": {
+        "run": 43963750094,
+        "job": 133637634704,
+        "head": "1e1c013542034d5db144e1a45220896f2863a139",
+        "base": "f6bfa5546bcf89919f86946ec669bcc7f4cd526d",
+        "url": "https://github.com/Afloat16/Edge0/actions/runs/43963750094/job/133637634704",
+        "unchanged_full_suite_failures": [
+          "moe_test_ordered_json",
+          "moe_test_platform_memory",
+          "moe_test_template_tools"
+        ],
+        "original_new_native_regression": "framed.streamed_tokens == c.fragments fails",
+        "original_http_failures": 12,
+        "old_pr255_http_failures": 12,
+        "fixed_http_cases_passed": 15,
+        "fixed_l0_l1": {
+          "passed": 98,
+          "skipped": 3,
+          "baseline_failures": 3
+        },
+        "fixed_l2_passed": 2,
+        "unchanged_weights_probe": {
+          "failed": 14,
+          "attempts": 100
+        },
+        "conclusion": "success",
+        "history_job": 133637634318,
+        "history_conclusion": "success",
+        "log": "validation-evidence/sse-first-native-http.log",
+        "baseline_results": "validation-evidence/sse-first-http-results.json"
+      },
+      "final_validation": {
+        "branch": "validation/sse-event-framing-20261116",
+        "head": "f8d66d6bef40b6716f8549bb87aa9d241d6484bf",
+        "tree": "6c8d6730cba434a651ab11624328773fd22abba7",
+        "run": 43965538547,
+        "url": "https://github.com/Afloat16/Edge0/actions/runs/43965538547",
+        "linux_job": 133643890924,
+        "linux_status": "completed",
+        "macos_job": 133643891585,
+        "macos_status": "completed",
+        "linux_conclusion": "failure",
+        "macos_conclusion": "cancelled",
+        "native_regression": "passed",
+        "http_cases_passed": 15,
+        "l0_l1": {
+          "passed": 97,
+          "skipped": 3,
+          "failures": [
+            "moe_test_ordered_json",
+            "moe_test_platform_memory",
+            "moe_test_template_tools",
+            "moe_test_edge0_35b_slots_config"
+          ]
+        },
+        "new_failure": "The slots_config assertion is now independently reproduced on pristine upstream in the final Linux validation; see final_linux_validation.",
+        "l2": "not_run_in_this_failed_attempt; final follow-up run passed both L2 tests",
+        "log": "validation-evidence/sse-second-native-linux.log"
+      },
+      "revision_reason": "Keep ignored fields and comment-only heartbeats from accumulating while no data event is pending; add a100-iteration native regression. Final job first reproduced the provisional version's buffer retention, then tests the corrected production files.",
+      "baseline_resolution_validation": {
+        "head": "523a0b1c0206a570783bd49df44cc54e1ad8e8e5",
+        "tree": "f5faacd105c468ba89b3b66ad5ce38c3edfea5a8",
+        "run": 43967469449,
+        "url": "https://github.com/Afloat16/Edge0/actions/runs/43967469449",
+        "linux_job": 133650571284,
+        "status": "completed",
+        "pristine_baseline_step": "success; raw evidence and exact counts pending completed log retrieval",
+        "production_files": "Identical four production files to f8d66d6bef40b6716f8549bb87aa9d241d6484bf",
+        "macos": "The previous job was cancelled before steps ran; this Linux-only diagnostic run does not start another macOS job.",
+        "conclusion": "success",
+        "evidence": "validation-evidence/sse-final-native-linux.log"
+      },
+      "branch": "fix/delegated-sse-framing-20261116",
+      "head": "67ecf24353700a65efba837d034cf098956a097c",
+      "tree": "5f08f6cfd4220940004882c25cc8aace08d28ec5",
+      "changed_files": 4,
+      "production_files_verified": [
+        {
+          "path": "edge0-infer/tests/integration/fake_strata.py",
+          "sha": "24eca5ed4babef233ae9896d5e8697c5352ff223",
+          "additions": 19,
+          "deletions": 0
+        },
+        {
+          "path": "edge0-infer/tests/integration/serve_strata_test.py",
+          "sha": "60705b96b412d3eb025075559f54e44bc24d98d4",
+          "additions": 58,
+          "deletions": 0
+        },
+        {
+          "path": "edge0-infer/tests/unit/cli/strata_registry_test.cpp",
+          "sha": "f8f2c113c28687106145be3fafe99a6d5444f7a5",
+          "additions": 51,
+          "deletions": 4
+        },
+        {
+          "path": "edge0-infer/tools/cli/serve_delegate_status.cpp",
+          "sha": "08dcb1dd56f8bb0ca933b0f5b17f8e0ebbe4a4be",
+          "additions": 26,
+          "deletions": 9
+        }
+      ],
+      "final_linux_validation": {
+        "run": 43967469449,
+        "job": 133650571284,
+        "head": "523a0b1c0206a570783bd49df44cc54e1ad8e8e5",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/Edge0/actions/runs/43967469449/job/133650571284",
+        "native_regression": "passed",
+        "http": {
+          "passed": 15,
+          "protocols": 3
+        },
+        "full_l0_l1": {
+          "passed": 98,
+          "skipped": 3,
+          "failures": [
+            "moe_test_ordered_json",
+            "moe_test_platform_memory",
+            "moe_test_template_tools"
+          ]
+        },
+        "l2": {
+          "passed": 2,
+          "failed": 0
+        },
+        "baseline": {
+          "base": "f6bfa5546bcf89919f86946ec669bcc7f4cd526d",
+          "native_tree_exactly_upstream": true,
+          "slots": [
+            {
+              "attempts": 100,
+              "workers": 1,
+              "failed": 0
+            },
+            {
+              "attempts": 300,
+              "workers": 4,
+              "failed": 1
+            }
+          ],
+          "weights": {
+            "attempts": 100,
+            "workers": 1,
+            "failed": 2
+          },
+          "slots_binary_sha256": "081f2b54ff37609d377845f4ebfd26a19ad77ec17b967a6973adfd97c5bf7414"
+        },
+        "baseline_failures": [
+          {
+            "test": "moe_test_edge0_35b_slots_config",
+            "workers": 4,
+            "attempt": 94,
+            "code": 1,
+            "stdout": "auto: maximum writing banks=1; active compute bank never written\n",
+            "stderr": "/home/runner/work/Edge0/Edge0/edge0-infer/tests/unit/models/edge0_35b/slots_config_test.cpp:101: check failed: observed_reads>0 && maximum_writing==1 && overlap && !violation\n"
+          },
+          {
+            "test": "moe_test_weights_mixed",
+            "workers": 1,
+            "attempt": 73,
+            "code": 1,
+            "stdout": "",
+            "stderr": "/home/runner/work/Edge0/Edge0/edge0-infer/tests/unit/weights/mixed_storage_test.cpp:33: check failed: storage.size() == 1 && budget.current(exec::Purpose::resident_weights) == ggml_backend_buffer_get_size(storage.front()->allocation()->buffer)\n"
+          },
+          {
+            "test": "moe_test_weights_mixed",
+            "workers": 1,
+            "attempt": 89,
+            "code": 1,
+            "stdout": "",
+            "stderr": "/home/runner/work/Edge0/Edge0/edge0-infer/tests/unit/weights/mixed_storage_test.cpp:33: check failed: storage.size() == 1 && budget.current(exec::Purpose::resident_weights) == ggml_backend_buffer_get_size(storage.front()->allocation()->buffer)\n"
+          }
+        ],
+        "slots_binary_before_after_identical": true,
+        "log": "validation-evidence/sse-final-native-linux.log"
+      },
+      "dedupe_refresh": {
+        "timestamp": "2026-11-16T22:23:23.405Z",
+        "pulls": 126,
+        "fork_branches": 44,
+        "changed_prs": [],
+        "changed_fork_branches": [
+          {
+            "name": "validation/sse-event-framing-20261116",
+            "current": "523a0b1c0206a570783bd49df44cc54e1ad8e8e5"
+          },
+          {
+            "name": "validation/20261116-contribution-checkpoint",
+            "previous": "688411128af504b5ac2a73eb54138cda0c336b33",
+            "current": "885aed1cf223dcf2fc945bd8143ab1a819543f05"
+          }
+        ]
+      },
+      "body": "## What & why\n\nDelegated stream accounting currently parses each `data:` line as a complete JSON document. A conforming event whose JSON spans multiple data fields loses token counts; Responses and Messages can also acquire a false appended error and a failed history record even though the upstream stream completed.\n\nAssemble the data fields with LF and account the event at its terminating blank line, following the [SSE parsing rules](https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream). Preserve LF, CRLF and CR boundaries across HTTP chunks, keep incomplete EOF data uncommitted, and discard comment-only heartbeats without retaining an event buffer. Valid upstream response bytes remain unchanged.\n\n## Area\n\n- [x] Engine, CLI or server (`edge0-infer/`)\n\n## How was it tested?\n\nLinux CPU on GitHub-hosted Ubuntu 26.04 / GCC 15.2, with the exact four production files in this branch:\n\n- Native regression: three protocols × three line endings × four chunk sizes, plus incomplete EOF and comment-only heartbeats.\n- Real native proxy + HTTP fixture: 15 cases. Original main and the existing #255 error-handling patch each fail the same 12 cases; this change passes all 15. Three single-line controls pass throughout. Valid streams remain byte-for-byte identical.\n- `cmake --preset cpu && cmake --build --preset cpu`\n- `ctest --preset cpu --no-tests=error --output-on-failure -L \"L0|L1\"`: 98 runnable passes, 3 device skips, and 3 reproduced baseline failures (`platform_memory`, `ordered_json`, `template_tools`).\n- `ctest --preset cpu --no-tests=error --output-on-failure -L L2 -R strata`: 2/2 pass.\n\nAn earlier final-suite attempt also hit the untouched slots test. With the entire native source tree restored to main, its assertion reproduced in 1/300 runs at four-process concurrency (0/100 serial); the unchanged weights assertion reproduced in 2/100. The slots binary hash stayed identical after restoring this patch. Both tests passed in the final complete suite; these failures are preserved in the evidence.\n\n[Original / #255 HTTP controls](https://github.com/Afloat16/Edge0/actions/runs/43963750094) · [Final Linux verification and pristine baseline](https://github.com/Afloat16/Edge0/actions/runs/43967469449/job/133650571284).\n\nmacOS did not run: its queued job was cancelled before executing steps. Keep this proposal as a draft pending the repository's macOS checks. No GPU or device execution is claimed.\n\n## Checklist\n\n- [ ] Full L0/L1 passes: the three unchanged Linux baseline failures above remain.\n- [x] Ran the affected higher-level delegated tests.\n- [x] Added regression tests for the changed behavior.\n- [x] Documentation checked; the existing protocol contract is unchanged.\n",
+      "intended_draft": true,
+      "maintainer_can_modify": false,
+      "creation_status": "not_attempted_again_after_existing_repository_integration_403",
+      "fallback_note": "Existing repository create-PR integration 403 was respected; no alternate-channel retry. Prepared branch and complete title/body comparison link are available. This is not an upstream PR.",
+      "prefilled_url": "https://github.com/Edge0-AI/Edge0/compare/main...Afloat16:fix/delegated-sse-framing-20261116?expand=1&title=fix(server)%3A%20account%20complete%20delegated%20SSE%20events&body=%23%23%20What%20%26%20why%0A%0ADelegated%20stream%20accounting%20currently%20parses%20each%20%60data%3A%60%20line%20as%20a%20complete%20JSON%20document.%20A%20conforming%20event%20whose%20JSON%20spans%20multiple%20data%20fields%20loses%20token%20counts%3B%20Responses%20and%20Messages%20can%20also%20acquire%20a%20false%20appended%20error%20and%20a%20failed%20history%20record%20even%20though%20the%20upstream%20stream%20completed.%0A%0AAssemble%20the%20data%20fields%20with%20LF%20and%20account%20the%20event%20at%20its%20terminating%20blank%20line%2C%20following%20the%20%5BSSE%20parsing%20rules%5D(https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fserver-sent-events.html%23parsing-an-event-stream).%20Preserve%20LF%2C%20CRLF%20and%20CR%20boundaries%20across%20HTTP%20chunks%2C%20keep%20incomplete%20EOF%20data%20uncommitted%2C%20and%20discard%20comment-only%20heartbeats%20without%20retaining%20an%20event%20buffer.%20Valid%20upstream%20response%20bytes%20remain%20unchanged.%0A%0A%23%23%20Area%0A%0A-%20%5Bx%5D%20Engine%2C%20CLI%20or%20server%20(%60edge0-infer%2F%60)%0A%0A%23%23%20How%20was%20it%20tested%3F%0A%0ALinux%20CPU%20on%20GitHub-hosted%20Ubuntu%2026.04%20%2F%20GCC%2015.2%2C%20with%20the%20exact%20four%20production%20files%20in%20this%20branch%3A%0A%0A-%20Native%20regression%3A%20three%20protocols%20%C3%97%20three%20line%20endings%20%C3%97%20four%20chunk%20sizes%2C%20plus%20incomplete%20EOF%20and%20comment-only%20heartbeats.%0A-%20Real%20native%20proxy%20%2B%20HTTP%20fixture%3A%2015%20cases.%20Original%20main%20and%20the%20existing%20%23255%20error-handling%20patch%20each%20fail%20the%20same%2012%20cases%3B%20this%20change%20passes%20all%2015.%20Three%20single-line%20controls%20pass%20throughout.%20Valid%20streams%20remain%20byte-for-byte%20identical.%0A-%20%60cmake%20--preset%20cpu%20%26%26%20cmake%20--build%20--preset%20cpu%60%0A-%20%60ctest%20--preset%20cpu%20--no-tests%3Derror%20--output-on-failure%20-L%20%22L0%7CL1%22%60%3A%2098%20runnable%20passes%2C%203%20device%20skips%2C%20and%203%20reproduced%20baseline%20failures%20(%60platform_memory%60%2C%20%60ordered_json%60%2C%20%60template_tools%60).%0A-%20%60ctest%20--preset%20cpu%20--no-tests%3Derror%20--output-on-failure%20-L%20L2%20-R%20strata%60%3A%202%2F2%20pass.%0A%0AAn%20earlier%20final-suite%20attempt%20also%20hit%20the%20untouched%20slots%20test.%20With%20the%20entire%20native%20source%20tree%20restored%20to%20main%2C%20its%20assertion%20reproduced%20in%201%2F300%20runs%20at%20four-process%20concurrency%20(0%2F100%20serial)%3B%20the%20unchanged%20weights%20assertion%20reproduced%20in%202%2F100.%20The%20slots%20binary%20hash%20stayed%20identical%20after%20restoring%20this%20patch.%20Both%20tests%20passed%20in%20the%20final%20complete%20suite%3B%20these%20failures%20are%20preserved%20in%20the%20evidence.%0A%0A%5BOriginal%20%2F%20%23255%20HTTP%20controls%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2FEdge0%2Factions%2Fruns%2F43963750094)%20%C2%B7%20%5BFinal%20Linux%20verification%20and%20pristine%20baseline%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2FEdge0%2Factions%2Fruns%2F43967469449%2Fjob%2F133650571284).%0A%0AmacOS%20did%20not%20run%3A%20its%20queued%20job%20was%20cancelled%20before%20executing%20steps.%20Keep%20this%20proposal%20as%20a%20draft%20pending%20the%20repository's%20macOS%20checks.%20No%20GPU%20or%20device%20execution%20is%20claimed.%0A%0A%23%23%20Checklist%0A%0A-%20%5B%20%5D%20Full%20L0%2FL1%20passes%3A%20the%20three%20unchanged%20Linux%20baseline%20failures%20above%20remain.%0A-%20%5Bx%5D%20Ran%20the%20affected%20higher-level%20delegated%20tests.%0A-%20%5Bx%5D%20Added%20regression%20tests%20for%20the%20changed%20behavior.%0A-%20%5Bx%5D%20Documentation%20checked%3B%20the%20existing%20protocol%20contract%20is%20unchanged.%0A",
+      "count_in_actual_prs": false,
+      "count_in_ready_or_merged": false,
+      "evidence_checkpoint": {
+        "repository": "Afloat16/Edge0",
+        "commit": "66c22590a469e75e31914e4dd7094f305e11f6d6",
+        "path": "prepared/edge0-sse-framing.json",
+        "url": "https://github.com/Afloat16/Edge0/blob/66c22590a469e75e31914e4dd7094f305e11f6d6/prepared/edge0-sse-framing.json"
+      }
     }
   ],
   "sources": [
     {
       "owner": "root",
       "repository": "Afloat16/awesome-mcp-servers-tensorblock",
-      "previous_commit": "e2f112736ad3d8ee3597dc98d399dc85a6df6ecf",
-      "count": 74,
-      "note": "Original root records plus verified PyPose #539/#541 and Qwen #17497–17499; Qwen bodies updated with observed official CI."
+      "previous_commit": "6c41172dfc0a6558f5a14c90e8421ffdab54fcb3",
+      "count": 75,
+      "note": "Includes new ECC #3951, verified direct creation and full baseline/candidate tests; previous root records retained."
     },
     {
       "owner": "merged_inventory",
@@ -17612,7 +17922,7 @@
     {
       "owner": "repository_rules",
       "repository": "Afloat16/Edge0",
-      "commit": "f9942ae9cd1b1279bff984fe8f30e04036bbcee2",
+      "commit": "66c22590a469e75e31914e4dd7094f305e11f6d6",
       "path": "repository-rules-portfolio.json",
       "count": 90
     }
@@ -17624,16 +17934,17 @@
     "LeRobot warm-start has passing code validation, but its mandatory contribution to another PR is not fulfilled: the prepared review could not be published because add_review_to_pr returned 403. No upstream PR creation was attempted.",
     "Kornia MS-SSIM has eager CPU validation but lacks mandatory compile/ONNX conformance. Previously denied compile/JIT/ONNX operations are not retried. Its intended submission is Draft.",
     "Official check snapshots have their own timestamps and scope; Ready/Open never implies merged or every upstream check green.",
-    "Library report version 16 predates this checkpoint and has not been updated. The Git checkpoint is authoritative for the current 314 actual PR records.",
+    "Library report version 16 predates this checkpoint and has not been updated. The Git checkpoint is authoritative for the current 315 actual PR records.",
     "Robotics Toolbox final c4e6 code passed the native canonical core command: 2673 passed, 19 skipped, 11 deselected, 254 subtests passed; Mypy has the same 8 baseline errors.",
-    "Edge0 locale remains prepared_blocked_checks because of a new check_layers violation, cancelled macOS job and absent iOS compilation result. It is not ready."
+    "Edge0 locale remains prepared_blocked_checks because of a new check_layers violation, cancelled macOS job and absent iOS compilation result. It is not ready.",
+    "Edge0 native SSE has passing Linux regression and same-source baseline comparisons. macOS was cancelled without executing; intended Draft with platform verification outstanding. No repeat of the existing Edge0 creation 403 was made."
   ],
   "active_investigations": [
     {
       "repository": "affaan-m/ECC",
-      "status": "full_tests_and_independent_review",
+      "status": "atomic_session_recording_review_and_validation",
       "actual_pr": false,
-      "note": "Latest valid turn_context model selection; baseline 12 pass/2 fail on Node 18/20/22, candidate 14 pass locally. Changed-source coverage 94.38% lines, 83.84% branches, 100% functions. Full npm test is running. All three prior source variants scan oldest-first; no equivalent found."
+      "note": "Model selection is submitted as #3951. A separate atomic JSON recording candidate has four actual partial-write fault regressions, baseline 4 fail to candidate 4 pass. Permission preservation is being verified; no second PR yet."
     },
     {
       "repository": "kornia/kornia",
@@ -17648,10 +17959,10 @@
       "note": "Relative-action statistics retain expanded arrays through completed Futures. Source inference is not an RSS measurement; history and native tests still required."
     },
     {
-      "repository": "Edge0-AI/Edge0",
-      "status": "native_sse_final_baseline_comparison",
+      "repository": "thedotmack/claude-mem",
+      "status": "rules_and_history_review",
       "actual_pr": false,
-      "note": "15 actual HTTP scenarios pass with candidate; full native suite contains an unexplained slots_config failure. A same-runner original baseline comparison is in progress; no final pass claimed."
+      "note": "Read-only exploration after persisting the Edge0 SSE prepared submission."
     }
   ],
   "excluded_candidates_relative_path": "excluded-candidates.json"

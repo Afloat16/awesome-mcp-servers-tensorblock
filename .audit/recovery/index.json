@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-16T22:22:32.591372+00:00",
+  "updated_at": "2026-11-16T22:40:58.320385+00:00",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "counts": {
-    "actual": 314,
-    "ready_open": 290,
+    "actual": 315,
+    "ready_open": 291,
     "draft": 3,
     "merged": 12,
     "closed_unmerged": 9,
-    "prepared_not_created": 25,
+    "prepared_not_created": 26,
     "target": 730,
-    "remaining_ready_or_merged": 428,
-    "open_total": 293,
-    "effective_ready_or_merged": 302
+    "remaining_ready_or_merged": 427,
+    "open_total": 294,
+    "effective_ready_or_merged": 303
   },
   "scope": {
     "eligible_repositories": 40,
@@ -514,7 +514,7 @@
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 9,
-        "prepared_not_created": 1,
+        "prepared_not_created": 2,
         "remaining_to_target": 11
       },
       {
@@ -538,16 +538,17 @@
           "existing_open": 0,
           "window_minutes": 20,
           "max_created_per_window": 5,
-          "source": "https://github.com/affaan-m/ECC/blob/d4b97e60dd7d8cdf01962881776a758769c0ba85/CONTRIBUTING.md"
+          "source": "https://github.com/affaan-m/ECC/blob/d4b97e60dd7d8cdf01962881776a758769c0ba85/CONTRIBUTING.md",
+          "current_open_author_prs": 1
         },
-        "actual": 0,
-        "ready": 0,
+        "actual": 1,
+        "ready": 1,
         "draft": 0,
         "merged": 0,
         "closed_unmerged": 0,
-        "effective": 0,
+        "effective": 1,
         "prepared_not_created": 0,
-        "remaining_to_target": 10
+        "remaining_to_target": 9
       },
       {
         "repository": "microsoft/onnxruntime",
@@ -576,7 +577,7 @@
       "owner": "root",
       "relative_path": "../root-portfolio.json",
       "array_key": "prs",
-      "expected_records": 74
+      "expected_records": 75
     },
     {
       "owner": "merged_inventory",
@@ -597,10 +598,10 @@
     {
       "owner": "repository_rules",
       "repository": "Afloat16/Edge0",
-      "commit": "f9942ae9cd1b1279bff984fe8f30e04036bbcee2",
+      "commit": "66c22590a469e75e31914e4dd7094f305e11f6d6",
       "path": "repository-rules-portfolio.json",
       "count": 90,
-      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/f9942ae9cd1b1279bff984fe8f30e04036bbcee2/repository-rules-portfolio.json"
+      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/66c22590a469e75e31914e4dd7094f305e11f6d6/repository-rules-portfolio.json"
     }
   ],
   "prepared_relative_path": "prepared-submissions.json",

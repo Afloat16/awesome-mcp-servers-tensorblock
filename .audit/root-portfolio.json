@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16T22:22:32.591372+00:00",
+  "as_of": "2026-11-16T22:40:58.320385+00:00",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -4130,7 +4130,7 @@
       },
       "updated_at": "2026-11-16T21:55:17Z",
       "official_checks_snapshot": {
-        "observed_at": "2026-11-16T22:22:32.591372+00:00",
+        "observed_at": "2026-11-16T22:40:58.320385+00:00",
         "head": "70fa8a1518861d4b7846f758bbbd388792da56e0",
         "total": 47,
         "counts": {
@@ -4531,7 +4531,7 @@
         }
       },
       "official_status_snapshot": {
-        "observed_at": "2026-11-16T22:22:32.591372+00:00",
+        "observed_at": "2026-11-16T22:40:58.320385+00:00",
         "head": "23853bda897abc44180471cc050c5c9f50abd0d9",
         "state": "success",
         "total": 4,
@@ -4561,6 +4561,63 @@
             "updated_at": "2026-11-16T21:44:17Z"
           }
         ]
+      }
+    },
+    {
+      "repo": "affaan-m/ECC",
+      "number": 3951,
+      "url": "https://github.com/affaan-m/ECC/pull/3951",
+      "title": "fix(session): report the latest model from Codex rollouts",
+      "head": "087686af59d7efa077354c2659e9b823c3ccb029",
+      "head_ref": "fix/codex-current-session-model-20261116",
+      "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "created_at": "2026-11-16T22:37:46Z",
+      "updated_at": "2026-11-16T22:37:55Z",
+      "merged_at": null,
+      "body": "## What Changed\n\nRead Codex `turn_context` records from the end of the rollout when deriving the session model. The latest valid model now reaches `workers[0].artifacts.model` in the canonical snapshot.\n\nThe existing metadata-model / provider / null fallbacks remain unchanged. Unrelated records, empty or non-string models, and a partially written final JSON line are still ignored.\n\n## Why This Change\n\nAfter switching models or resuming a session with a different model, `session-inspect` continues to report the first model in the append-only rollout. Reopening or refreshing the adapter does not correct it because `deriveModel` always scans from the beginning.\n\nThe new regression opens one session, appends a model change, and checks both the refreshed snapshot and direct parser result.\n\n## Testing Done\n\n- Node 18, 20 and 22: the same regression suite changes from **12 passed / 2 failed** on the base to **14 passed / 0 failed** with this fix.\n- Full `npm test` on clean Ubuntu / Node 22: **488/488 test files pass** on both the exact base and candidate. The runner reports 9,991 passing assertions before and 9,996 after.\n- Changed-file ESLint passes. Changed-source coverage: **94.38% lines/statements, 83.84% branches, 100% functions**.\n- Cases include repeated snapshot reads after an append, invalid trailing models, unrelated records, partial JSON, metadata fallbacks, and unchanged rollout file contents.\n- [Baseline regressions](https://github.com/Afloat16/ECC/actions/runs/43967246271) · [Node 18/20/22 regressions](https://github.com/Afloat16/ECC/actions/runs/43969989051) · [Full base/candidate validation](https://github.com/Afloat16/ECC/actions/runs/43970310489).\n\nThe full comparison uses base `d4b97e60` and candidate `087686af`. Main subsequently received CI/dependency updates in `8abdf329`; neither changed file overlaps this patch.\n\nLocal Node 24 focused tests and coverage also pass. The local full suite completed with 11 hook/install/fixture test files failing; the clean Node 22 baseline/candidate comparison above is the full-suite passing result.\n\n- [ ] Manual testing completed\n- [ ] Automated full suite passes locally (`node tests/run-all.js`)\n- [x] Edge cases considered and tested\n\n## Type of Change\n\n- [x] `fix:` Bug fix\n\n## Security & Quality Checklist\n\n- [x] No secrets or API keys committed\n- [x] No sensitive data exposed in the regression fixtures\n- [x] Follows conventional commits format\n- [x] Independent code and regression-test review completed\n\nNo dependency, package manifest, shell-script, or published-path changes are included. The two-file change does not require catalog regeneration or documentation updates.\n",
+      "maintainer_can_modify": false,
+      "batch_owner": "root",
+      "fork_validation_urls": [
+        "https://github.com/Afloat16/ECC/actions/runs/43967246271",
+        "https://github.com/Afloat16/ECC/actions/runs/43969989051",
+        "https://github.com/Afloat16/ECC/actions/runs/43970310489"
+      ],
+      "validation_summary": {
+        "base": "d4b97e60dd7d8cdf01962881776a758769c0ba85",
+        "candidate": "087686af59d7efa077354c2659e9b823c3ccb029",
+        "regression_node_versions": [
+          18,
+          20,
+          22
+        ],
+        "baseline_regression": {
+          "passed": 12,
+          "failed": 2
+        },
+        "candidate_regression": {
+          "passed": 14,
+          "failed": 0
+        },
+        "full_npm_test": {
+          "base_files_passed": 488,
+          "candidate_files_passed": 488,
+          "files_failed": 0,
+          "base_reported_assertions": 9991,
+          "candidate_reported_assertions": 9996,
+          "environment": "clean Ubuntu / Node 22",
+          "execution_integrity": true
+        },
+        "coverage": {
+          "lines": 94.38,
+          "statements": 94.38,
+          "branches": 83.84,
+          "functions": 100
+        },
+        "local_full_suite": "Node 24 completed with 11 failing hook/install/fixture files; no local all-pass claim.",
+        "independent_review": "Source and regression review completed; no findings."
       }
     }
   ],
