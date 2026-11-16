@@ -1,0 +1,134 @@
+{
+  "head": "1e0d50e49448c5496d50c2c8bf9cb3654d2a47d1",
+  "run": "https://github.com/Afloat16/recommenders/actions/runs/43904653540",
+  "jobs": [
+    {
+      "id": 133430126844,
+      "name": "validate (3.10, 1.24.4, 0.57.1, 1.10.1)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-11-16T16:12:29.0844126Z 12 passed in 2.00s",
+        "2026-11-16T16:12:32.4928196Z 26 passed in 2.04s",
+        "2026-11-16T16:12:35.9098634Z 26 passed in 2.01s",
+        "2026-11-16T16:12:38.3783663Z GeoIMC functional equivalence and complete inference benchmark verified."
+      ],
+      "benchmark": [
+        {
+          "rank": 8,
+          "users": 943,
+          "items": 1682,
+          "features": 128,
+          "median_ms": {
+            "before": 3.1012719999949923,
+            "after": 2.972793000012075
+          },
+          "speedup": 1.0432182799079504,
+          "sqrt_calls": {
+            "before": 2,
+            "after": 1
+          },
+          "full_output_equal": true,
+          "output_sha256": "9164b29995b416b1e950ac1cdb1de89f5525ae4dbc566166f8184715497c71f0"
+        },
+        {
+          "rank": 32,
+          "users": 1,
+          "items": 256,
+          "features": 128,
+          "median_ms": {
+            "before": 0.7592279999926177,
+            "after": 0.429121999999893
+          },
+          "speedup": 1.7692590918032798,
+          "sqrt_calls": {
+            "before": 2,
+            "after": 1
+          },
+          "full_output_equal": true,
+          "output_sha256": "34ac9eb9e45f60e1ffcc4e3f6608306943f421993454f6ec11bb8abd161bd895"
+        },
+        {
+          "rank": 128,
+          "users": 1,
+          "items": 256,
+          "features": 256,
+          "median_ms": {
+            "before": 14.759337000000983,
+            "after": 7.743231999995714
+          },
+          "speedup": 1.906095155099208,
+          "sqrt_calls": {
+            "before": 2,
+            "after": 1
+          },
+          "full_output_equal": true,
+          "output_sha256": "91697bae1c3e74b285df9be721e09a0fdf15ccf0cd446e7b25e7834d8229366d"
+        }
+      ]
+    },
+    {
+      "id": 133430127604,
+      "name": "validate (3.11, 1.26.4, 0.61.2, 1.13.1)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-11-16T16:12:17.6529140Z 12 passed in 1.63s",
+        "2026-11-16T16:12:20.7325551Z 26 passed in 1.66s",
+        "2026-11-16T16:12:23.7306601Z 26 passed in 1.58s",
+        "2026-11-16T16:12:26.1232867Z GeoIMC functional equivalence and complete inference benchmark verified."
+      ],
+      "benchmark": [
+        {
+          "rank": 8,
+          "users": 943,
+          "items": 1682,
+          "features": 128,
+          "median_ms": {
+            "before": 2.697402999984888,
+            "after": 2.5718290000043
+          },
+          "speedup": 1.0488267299188159,
+          "sqrt_calls": {
+            "before": 2,
+            "after": 1
+          },
+          "full_output_equal": true,
+          "output_sha256": "9164b29995b416b1e950ac1cdb1de89f5525ae4dbc566166f8184715497c71f0"
+        },
+        {
+          "rank": 32,
+          "users": 1,
+          "items": 256,
+          "features": 128,
+          "median_ms": {
+            "before": 0.6864739999912217,
+            "after": 0.3876849999926435
+          },
+          "speedup": 1.7707004398009927,
+          "sqrt_calls": {
+            "before": 2,
+            "after": 1
+          },
+          "full_output_equal": true,
+          "output_sha256": "34ac9eb9e45f60e1ffcc4e3f6608306943f421993454f6ec11bb8abd161bd895"
+        },
+        {
+          "rank": 128,
+          "users": 1,
+          "items": 256,
+          "features": 256,
+          "median_ms": {
+            "before": 14.219937999996546,
+            "after": 7.365933000016867
+          },
+          "speedup": 1.9305005896692224,
+          "sqrt_calls": {
+            "before": 2,
+            "after": 1
+          },
+          "full_output_equal": true,
+          "output_sha256": "512fdc15366b33b27e433a8fae6ba64590fc0e80db8409e84256fdd74544c7e6"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/follow-slirec-parameter-device-20261116",
+  "title": "Follow SLi-Rec parameter placement after native device moves",
+  "issue": 2470,
+  "head": "4d1b220158d15d93636e565f2298560fe0cb484c",
+  "tree": "7d008a213144c9a828372913c799c32b3c716e1a",
+  "mask_head": "9cdeeb972c7909405ca9ff32778ca98baa0441f6",
+  "mask_tree": "ec71f206bc9b75b39974b8361dea0866836770a2",
+  "body": "### Description\n\nSLi-Rec stores the device selected at construction in a plain attribute. Native module migration moves parameters but leaves that attribute unchanged, so dataset tensors, regularization and checkpoint loading can use a different device from the model.\n\nRead the device from the item-embedding weights instead. Initial automatic CPU/CUDA selection is preserved; native `to()`, `cpu()` and `to_empty()` then require no separate metadata update. Parameter names and checkpoint tensors remain unchanged.\n\nFixes #2470.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43907660754) checks exact head `4d1b220158d15d93636e565f2298560fe0cb484c` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged model suite: **12 passed** in both environments.\n- New cases on unchanged staging: **4 failed, 1 passing control, 2 CUDA-only skips**.\n- Patched full model suite: **17 passed, 2 CUDA-only skips** in both environments.\n- Native meta transitions reproduce the original full-forward mixed-device failure and verify batch placement, shapes, dtypes and regularization. Meta cases assess placement rather than numerical predictions.\n- A native CPU \u2192 meta \u2192 CPU round trip restores an actual checkpoint, reproduces every saved prediction exactly and runs finite-gradient SGD steps that change parameters. No mocked device operators are used.\n- CUDA-to-CPU tests cover both `cpu()` and `to(\"cpu\")`, including checkpoint loading, prediction and training. They are committed but skipped on these CPU runners; no CUDA execution is claimed.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\nThe validation also combines this change with the exact updated attention fix in #2453. Its CPU test no longer assigns device metadata. Combined results are **31 passed, 2 CUDA-only skips** on PyTorch 2.5.1 and **27 passed, 6 skips** on 2.0.1 (two CUDA cases plus four independently confirmed unsupported CPU-half cases).\n\n### History review\n\nChecked 1,497 pre-existing upstream PR heads and 69 fork branches, including all four reachable PyTorch sequential-base source versions from nine commits under current and former filenames. They all retain the initialization-time device. Earlier LightGCN graph-buffer work addresses unregistered graph tensors, a separate cause.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regressions added to the existing registered model test module.\n- [x] Device property documents its native-migration behavior.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation_branch": "validation/recommenders-slirec-device-20261116",
+  "validation_head": "1ef754bc6884977faeed67f07dd4fea60ddae044",
+  "validation_run": "https://github.com/Afloat16/recommenders/actions/runs/43907660754",
+  "number": 2471,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2471",
+  "status": "published_open"
+}

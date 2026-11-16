@@ -1,0 +1,43 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/reject-cross-instance-ffm-fields-20261116",
+  "title": "Reject FFM fields before they alias another instance",
+  "issue": 2472,
+  "historical_blobs": 24,
+  "historical_commits": 168,
+  "historical_files": [
+    "ffm_dataset.py",
+    "iterator.py",
+    "ffm_cache.py"
+  ],
+  "head": "bb40866a7747ffbf2c95021b22ab6b4f488d20d1",
+  "tree": "43647f1ce79d6d3dec7a42f028b7805a9d20c663",
+  "body": "### Description\n\nFFM field positions are flattened across the whole batch before bounds are checked. An out-of-range field can therefore land in another training instance: with `field_count=4`, a field numbered 5 on the first row becomes field 1 on the second row. The same input is rejected with batch size 1 but silently changes another example with batch size 2.\n\nValidate each zero-based field index against `field_count` before adding the instance offset. Keep the existing global consistency check and preserve valid sparse fields, repeated fields, empty feature rows, values and ordering.\n\nFixes #2472.\n\n### Validation\n\n[Independent before/after validation](https://github.com/Afloat16/recommenders/actions/runs/43910433462) checks exact head `bb40866a7747ffbf2c95021b22ab6b4f488d20d1` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged FFM and xDeepFM suites: **27 passed** in both environments.\n- New cases against unchanged staging: **8 failed, 5 passing controls**.\n- Patched full FFM and xDeepFM suites: **40 passed** in both environments, with no skipped tests.\n- Six loader cases expose forward and backward aliasing across three records.\n- Two native xDeepFM training cases reject the malformed input before any optimizer update; model parameters remain unchanged.\n- Five valid-data controls compare complete predictions and gradients across single-record and three-record batches for the linear, FM, CIN, DNN and combined paths. They include empty rows, repeated and unsorted fields, signed feature values and the largest valid field.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 also passes all 40 tests.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads and 69 fork branches. The current FFM dataset and its former TensorFlow iterator/cache implementations contain 24 distinct reachable source versions across 168 commits; none checks the field against its own instance before flattening. Existing batch-size handling does not address this cross-record aliasing.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression tests extend the existing FFM and xDeepFM test modules.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation": {
+    "run": "https://github.com/Afloat16/recommenders/actions/runs/43910433462",
+    "head": "bb40866a7747ffbf2c95021b22ab6b4f488d20d1",
+    "jobs": [
+      {
+        "id": 133450545732,
+        "name": "validate (3.10, 2.0.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43910433462/job/133450545732"
+      },
+      {
+        "id": 133450546368,
+        "name": "validate (3.11, 2.5.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43910433462/job/133450546368"
+      }
+    ],
+    "before": "8 failed, 5 passed, 27 deselected",
+    "baseline": "27 passed",
+    "after": "40 passed",
+    "format": "Black and git diff --check passed"
+  },
+  "status": "published_open",
+  "number": 2473,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2473"
+}

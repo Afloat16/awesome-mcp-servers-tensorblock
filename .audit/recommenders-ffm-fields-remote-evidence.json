@@ -1,0 +1,22 @@
+{
+  "run": "https://github.com/Afloat16/recommenders/actions/runs/43910433462",
+  "head": "bb40866a7747ffbf2c95021b22ab6b4f488d20d1",
+  "jobs": [
+    {
+      "id": 133450545732,
+      "name": "validate (3.10, 2.0.1)",
+      "conclusion": "success",
+      "url": "https://github.com/Afloat16/recommenders/actions/runs/43910433462/job/133450545732"
+    },
+    {
+      "id": 133450546368,
+      "name": "validate (3.11, 2.5.1)",
+      "conclusion": "success",
+      "url": "https://github.com/Afloat16/recommenders/actions/runs/43910433462/job/133450546368"
+    }
+  ],
+  "before": "8 failed, 5 passed, 27 deselected",
+  "baseline": "27 passed",
+  "after": "40 passed",
+  "format": "Black and git diff --check passed"
+}

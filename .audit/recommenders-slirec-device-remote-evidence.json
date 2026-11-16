@@ -1,0 +1,42 @@
+{
+  "run": 43907660754,
+  "jobs": [
+    {
+      "id": 133440732692,
+      "name": "validate (3.11, 2.5.1)",
+      "conclusion": "success"
+    },
+    {
+      "id": 133440733253,
+      "name": "validate (3.10, 2.0.1)",
+      "conclusion": "success"
+    }
+  ],
+  "observations": [
+    {
+      "job": 133440732692,
+      "lines": [
+        "2026-11-16T16:28:47.5153573Z 12 passed in 2.24s",
+        "2026-11-16T16:28:51.8389202Z 4 failed, 1 passed, 2 skipped, 12 deselected in 2.40s",
+        "2026-11-16T16:28:56.2646669Z 17 passed, 2 skipped in 2.54s",
+        "2026-11-16T16:29:00.8653791Z 4 failed, 10 passed, 12 deselected in 2.37s",
+        "2026-11-16T16:29:05.2298443Z 26 passed in 2.45s",
+        "2026-11-16T16:29:10.2306072Z 31 passed, 2 skipped in 2.80s",
+        "2026-11-16T16:29:10.3650231Z Native placement, restored CPU predictions/training and independent-change compatibility verified."
+      ]
+    },
+    {
+      "job": 133440733253,
+      "lines": [
+        "2026-11-16T16:28:26.0958078Z 12 passed in 0.93s",
+        "2026-11-16T16:28:28.2758141Z 4 failed, 1 passed, 2 skipped, 12 deselected, 1 warning in 1.14s",
+        "2026-11-16T16:28:30.4527071Z 17 passed, 2 skipped, 1 warning in 1.14s",
+        "2026-11-16T16:28:30.6434579Z Independent CPU-half capability probe: \"addmm_impl_cpu_\" not implemented for 'Half'",
+        "2026-11-16T16:28:32.4814748Z 10 passed, 4 skipped, 12 deselected, 1 warning in 0.81s",
+        "2026-11-16T16:28:34.5135864Z 22 passed, 4 skipped, 1 warning in 1.00s",
+        "2026-11-16T16:28:36.9601691Z 27 passed, 6 skipped, 2 warnings in 1.22s",
+        "2026-11-16T16:28:37.0328909Z Native placement, restored CPU predictions/training and independent-change compatibility verified."
+      ]
+    }
+  ]
+}

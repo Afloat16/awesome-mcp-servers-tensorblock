@@ -67,5 +67,55 @@
     "paths": [
       "recommenders/models/deeprec/io/torch/sequential_iterator.py"
     ]
+  },
+  "rlrmc_pair_predictions": {
+    "commits": 85,
+    "blobs": 14,
+    "finding": "All reachable predict implementations preserve the same incorrect low-memory mean sign and duplicate-collapsing sparse prediction; former paths and intermediate commits included."
+  },
+  "dkn_item2item_normalization": {
+    "commits": 74,
+    "blobs": 16,
+    "finding": "Only one PyTorch source variant, using score-dtype square/rsqrt with epsilon 1e-12; 15 former TensorFlow variants use tf.math.l2_normalize and float32 layer weights. No earlier PyTorch low-precision promotion."
+  },
+  "geoimc_prediction_factorization": {
+    "commits": 48,
+    "blobs": 9,
+    "finding": "All variants call sqrtm(W[1]) separately for user and item embeddings; prior fork branches only adjust top-k edge handling."
+  },
+  "geoimc_length_normalization": {
+    "commits": 49,
+    "blobs": 8,
+    "finding": "All variants square input directly before division; zero-row protection already present, so zero-row handling is not a new candidate.",
+    "counting_decision": "Do not submit or count as a separate improvement in this round: overlaps the row-vector normalization stability theme of DKN PR #2467. Independent review agreed despite different backends and scaling algorithms. Existing zero-row guard is not novel."
+  },
+  "cin_mask_smaller_operand": {
+    "counting_decision": "excluded_duplicate",
+    "evidence_blob": "20481ecac0987a4f14bc8ac53dfc5cc2ddfeb9a8",
+    "reason": "Historical TensorFlow xDeepFM source already proposes the same filter masking algebra in commented code: filters_in_use = tf.multiply(filters, mask_matrix) * 2. Do not count backend port/adaptive operand selection as independent new contribution under user requirement."
+  },
+  "slirec_native_device_migration": {
+    "status": "implemented_under_validation",
+    "issue": 2470,
+    "historical_versions": 4,
+    "historical_commits": 9,
+    "files": [
+      "sequential_base.py",
+      "sequential_base_pytorch.py"
+    ],
+    "reason": "All native module variants retain initialization-time device metadata; no migration-aware property or _apply synchronization found. Different from LightGCN adjacency registration root cause.",
+    "compatibility": "Remove direct device assignment in existing #2453 CPU attention test; explicitly move loader result to CPU, preserving that test on GPU hosts and with dynamic device property."
+  },
+  "ffm_field_aliasing": {
+    "status": "implemented_validated_locally_remote_matrix_pending",
+    "issue": 2472,
+    "historical_blobs": 24,
+    "historical_commits": 168,
+    "files": [
+      "ffm_dataset.py",
+      "iterator.py",
+      "ffm_cache.py"
+    ],
+    "decision": "No prior per-instance field bounds validation; current global flattened bounds miss inter-instance aliasing. Eight real failures, five valid-sparse model controls, full40pass locally."
   }
 }

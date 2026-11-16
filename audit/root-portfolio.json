@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16T15:00:11.198201+00:00",
+  "as_of": "2026-11-16T16:32:06Z",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -1940,7 +1940,7 @@
       "state": "open",
       "created_at": "2026-11-16T14:09:36Z",
       "merged_at": null,
-      "body": "### Description\n\nWhen a new category appears during validation or prediction and training produced no `<LESS>` bucket, `NumEncoder.transform()` receives floating-point ordinal values with a negative unknown-category sentinel. Passing these values to `unpackbits` raises a `TypeError`.\n\nMap negative ordinal sentinels to the unused zero code and convert the category codes to integers before binary encoding. Learned positive codes and any fitted rare-value bucket keep their existing meanings and the feature width stays fixed. The zero code also avoids aliasing a negative sentinel's low bits with a learned category.\n\nTests cover mixed known/unseen rows, entirely unseen inputs, several binary widths, independent categorical fields, unchanged known codes and the existing rare-value bucket. The new module is registered in the PR test group and the transform docstring describes the behavior.\n\n### Related Issues\n\nFixes #2445.\n\n### Validation\n\n- Unchanged staging `6fb74f88b2a271b917be462a2a2a59e100b929da`: **5 regression failures, 4 passing controls**.\n- This exact commit: **9 focused tests passed**.\n- Python 3.12.14 locally: five existing data/evaluation/utility modules plus the new suite give **97 passed, 1 failed**.\n- The remaining failure is unchanged `test_python_ranking_metrics_by_threshold`: baseline and patch both return precision `0.06666666666666667` where the existing test expects `1.0`. The corresponding baseline core run is **88 passed, 1 failed**.\n- [Python 3.10](https://github.com/Afloat16/recommenders/actions/runs/43881322957/job/133347661825) and [Python 3.11](https://github.com/Afloat16/recommenders/actions/runs/43881322957/job/133347661099) independently reproduce the baseline failures and pass all nine regression tests on this exact head. Both retain the same existing failure in the 89-test core suite. The validation checks the exact expected failing names; it does not claim the full upstream suite is green.\n- Black on the changed Python files and `git diff --check` pass.\n\nHistorical review covered 1,497 upstream PR heads, 69 existing fork branches, and all 24 reachable LightGBM utility source versions across 147 commits, including intermediate commits and former paths.\n\n### Checklist\n\n- [x] I have followed the contribution guidelines and code style.\n- [x] I have added tests covering the change.\n- [x] I have updated the transform docstring.\n- [x] The commit includes the required `Signed-off-by` trailer.\n- [x] This PR targets `staging`.\n",
+      "body": "### Description\r\n\r\nWhen a new category appears during validation or prediction and training produced no `<LESS>` bucket, `NumEncoder.transform()` receives floating-point ordinal values with a negative unknown-category sentinel. Passing these values to `unpackbits` raises a `TypeError`.\r\n\r\nMap negative ordinal sentinels to the unused zero code and convert the category codes to integers before binary encoding. Learned positive codes and any fitted rare-value bucket keep their existing meanings and the feature width stays fixed. The zero code also avoids aliasing a negative sentinel's low bits with a learned category.\r\n\r\nTests cover mixed known/unseen rows, entirely unseen inputs, several binary widths, independent categorical fields, unchanged known codes and the existing rare-value bucket. The new module is registered in the PR test group and the transform docstring describes the behavior.\r\n\r\n### Related Issues\r\n\r\nFixes #2445.\r\n\r\n### Validation\r\n\r\n- Unchanged staging `6fb74f88b2a271b917be462a2a2a59e100b929da`: **5 regression failures, 4 passing controls**.\r\n- This exact commit: **9 focused tests passed**.\r\n- Python 3.12.14 locally: five existing data/evaluation/utility modules plus the new suite give **97 passed, 1 failed**.\r\n- The remaining failure is unchanged `test_python_ranking_metrics_by_threshold`: baseline and patch both return precision `0.06666666666666667` where the existing test expects `1.0`. The corresponding baseline core run is **88 passed, 1 failed**.\r\n- [Python 3.10](https://github.com/Afloat16/recommenders/actions/runs/43881322957/job/133347661825) and [Python 3.11](https://github.com/Afloat16/recommenders/actions/runs/43881322957/job/133347661099) independently reproduce the baseline failures and pass all nine regression tests on this exact head. Both retain the same existing failure in the 89-test core suite. The validation checks the exact expected failing names; it does not claim the full upstream suite is green.\r\n- Black on the changed Python files and `git diff --check` pass.\r\n\r\nHistorical review covered 1,497 upstream PR heads, 69 existing fork branches, and all 24 reachable LightGBM utility source versions across 147 commits, including intermediate commits and former paths.\r\n\r\n### Checklist\r\n\r\n- [x] I have followed the contribution guidelines and code style.\r\n- [x] I have added tests covering the change.\r\n- [x] I have updated the transform docstring.\r\n- [x] The commit includes the required `Signed-off-by` trailer.\r\n- [x] This PR targets `staging`.\r\n\r\n### Upstream CI observation\r\n\r\nThe upstream [job log](https://github.com/recommenders-team/recommenders/actions/runs/43882839803/job/133353134000) records an environment setup failure. The Aliyun Docker package index had an unexpected size (73831 bytes versus 74485 in the release metadata), and apt exited with code 100 during host setup before project tests ran. The other matrix jobs were cancelled. Independent validation of the exact contribution head is linked above.\r\n",
       "issue": 2445,
       "maintainer_can_modify": false,
       "validation": {
@@ -1983,7 +1983,7 @@
       "state": "open",
       "created_at": "2026-11-16T14:19:34Z",
       "merged_at": null,
-      "body": "### Description\n\nKCNN currently projects and applies `tanh` to the entire entity/context vocabulary before looking up a batch's rows. A batch with 40 entity positions therefore transforms two 10,000-row tables. Gather the fixed embeddings first when the batch has fewer positions than the vocabulary; otherwise retain full-table projection. Entity and context channels choose independently.\n\n`embedding_tables()` remains unchanged, so whole-vocabulary embedding regularization retains its meaning. Tests check the computation bound, float32/float64 outputs and parameter gradients, repeated/noncontiguous IDs, optional channels, unused entities in regularization, and a complete DKN optimizer step followed by evaluation.\n\nFixes #2448.\n\n### Validation\n\nBoth [Python 3.10](https://github.com/Afloat16/recommenders/actions/runs/43883924050/job/133356812851) and [Python 3.11](https://github.com/Afloat16/recommenders/actions/runs/43883924050/job/133356812352) validate this exact head `a8c132ba9975becd2d2bf74ae491cb432527bffa`:\n\n- Unchanged staging: **79 passed, 1 CUDA test skipped** across DKN, item-to-item DKN, DKN datasets and the shared FCN.\n- New regressions on unchanged staging: **4 failed, 12 passing controls**.\n- Exact improvement head: **95 passed, 1 CUDA test skipped**.\n- Black and `git diff --check` pass. Python 3.12.14 locally gives the same results.\n\n### Measured CPU effect\n\nThe [reproducible benchmark](https://github.com/Afloat16/recommenders/blob/validation/recommenders-kcnn-20261116/.validation/benchmark_kcnn.py) uses PyTorch 2.5.1+cpu, one thread, the same model weights/storage for both implementations, five warmups and alternating measurement order. The figures below are medians from the Python 3.11 runner.\n\n| Workload | Before | After | Speedup |\n|---|---:|---:|---:|\n| KCNN forward, 10k entities, 4 x 10 positions | 1.655 ms | 0.239 ms | 6.92x |\n| KCNN forward, 50k entities, 32 x 20 positions | 7.747 ms | 0.885 ms | 8.75x |\n| KCNN forward, 100k entities, 64 x 50 positions | 33.575 ms | 3.798 ms | 8.84x |\n| Dense control, 64 entities, 64 x 20 positions | 1.370 ms | 1.370 ms | 1.00x |\n| Complete DKN evaluation, 500 articles / 512 examples | 283.641 ms | 163.709 ms | 1.73x |\n\nKCNN forward plus backward improves **5.92x / 10.62x / 6.72x** for the three large-table cases; these microbenchmarks exclude embedding regularization. KCNN measurements use 31 samples; complete evaluation uses 15 and includes the existing article cache, scoring and metrics. All five evaluation metrics match; KCNN maximum output difference is zero in these benchmark cases.\n\n### Scope and checklist\n\nHistory review covered 1,497 upstream PR heads, 69 existing fork branches and all 40 reachable DKN source versions across 200 commits, including former paths and intermediate commits. #2402 deduplicates/caches article embeddings; this change removes repeated projection of unused knowledge-table rows within KCNN.\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression tests added to the existing registered DKN test module.\n- [x] The new helper documents its projection bound.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "body": "### Description\r\n\r\nKCNN currently projects and applies `tanh` to the entire entity/context vocabulary before looking up a batch's rows. A batch with 40 entity positions therefore transforms two 10,000-row tables. Gather the fixed embeddings first when the batch has fewer positions than the vocabulary; otherwise retain full-table projection. Entity and context channels choose independently.\r\n\r\n`embedding_tables()` remains unchanged, so whole-vocabulary embedding regularization retains its meaning. Tests check the computation bound, float32/float64 outputs and parameter gradients, repeated/noncontiguous IDs, optional channels, unused entities in regularization, and a complete DKN optimizer step followed by evaluation.\r\n\r\nFixes #2448.\r\n\r\n### Validation\r\n\r\nBoth [Python 3.10](https://github.com/Afloat16/recommenders/actions/runs/43883924050/job/133356812851) and [Python 3.11](https://github.com/Afloat16/recommenders/actions/runs/43883924050/job/133356812352) validate this exact head `a8c132ba9975becd2d2bf74ae491cb432527bffa`:\r\n\r\n- Unchanged staging: **79 passed, 1 CUDA test skipped** across DKN, item-to-item DKN, DKN datasets and the shared FCN.\r\n- New regressions on unchanged staging: **4 failed, 12 passing controls**.\r\n- Exact improvement head: **95 passed, 1 CUDA test skipped**.\r\n- Black and `git diff --check` pass. Python 3.12.14 locally gives the same results.\r\n\r\n### Measured CPU effect\r\n\r\nThe [reproducible benchmark](https://github.com/Afloat16/recommenders/blob/validation/recommenders-kcnn-20261116/.validation/benchmark_kcnn.py) uses PyTorch 2.5.1+cpu, one thread, the same model weights/storage for both implementations, five warmups and alternating measurement order. The figures below are medians from the Python 3.11 runner.\r\n\r\n| Workload | Before | After | Speedup |\r\n|---|---:|---:|---:|\r\n| KCNN forward, 10k entities, 4 x 10 positions | 1.655 ms | 0.239 ms | 6.92x |\r\n| KCNN forward, 50k entities, 32 x 20 positions | 7.747 ms | 0.885 ms | 8.75x |\r\n| KCNN forward, 100k entities, 64 x 50 positions | 33.575 ms | 3.798 ms | 8.84x |\r\n| Dense control, 64 entities, 64 x 20 positions | 1.370 ms | 1.370 ms | 1.00x |\r\n| Complete DKN evaluation, 500 articles / 512 examples | 283.641 ms | 163.709 ms | 1.73x |\r\n\r\nKCNN forward plus backward improves **5.92x / 10.62x / 6.72x** for the three large-table cases; these microbenchmarks exclude embedding regularization. KCNN measurements use 31 samples; complete evaluation uses 15 and includes the existing article cache, scoring and metrics. All five evaluation metrics match; KCNN maximum output difference is zero in these benchmark cases.\r\n\r\n### Scope and checklist\r\n\r\nHistory review covered 1,497 upstream PR heads, 69 existing fork branches and all 40 reachable DKN source versions across 200 commits, including former paths and intermediate commits. #2402 deduplicates/caches article embeddings; this change removes repeated projection of unused knowledge-table rows within KCNN.\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Regression tests added to the existing registered DKN test module.\r\n- [x] The new helper documents its projection bound.\r\n- [x] Commit includes the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n\r\n### Upstream CI observation\r\n\r\nThe upstream [job log](https://github.com/recommenders-team/recommenders/actions/runs/43884547842/job/133359140948) records an environment setup failure. The Aliyun Docker package index had an unexpected size (73831 bytes versus 74485 in the release metadata), and apt exited with code 100 during host setup before project tests ran. The other matrix jobs were cancelled. Independent validation of the exact contribution head is linked above.\r\n",
       "issue": 2448,
       "maintainer_can_modify": false,
       "validation": {
@@ -2031,12 +2031,12 @@
       "number": 2453,
       "url": "https://github.com/recommenders-team/recommenders/pull/2453",
       "title": "Keep SLi-Rec attention padding representable in float16",
-      "head": "e2647acfc6d50e84e7334f43d160d99742e297ec",
+      "head": "9cdeeb972c7909405ca9ff32778ca98baa0441f6",
       "head_ref": "Afloat16/bound-slirec-attention-padding-20261116",
       "state": "open",
       "created_at": "2026-11-16T14:42:27Z",
       "merged_at": null,
-      "body": "### Description\n\nSLi-Rec's masked attention constructs the TensorFlow-era sentinel `-(2**32)+1` in the score dtype. It cannot be represented in float16, so `full_like` raises before masking even for an entirely valid history. A complete SLi-Rec forward pass under CPU float16 autocast also fails.\n\nBound this finite sentinel by the score dtype's minimum finite value. Float32, float64 and bfloat16 retain the existing sentinel; float16 uses its representable lower bound. The existing fully padded-row behavior remains finite and unchanged.\n\nFixes #2450.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43887198998) checks exact head `e2647acfc6d50e84e7334f43d160d99742e297ec` against unchanged staging:\n\n- Python 3.10 and 3.11 with PyTorch 2.5.1: unchanged model suite **12 passed**; new cases on the baseline **4 failed, 10 passing controls**; patched model suite **26 passed**.\n- Python 3.10 with the declared PyTorch 2.0.1 minimum: **22 passed, 4 skipped**. Independent tiny operator probes confirm that this version lacks the CPU half linear/autocast support required by those four cases. Supported dtype cases run normally.\n- Tests cover float16/bfloat16/float32/float64 with empty, partial and full masks, plus complete SLi-Rec autocast forward, backward and optimizer steps.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 reproduces the same four failures and passes all 26 patched tests.\n\n### History review\n\nChecked 1,497 upstream PR heads, 69 existing fork branches and all 13 reachable SLi-Rec source versions across 74 commits, including previous TensorFlow paths and intermediate commits. This fix is limited to attention sentinel representability.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression tests added to the existing registered model test module.\n- [x] Comments explain the numerical choice; public API is unchanged.\n- [x] Commits include the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "body": "### Description\r\n\r\nSLi-Rec's masked attention constructs the TensorFlow-era sentinel `-(2**32)+1` in the score dtype. It cannot be represented in float16, so `full_like` raises before masking even for an entirely valid history. A complete SLi-Rec forward pass under CPU float16 autocast also fails.\r\n\r\nBound this finite sentinel by the score dtype's minimum finite value. Float32, float64 and bfloat16 retain the existing sentinel; float16 uses its representable lower bound. The existing fully padded-row behavior remains finite and unchanged.\r\n\r\nFixes #2450.\r\n\r\n### Validation\r\n\r\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43907660754) checks exact head `9cdeeb972c7909405ca9ff32778ca98baa0441f6` against unchanged staging:\r\n\r\n- Python 3.11 with PyTorch 2.5.1: unchanged model suite **12 passed**; new cases on the baseline **4 failed, 10 passing controls**; patched model suite **26 passed**.\r\n- Python 3.10 with the declared PyTorch 2.0.1 minimum: **22 passed, 4 skipped**. Independent tiny operator probes confirm that this version lacks the CPU half linear/autocast support required by those four cases. Supported dtype cases run normally.\r\n- Tests cover float16/bfloat16/float32/float64 with empty, partial and full masks, plus complete SLi-Rec autocast forward, backward and optimizer steps.\r\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 reproduces the same four failures and passes all 26 patched tests.\r\n\r\n### History review\r\n\r\nChecked 1,497 upstream PR heads, 69 existing fork branches and all 15 reachable SLi-Rec source versions, including previous TensorFlow paths, the former `sli_rec_pytorch.py` filename and intermediate commits. This fix is limited to attention sentinel representability.\r\n\r\n### Checklist\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Regression tests added to the existing registered model test module.\r\n- [x] Comments explain the numerical choice; public API is unchanged.\r\n- [x] Commits include the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n\r\n### Device-migration compatibility\r\n\r\nThe CPU autocast test explicitly places loader results on CPU without assigning model device metadata. The linked run also validates this exact head together with the independent device-migration fix for #2470: **31 passed, 2 CUDA-only skips** on PyTorch 2.5.1 and **27 passed, 6 skips** on 2.0.1 (two CUDA cases and four unsupported CPU-half cases).\r\n",
       "issue": 2450,
       "maintainer_can_modify": false,
       "validation": {
@@ -2044,7 +2044,7 @@
         "regressions_before": "4 failed, 10 passed",
         "after": "26 passed",
         "minimum_version_after": "22 passed, 4 CPU half capability skips",
-        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43887198998",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43907660754",
         "versions": [
           "Python 3.10/PyTorch 2.0.1",
           "Python 3.10/PyTorch 2.5.1",
@@ -2052,15 +2052,20 @@
           "Python 3.12.14/PyTorch 2.5.1"
         ],
         "black": "passed",
-        "diff_check": "passed"
+        "diff_check": "passed",
+        "combined": "31 passed, 2 CUDA skips; floor 27 passed, 6 skips"
       },
       "novelty": {
         "upstream_pr_heads": 1497,
         "old_fork_branches": 69,
         "evidence": [
           "audit/recommenders-history-sli_rec.py.json"
-        ]
-      }
+        ],
+        "former_filename_audit": "audit/recommenders-next-novelty-review.json",
+        "historical_blobs": 15
+      },
+      "head_sha": "8686ca9726be9f617f0ea790bbf3d3ea8fd2c0c2",
+      "validation_url": "https://github.com/Afloat16/recommenders/actions/runs/43896904939"
     },
     {
       "repo": "recommenders-team/recommenders",
@@ -2110,7 +2115,7 @@
       "state": "open",
       "created_at": "2026-11-16T14:43:53Z",
       "merged_at": null,
-      "body": "### Description\n\nxDeepFM expresses both RMSE and CIN Frobenius regularization as a square root of a sum of squares. At an exact fit or an all-zero CIN filter, the forward value is valid but the composed backward produces NaN gradients. An optimizer step can consequently corrupt otherwise finite model parameters.\n\nCompute these objectives with `torch.linalg.vector_norm`, which selects a finite zero subgradient at the origin. Divide the residual norm by the square root of the element count to preserve RMSE. The CIN term still uses the Frobenius norm of the entire filter. Both occurrences of this zero-norm issue are handled together.\n\nFixes #2452.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43887605963) checks exact head `a19e80dafb707cd6abb30de08b80da6dbf3040f1` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged xDeepFM, FFM dataset and shared FCN suites: **35 passed**.\n- New regressions on unchanged staging: **10 failed, 4 passing controls**.\n- Patched suites: **49 passed** in both environments.\n- Tests cover float32/float64, regression/classification exact fits, one/two CIN layers, independent nonzero RMSE and 3-4-5 norm gradient references, and complete model Adam steps for both zero-norm cases.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 existing fork branches, including all 6 reachable PyTorch xDeepFM versions, 22 former TensorFlow xDeepFM versions and 102 shared base-model versions, with intermediate and former-path commits included.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression tests added to the existing registered model test module.\n- [x] Comments explain the numerical choice; public API is unchanged.\n- [x] Commits include the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "body": "### Description\r\n\r\nxDeepFM expresses both RMSE and CIN Frobenius regularization as a square root of a sum of squares. At an exact fit or an all-zero CIN filter, the forward value is valid but the composed backward produces NaN gradients. An optimizer step can consequently corrupt otherwise finite model parameters.\r\n\r\nCompute these objectives with `torch.linalg.vector_norm`, which selects a finite zero subgradient at the origin. Divide the residual norm by the square root of the element count to preserve RMSE. The CIN term still uses the Frobenius norm of the entire filter. Both occurrences of this zero-norm issue are handled together.\r\n\r\nFixes #2452.\r\n\r\n### Validation\r\n\r\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43887605963) checks exact head `a19e80dafb707cd6abb30de08b80da6dbf3040f1` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\r\n\r\n- Unchanged xDeepFM, FFM dataset and shared FCN suites: **35 passed**.\r\n- New regressions on unchanged staging: **10 failed, 4 passing controls**.\r\n- Patched suites: **49 passed** in both environments.\r\n- Tests cover float32/float64, regression/classification exact fits, one/two CIN layers, independent nonzero RMSE and 3-4-5 norm gradient references, and complete model Adam steps for both zero-norm cases.\r\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\r\n\r\n### History review\r\n\r\nChecked 1,497 upstream PR heads and 69 existing fork branches, including all 6 reachable PyTorch xDeepFM versions, 22 former TensorFlow xDeepFM versions and 102 shared base-model versions, with intermediate and former-path commits included.\r\n\r\n### Checklist\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Regression tests added to the existing registered model test module.\r\n- [x] Comments explain the numerical choice; public API is unchanged.\r\n- [x] Commits include the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n\r\n### Upstream CI observation\r\n\r\nThe upstream [job log](https://github.com/recommenders-team/recommenders/actions/runs/43888820974/job/133374249182) records an environment setup failure. The Python 3.10 CPU/Spark job stopped while building its Docker image: adding the deadsnakes PPA raised `http.client.IncompleteRead` before Python installation or project tests ran. The other matrix jobs were cancelled. Independent validation of the exact contribution head is linked above.\r\n",
       "issue": 2452,
       "maintainer_can_modify": false,
       "validation": {
@@ -2146,19 +2151,19 @@
       "number": 2458,
       "url": "https://github.com/recommenders-team/recommenders/pull/2458",
       "title": "Use the latest observed time in SLi-Rec preference fusion",
-      "head": "034170008fe29d2c455bf6f7f355dd23f7b0393b",
+      "head": "a9147aa957d9793832899e1285febfe95eae77a0",
       "head_ref": "Afloat16/use-observed-slirec-recency-20261116",
       "state": "open",
       "created_at": "2026-11-16T14:57:07Z",
       "merged_at": null,
-      "body": "### Description\n\nThe adaptive preference-fusion gate reads `time_to_now[:, -1:]`, but the dataset left-aligns history and pads the remaining columns. Short histories therefore supply a padded zero instead of the interval since the latest real behavior. With two observations and a three-day gap, the gate receives `log(3)` at maximum length 2 and zero at maximum length 5.\n\nUse the existing sequence length to gather the last observed time, and supply a neutral zero for an empty history. Full and truncated histories keep their existing temporal context. The correction changes the fusion feature only; checkpoint parameter shapes are unchanged.\n\nFixes #2456.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43890448743) checks exact head `034170008fe29d2c455bf6f7f355dd23f7b0393b` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged SLi-Rec suite: **12 passed**.\n- New cases on the baseline: **7 failed, 8 passing controls**.\n- Patched model suite: **27 passed**.\n- Native dataset tests cover short/full/truncated histories, maximum length one, and positive/negative sample groups. Additional cases cover mixed and empty masks and noncontiguous time tensors.\n- Complete float32/float64 model predictions, parameter gradients and Adam updates match a separate row-wise reference that selects the last observed event.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\n### References and history\n\nThe [SLi-Rec paper, section 3.3](https://www.ijcai.org/proceedings/2019/0585.pdf) uses temporal context to adapt preference fusion and evaluates the interval since a user's last behavior. This patch restores the observed interval as the fusion input.\n\nChecked 1,497 upstream PR heads, 69 existing fork branches and all 13 reachable SLi-Rec source versions across 74 commits, including former TensorFlow paths and intermediate commits. All historical variants select the final padded column.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression tests added to the existing registered model test module.\n- [x] The code comment explains the padding/recency distinction.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "body": "### Description\r\n\r\nThe adaptive preference-fusion gate reads `time_to_now[:, -1:]`, but the dataset left-aligns history and pads the remaining columns. Short histories therefore supply a padded zero instead of the interval since the latest real behavior. With two observations and a three-day gap, the gate receives `log(3)` at maximum length 2 and zero at maximum length 5.\r\n\r\nUse the existing sequence length to gather the last observed time, and supply a neutral zero for an empty history. Full and truncated histories keep their existing temporal context. The correction changes the fusion feature only; checkpoint parameter shapes are unchanged.\r\n\r\nFixes #2456.\r\n\r\n### Validation\r\n\r\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43896904939) checks exact head `a9147aa957d9793832899e1285febfe95eae77a0` on Python 3.10/PyTorch 2.0.1 and Python 3.10\u20133.11/PyTorch 2.5.1:\r\n\r\n- Unchanged SLi-Rec suite: **12 passed**.\r\n- New cases on the baseline: **7 failed, 8 passing controls**.\r\n- Patched model suite: **27 passed**.\r\n- Native dataset tests cover short/full/truncated histories, maximum length one, and positive/negative sample groups. Additional cases cover mixed and empty masks and noncontiguous time tensors.\r\n- Complete float32/float64 model predictions, parameter gradients and Adam updates match a separate row-wise reference that selects the last observed event.\r\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\r\n\r\n### References and history\r\n\r\nThe [SLi-Rec paper, section 3.3](https://www.ijcai.org/proceedings/2019/0585.pdf) uses temporal context to adapt preference fusion and evaluates the interval since a user's last behavior. This patch restores the observed interval as the fusion input.\r\n\r\nChecked 1,497 upstream PR heads, 69 existing fork branches and all 15 reachable SLi-Rec source versions, including former TensorFlow paths, the former `sli_rec_pytorch.py` filename and intermediate commits. All historical variants select the final padded column.\r\n\r\n### Checklist\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Regression tests added to the existing registered model test module.\r\n- [x] The code comment explains the padding/recency distinction.\r\n- [x] Commit includes the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n",
       "issue": 2456,
       "maintainer_can_modify": false,
       "validation": {
         "baseline": "12 passed",
         "regressions_before": "7 failed, 8 passed",
         "after": "27 passed",
-        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43890448743",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43896904939",
         "versions": [
           "Python 3.10/PyTorch 2.0.1",
           "Python 3.11/PyTorch 2.5.1",
@@ -2171,9 +2176,12 @@
         "upstream_pr_heads": 1497,
         "old_fork_branches": 69,
         "historical_commits": 74,
-        "historical_blobs": 13,
-        "evidence": "audit/recommenders-history-sli_rec.py.json"
-      }
+        "historical_blobs": 15,
+        "evidence": "audit/recommenders-history-sli_rec.py.json",
+        "former_filename_audit": "audit/recommenders-next-novelty-review.json"
+      },
+      "head_sha": "a9147aa957d9793832899e1285febfe95eae77a0",
+      "validation_url": "https://github.com/Afloat16/recommenders/actions/runs/43896904939"
     },
     {
       "repo": "recommenders-team/recommenders",
@@ -2185,7 +2193,7 @@
       "state": "open",
       "created_at": "2026-11-16T14:59:32Z",
       "merged_at": null,
-      "body": "### Description\n\nThe sequential trainer treats every validation metric as higher-is-better. Choosing `logloss` or `rmse` therefore saves the model with the largest error and can stop when that error decreases. A real SLi-Rec run selects epoch 3 (logloss 0.7067) although epoch 1 has the lowest observed error (0.7017).\n\nMinimize the two supported error metrics and continue maximizing ranking/accuracy metrics. Initialize the comparison with the corresponding infinity so a valid zero score can establish the first checkpoint. Checkpoint selection and early-stopping patience use the same comparison. Document the metric direction in `fit`.\n\nFixes #2457.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43891129363) checks exact head `201ca1ac15ae441749a7fad848cdb0a089f97a0d` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged SLi-Rec suite: **12 passed**.\n- New cases on unchanged staging: **8 failed, 3 passing controls**.\n- Patched model suite: **23 passed**.\n- Controlled metric trajectories verify direction, zero scores, ties, non-improving NaN scores, patience and exact saved weights while the training loop performs real forward/backward/Adam steps.\n- Separate integration cases calculate actual logloss, RMSE and AUC during three training epochs, independently find the optimum, reload the saved checkpoint and reproduce its validation score.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 existing fork branches, including both reachable PyTorch sequential-base versions and all 20 historical TensorFlow sequential-base versions across 100 commits. These variants initialize `best_metric=0` and maximize every evaluation metric; intermediate commits and former paths are included.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Tests added to the existing registered SLi-Rec test module.\n- [x] The public `fit` docstring describes metric direction.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "body": "### Description\r\n\r\nThe sequential trainer treats every validation metric as higher-is-better. Choosing `logloss` or `rmse` therefore saves the model with the largest error and can stop when that error decreases. A real SLi-Rec run selects epoch 3 (logloss 0.7067) although epoch 1 has the lowest observed error (0.7017).\r\n\r\nMinimize the two supported error metrics and continue maximizing ranking/accuracy metrics. Initialize the comparison with the corresponding infinity so a valid zero score can establish the first checkpoint. Checkpoint selection and early-stopping patience use the same comparison. Document the metric direction in `fit`.\r\n\r\nFixes #2457.\r\n\r\n### Validation\r\n\r\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43891129363) checks exact head `201ca1ac15ae441749a7fad848cdb0a089f97a0d` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\r\n\r\n- Unchanged SLi-Rec suite: **12 passed**.\r\n- New cases on unchanged staging: **8 failed, 3 passing controls**.\r\n- Patched model suite: **23 passed**.\r\n- Controlled metric trajectories verify direction, zero scores, ties, non-improving NaN scores, patience and exact saved weights while the training loop performs real forward/backward/Adam steps.\r\n- Separate integration cases calculate actual logloss, RMSE and AUC during three training epochs, independently find the optimum, reload the saved checkpoint and reproduce its validation score.\r\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\r\n\r\n### History review\r\n\r\nChecked 1,497 upstream PR heads and 69 existing fork branches, including all four reachable PyTorch sequential-base versions under the current and former `sequential_base_pytorch.py` filenames and all 20 historical TensorFlow sequential-base versions across 100 commits. These variants initialize `best_metric=0` and maximize every evaluation metric; intermediate commits and former paths are included.\r\n\r\n### Checklist\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Tests added to the existing registered SLi-Rec test module.\r\n- [x] The public `fit` docstring describes metric direction.\r\n- [x] Commit includes the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n",
       "issue": 2457,
       "maintainer_can_modify": false,
       "validation": {
@@ -2207,6 +2215,303 @@
         "evidence": [
           "audit/recommenders-history-sequential_base.py.json",
           "audit/recommenders-history-sequential_base_model.py.json"
+        ],
+        "former_filename_audit": "audit/recommenders-next-novelty-review.json",
+        "pytorch_historical_blobs": 4
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2461,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2461",
+      "title": "Skip shared padding in the SLi-Rec recurrent scan",
+      "head": "747087a8b6cef54a0bdc8545bc3d3bd31148f3c5",
+      "head_ref": "Afloat16/bound-slirec-padded-recurrence-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T15:17:02Z",
+      "merged_at": null,
+      "body": "### Description\n\nThe Time4LSTM driver executes every padded step, even after all histories in a batch have ended. A batch whose longest history has seven events still performs 50 cell calls at the default maximum length.\n\nStop recurrent work at the longest valid history and append a zero output tail. Keep one differentiable step for all-padding batches so input and parameter gradients remain zero tensors. Output shape, parameter layout and the full-width behavior for dense or empty batches are preserved.\n\nFixes #2460.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43893999137) checks exact head `747087a8b6cef54a0bdc8545bc3d3bd31148f3c5` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged SLi-Rec suite: **12 passed**.\n- New cases on unchanged staging: **11 failed, 6 passing controls**.\n- Patched model suite: **29 passed** in both environments.\n- Float32/float64 tests compare outputs and input/parameter gradients with the original full-width unroll, including mixed lengths, all padding, noncontiguous views, dense histories and empty batches.\n- Complete model predictions, binary cross-entropy gradients, Adam updates and file-evaluation metrics match the reference.\n- Black and `git diff --check` pass.\n\n### Measured effect\n\nLocal CPU, Python 3.12.14/PyTorch 2.5.1, one thread, five warmups and 31 alternating samples per version:\n\n| Workload | Unchanged staging | Bounded scan | Speedup |\n| --- | ---: | ---: | ---: |\n| Cell forward, 32 rows, 7 valid / 50 padded steps | 10.25 ms | 1.49 ms | 6.88x |\n| Cell forward and backward, same batch | 54.93 ms | 10.01 ms | 5.49x |\n| Complete file evaluation, 40 examples, maximum 7 / 50 steps | 38.76 ms | 27.87 ms | 1.39x |\n| Dense 50 / 50 forward control | 10.39 ms | 10.49 ms | 0.99x |\n| Dense 50 / 50 forward/backward control | 50.88 ms | 51.32 ms | 0.99x |\n\nThe complete evaluation includes the dataset, model, attention and seven ranking/classification metrics; all reported metrics are unchanged. Dense controls were about 1% slower in this measurement. Determining the bound reads the maximum sequence length once; CUDA timings were not measured. The validation workflow includes the benchmark script and results as artifacts.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 existing fork branches, including both reachable Time4LSTM driver versions under the current and former `rnn_cell_pytorch.py` filenames and their intermediate commits. Both execute the full padded width.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regressions added to the existing registered SLi-Rec test module.\n- [x] Padding and differentiability choices documented.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "issue": 2460,
+      "maintainer_can_modify": false,
+      "validation": {
+        "baseline": "12 passed",
+        "regressions_before": "11 failed, 6 passed",
+        "after": "29 passed",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43893999137",
+        "versions": [
+          "Python 3.10/PyTorch 2.0.1",
+          "Python 3.11/PyTorch 2.5.1",
+          "Python 3.12.14/PyTorch 2.5.1"
+        ],
+        "black": "passed",
+        "diff_check": "passed",
+        "benchmark": "audit/benchmark_slirec_bounded_scan.json",
+        "remote_file_eval_speedup": 1.46347556425324
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 2,
+        "evidence": [
+          "audit/recommenders-history-rnn_cell.py.json",
+          "audit/recommenders-history-rnn_cell_pytorch.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2463,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2463",
+      "title": "Preserve sequential ranking groups across evaluation batches",
+      "head": "8325924934e574c081031cf8be91bfe24f5a720c",
+      "head_ref": "Afloat16/preserve-cross-batch-ranking-groups-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T15:30:03Z",
+      "merged_at": null,
+      "body": "### Description\n\nSequential evaluation reshapes each inference batch into ranking groups. A valid file containing one positive and four negatives per group therefore fails with batch sizes such as 8 or 32, because a group crosses the batch boundary. The same error interrupts validation inside `fit`.\n\nCollect predictions and labels in file order, then form the ranking groups once all batches are available. This keeps group membership independent of the inference batch size. Aligned-batch metrics remain unchanged, and incomplete input files still raise instead of silently discarding rows.\n\nFixes #2462.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43895839192) checks exact head `8325924934e574c081031cf8be91bfe24f5a720c` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged SLi-Rec suite: **12 passed**.\n- New cases on unchanged staging: **13 failed, 9 passing controls**.\n- Patched model suite: **34 passed** in both environments.\n- Native file evaluation covers one, two and four negatives per group and batch sizes 1, 3, 8, 16, 32 and 100. All seven reported metrics match the single-batch reference.\n- Two integration cases perform real training and parameter updates, then validate with unaligned training batch sizes.\n- Additional cases cover whole-group history filtering and rejection of a truncated final group.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 existing fork branches, including all four reachable PyTorch sequential-base versions under both current and former filenames and all 20 historical TensorFlow sequential-base-model versions. These variants all reshape ranking groups within each batch; intermediate commits and former paths are included.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regressions added to the existing registered SLi-Rec test module.\n- [x] The evaluation docstring describes cross-batch groups.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "issue": 2462,
+      "maintainer_can_modify": false,
+      "validation": {
+        "baseline": "12 passed",
+        "regressions_before": "13 failed, 9 passed",
+        "after": "34 passed",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43895839192",
+        "versions": [
+          "Python 3.10/PyTorch 2.0.1",
+          "Python 3.11/PyTorch 2.5.1",
+          "Python 3.12.14/PyTorch 2.5.1"
+        ],
+        "black": "passed",
+        "diff_check": "passed"
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "pytorch_versions": 4,
+        "legacy_versions": 20,
+        "evidence": [
+          "audit/recommenders-history-sequential_base.py.json",
+          "audit/recommenders-history-sequential_base_pytorch.py.json",
+          "audit/recommenders-history-sequential_base_model.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2465,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2465",
+      "title": "Preserve RLRMC ratings for repeated pairs and low-memory prediction",
+      "head": "f74abf8dffada2f9f4b70286fd043aba4fd12b04",
+      "head_ref": "Afloat16/preserve-rlrmc-pair-predictions-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T15:47:20Z",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "issue": 2464,
+      "body": "### Description\n\nRLRMC trains on mean-centered ratings. Its low-memory prediction path subtracts the training mean, while its sparse path adds the mean only correctly for unique pairs. Repeated coordinates are combined by CSR construction, which accumulates their offsets and leaves some requested output entries unwritten. A factor score of 10 with training mean 3 consequently returns 7 in low-memory mode and `[16, -3]` for two identical pairs in sparse mode.\n\nRestore the mean in both paths. Score sorted unique pairs with the existing sparse Numba kernel, then map the scores back to every original occurrence. Repeated and unsorted requests now preserve their order and multiplicity, and empty requests return an empty float64 array. This retains sparse scoring without gathering a dense factor array for every requested pair.\n\nFixes #2464.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43899465242) checks exact head `f74abf8dffada2f9f4b70286fd043aba4fd12b04` against unchanged staging using the Pymanopt revision documented in `setup.py`:\n\n- Python 3.10: NumPy 1.24.4, SciPy 1.10.1, Numba 0.57.1.\n- Python 3.11: NumPy 1.26.4, SciPy 1.13.1, Numba 0.61.2.\n- Existing GeoIMC experimental controls: **12 passed**.\n- New tests on unchanged RLRMC: **17 failed, 11 passing controls**.\n- Patched RLRMC and GeoIMC suites: **40 passed**, with no skips, in both environments.\n- Cases cover positive, negative and zero training means; string IDs; noncontiguous factors; unique, interleaved and repeated pairs; batch partitioning; empty and mismatched inputs.\n- Four integration cases run native RLRMC training with and without centering and compare both prediction modes to an independent factor-sum reference.\n- Black and `git diff --check` pass. Local Python 3.12.14 gives the same results.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 pre-existing fork branches, including 14 RLRMC algorithm source versions from 85 reachable commits under current and former paths. None contains an equivalent prediction correction. The earlier fork change to RLRMC dataset column names concerns data preprocessing and is separate from pair scoring.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Native regressions registered in the experimental CPU test group.\n- [x] Prediction docstring documents repeated pairs and mean restoration.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "validation": {
+        "baseline": "12 passed",
+        "regressions_before": "17 failed, 11 passing controls",
+        "after": "40 passed",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43899465242",
+        "versions": [
+          "Python 3.10/NumPy 1.24.4/SciPy 1.10.1/Numba 0.57.1",
+          "Python 3.11/NumPy 1.26.4/SciPy 1.13.1/Numba 0.61.2"
+        ],
+        "pymanopt": "fb36a272cdeecb21992cfd9271eb82baafeb316d",
+        "black": "passed",
+        "diff_check": "passed"
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 14,
+        "historical_commits": 85,
+        "evidence": [
+          "audit/recommenders-history-RLRMCalgorithm.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2467,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2467",
+      "title": "Keep DKN item-to-item normalization finite in low precision",
+      "head": "eb6af96ae54feacc80b31fd3cb71869a55edc1ad",
+      "head_ref": "Afloat16/stabilize-item2item-normalization-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T16:03:36Z",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "issue": 2466,
+      "body": "### Description\n\nDKN item-to-item normalization squares article embeddings and applies its `1e-12` floor in the embedding dtype. In float16 the floor rounds to zero, so zero embeddings become NaN; small nonzero embeddings can also underflow during squaring. Native KCNN outputs then contaminate relation scores and the training loss, including under CPU float16 autocast.\n\nCompute normalization in float32 for float16/bfloat16 embeddings, then return the original dtype. This preserves the squared-norm floor and zero-vector convention. Float32 and float64 keep the existing calculation exactly.\n\nFixes #2466.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43902450955) checks exact head `eb6af96ae54feacc80b31fd3cb71869a55edc1ad` against unchanged staging:\n\n- Python 3.11/PyTorch 2.5.1: existing DKN, item-to-item and dataset suites **71 passed, 1 CUDA-only skip**; new regressions on the baseline **6 failed, 10 passing controls**; patched suites **87 passed, 1 CUDA-only skip**.\n- Python 3.10/PyTorch 2.0.1: **80 passed, 8 skipped** after the patch. One skip is the existing CUDA test; seven new float16 CPU cases require native linear/autocast capabilities absent from this version. An independent tiny operator probe confirms that limitation.\n- Four dtypes and zero, small and ordinary embeddings are checked against a float64 vector-norm reference. Float32/float64 results additionally match the former expression exactly.\n- Complete native KCNN/document-transform/relation-score paths run forward, backward and SGD updates with explicit half parameters and CPU half autocast. Scores, loss, gradients and updated parameters remain finite; nonzero cases verify that parameters actually change.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same six baseline failures and **87 passed, 1 skipped** after the patch.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 pre-existing fork branches, including all 16 reachable item-to-item source versions from 74 commits under current and former paths. The PyTorch variant normalizes in the input dtype; earlier TensorFlow variants use their float32 graph normalization. No previous PyTorch accumulator-promotion correction was found.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regressions added to the existing registered item-to-item test module.\n- [x] Code comment explains why low-precision accumulation needs promotion.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "validation": {
+        "baseline": "71 passed, 1 CUDA-only skip",
+        "regressions_before": "6 failed, 10 passing controls",
+        "after": "87 passed, 1 CUDA-only skip",
+        "minimum_version_after": "80 passed, 8 skipped (7 CPU half capabilities; 1 existing CUDA test)",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43902450955",
+        "versions": [
+          "Python 3.10/PyTorch 2.0.1",
+          "Python 3.11/PyTorch 2.5.1",
+          "Python 3.12.14/PyTorch 2.5.1"
+        ],
+        "black": "passed",
+        "diff_check": "passed"
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 16,
+        "historical_commits": 74,
+        "evidence": [
+          "audit/recommenders-history-dkn_item2item.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2469,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2469",
+      "title": "Reuse the GeoIMC middle-factor square root within inference",
+      "head": "1e0d50e49448c5496d50c2c8bf9cb3654d2a47d1",
+      "head_ref": "Afloat16/reuse-geoimc-inference-square-root-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T16:20:02Z",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "issue": 2468,
+      "body": "### Description\n\nGeoIMC computes the same middle-factor matrix square root twice in every inference call, once for row features and once for column features. This repeated decomposition dominates the measured small-query cases.\n\nCompute it once and reuse it for both projections within that call. The scoring formula and transformations stay the same. Subsequent calls still recompute from the current weights, and the direct-embedding list path remains independent of the factor matrices.\n\nFixes #2468.\n\n### Validation and performance\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43904653540) checks exact head `1e0d50e49448c5496d50c2c8bf9cb3654d2a47d1` with the documented Pymanopt revision:\n\n- Python 3.10: NumPy 1.24.4, SciPy 1.10.1, Numba 0.57.1.\n- Python 3.11: NumPy 1.26.4, SciPy 1.13.1, Numba 0.61.2.\n- Original GeoIMC tests: **12 passed**. Expanded equivalence suite: **26 passed** on both unchanged staging and the patch, without skips.\n- Added checks cover float32/float64, filtered entity rows, all three score transformations, direct embeddings, unchanged input matrices and updated weights between calls.\n- The complete inference benchmark uses five warmups and 31 alternating measurements with one BLAS thread. Every paired output is bitwise identical within its environment, and square-root calls decrease from two to one.\n\nPython 3.11 runner results for fixed synthetic feature matrices:\n\n| Scenario | Rank | Before | After | Speedup |\n| --- | ---: | ---: | ---: | ---: |\n| 943 users \u00d7 1,682 items, 128 features | 8 | 2.697 ms | 2.572 ms | 1.05\u00d7 |\n| 1 user \u00d7 256 items, 128 features | 32 | 0.686 ms | 0.388 ms | 1.77\u00d7 |\n| 1 user \u00d7 256 items, 256 features | 128 | 14.220 ms | 7.366 ms | 1.93\u00d7 |\n\nThe other dependency environment gives 1.04\u00d7, 1.77\u00d7 and 1.91\u00d7 for the same shapes. These measurements are fixture-specific: large low-rank batches spend most of their time outside the square-root decomposition.\n\nBlack and `git diff --check` pass. Benchmark code, all individual timing samples, dependency versions and test logs are included in the validation branch and run artifacts.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 pre-existing fork branches, including nine reachable GeoIMC prediction source versions from 48 commits and their former paths. All factor-based variants compute the square root separately for both projections; the earlier fork top-k changes are unrelated.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Equivalence cases registered in the experimental CPU test group.\n- [x] Code comment describes the shared factor within an inference call.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "validation": {
+        "baseline": "12 passed",
+        "equivalence_suite_baseline": "26 passed",
+        "after": "26 passed; no skips in either dependency environment",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43904653540",
+        "versions": [
+          "Python 3.10/NumPy 1.24.4/SciPy 1.10.1/Numba 0.57.1",
+          "Python 3.11/NumPy 1.26.4/SciPy 1.13.1/Numba 0.61.2"
+        ],
+        "performance": "31 alternating full-inference trials; one BLAS thread; output bitwise identical; 1.05x bulk, 1.77x rank32, 1.93x rank128 on Python 3.11",
+        "black": "passed",
+        "diff_check": "passed"
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 9,
+        "historical_commits": 48,
+        "evidence": [
+          "audit/recommenders-history-geoimc_predict.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2471,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2471",
+      "title": "Follow SLi-Rec parameter placement after native device moves",
+      "head": "4d1b220158d15d93636e565f2298560fe0cb484c",
+      "head_ref": "Afloat16/follow-slirec-parameter-device-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T16:32:05Z",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "issue": 2470,
+      "body": "### Description\n\nSLi-Rec stores the device selected at construction in a plain attribute. Native module migration moves parameters but leaves that attribute unchanged, so dataset tensors, regularization and checkpoint loading can use a different device from the model.\n\nRead the device from the item-embedding weights instead. Initial automatic CPU/CUDA selection is preserved; native `to()`, `cpu()` and `to_empty()` then require no separate metadata update. Parameter names and checkpoint tensors remain unchanged.\n\nFixes #2470.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43907660754) checks exact head `4d1b220158d15d93636e565f2298560fe0cb484c` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged model suite: **12 passed** in both environments.\n- New cases on unchanged staging: **4 failed, 1 passing control, 2 CUDA-only skips**.\n- Patched full model suite: **17 passed, 2 CUDA-only skips** in both environments.\n- Native meta transitions reproduce the original full-forward mixed-device failure and verify batch placement, shapes, dtypes and regularization. Meta cases assess placement rather than numerical predictions.\n- A native CPU \u2192 meta \u2192 CPU round trip restores an actual checkpoint, reproduces every saved prediction exactly and runs finite-gradient SGD steps that change parameters. No mocked device operators are used.\n- CUDA-to-CPU tests cover both `cpu()` and `to(\"cpu\")`, including checkpoint loading, prediction and training. They are committed but skipped on these CPU runners; no CUDA execution is claimed.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\nThe validation also combines this change with the exact updated attention fix in #2453. Its CPU test no longer assigns device metadata. Combined results are **31 passed, 2 CUDA-only skips** on PyTorch 2.5.1 and **27 passed, 6 skips** on 2.0.1 (two CUDA cases plus four independently confirmed unsupported CPU-half cases).\n\n### History review\n\nChecked 1,497 pre-existing upstream PR heads and 69 fork branches, including all four reachable PyTorch sequential-base source versions from nine commits under current and former filenames. They all retain the initialization-time device. Earlier LightGCN graph-buffer work addresses unregistered graph tensors, a separate cause.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regressions added to the existing registered model test module.\n- [x] Device property documents its native-migration behavior.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "validation": {
+        "baseline": "12 passed",
+        "regressions_before": "4 failed, 1 passing control, 2 CUDA-only skips",
+        "after": "17 passed, 2 CUDA-only skips on both dependency versions",
+        "matrix_run": "https://github.com/Afloat16/recommenders/actions/runs/43907660754",
+        "versions": [
+          "Python 3.10/PyTorch 2.0.1",
+          "Python 3.11/PyTorch 2.5.1",
+          "Python 3.12.14/PyTorch 2.5.1"
+        ],
+        "integration": "31 passed, 2 CUDA skips on 2.5.1; 27 passed, 6 skips on 2.0.1 with exact updated #2453",
+        "black": "passed",
+        "diff_check": "passed"
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 4,
+        "historical_commits": 9,
+        "evidence": [
+          "audit/recommenders-history-sequential_base.py.json",
+          "audit/recommenders-history-sequential_base_pytorch.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2473,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2473",
+      "title": "Reject FFM fields before they alias another instance",
+      "head": "bb40866a7747ffbf2c95021b22ab6b4f488d20d1",
+      "head_ref": "Afloat16/reject-cross-instance-ffm-fields-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T16:49:59Z",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "issue": 2472,
+      "body": "### Description\n\nFFM field positions are flattened across the whole batch before bounds are checked. An out-of-range field can therefore land in another training instance: with `field_count=4`, a field numbered 5 on the first row becomes field 1 on the second row. The same input is rejected with batch size 1 but silently changes another example with batch size 2.\n\nValidate each zero-based field index against `field_count` before adding the instance offset. Keep the existing global consistency check and preserve valid sparse fields, repeated fields, empty feature rows, values and ordering.\n\nFixes #2472.\n\n### Validation\n\n[Independent before/after validation](https://github.com/Afloat16/recommenders/actions/runs/43910433462) checks exact head `bb40866a7747ffbf2c95021b22ab6b4f488d20d1` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged FFM and xDeepFM suites: **27 passed** in both environments.\n- New cases against unchanged staging: **8 failed, 5 passing controls**.\n- Patched full FFM and xDeepFM suites: **40 passed** in both environments, with no skipped tests.\n- Six loader cases expose forward and backward aliasing across three records.\n- Two native xDeepFM training cases reject the malformed input before any optimizer update; model parameters remain unchanged.\n- Five valid-data controls compare complete predictions and gradients across single-record and three-record batches for the linear, FM, CIN, DNN and combined paths. They include empty rows, repeated and unsorted fields, signed feature values and the largest valid field.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 also passes all 40 tests.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads and 69 fork branches. The current FFM dataset and its former TensorFlow iterator/cache implementations contain 24 distinct reachable source versions across 168 commits; none checks the field against its own instance before flattening. Existing batch-size handling does not address this cross-record aliasing.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression tests extend the existing FFM and xDeepFM test modules.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "validation": [
+        {
+          "url": "https://github.com/Afloat16/recommenders/actions/runs/43910433462/job/133450545732",
+          "name": "validate (3.10, 2.0.1)",
+          "conclusion": "success"
+        },
+        {
+          "url": "https://github.com/Afloat16/recommenders/actions/runs/43910433462/job/133450546368",
+          "name": "validate (3.11, 2.5.1)",
+          "conclusion": "success"
+        }
+      ],
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 24,
+        "historical_commits": 168,
+        "evidence": [
+          "audit/recommenders-history-ffm_dataset.py.json",
+          "audit/recommenders-history-iterator.py.json",
+          "audit/recommenders-history-ffm_cache.py.json"
+        ]
+      }
+    },
+    {
+      "repo": "recommenders-team/recommenders",
+      "number": 2475,
+      "url": "https://github.com/recommenders-team/recommenders/pull/2475",
+      "title": "Exclude masked NewsRec positions from the attention shift",
+      "head": "b890261b4c6df7b10e7e9af511b96e247fe8bf5e",
+      "head_ref": "Afloat16/exclude-masked-newsrec-shift-20261116",
+      "state": "open",
+      "created_at": "2026-11-16T17:01:16Z",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "issue": 2474,
+      "body": "### Description\n\nNewsRec additive attention chooses its stabilizing maximum before excluding masked positions. A high-scoring padding position can drive every valid exponential below the fixed denominator epsilon. Valid title content then disappears, with zero input gradients in float32 and severely attenuated outputs even in float64.\n\nExclude masked scores before choosing the shift. Keep a finite sentinel so entirely masked rows still return finite zeros with zero gradients. The unmasked path and learned parameter structure remain unchanged.\n\nFixes #2474.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43913345232) checks exact candidate `b890261b4c6df7b10e7e9af511b96e247fe8bf5e` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged NewsRec model suite: **38 passed** in both environments.\n- New cases against unchanged staging: **8 failed, 4 passing controls**.\n- Patched complete NewsRec model suite: **50 passed** in both environments; no skips.\n- Float32 and float64 attention outputs, input gradients and parameter gradients match a reference that physically removes masked positions.\n- All-valid masks preserve the unmasked result exactly. Fully masked rows retain finite zero outputs and gradients.\n- Both LSTUR user-combination modes run two actual forward/backward/SGD steps. Predictions, losses, every parameter gradient and updated weights match otherwise identical models with title padding removed at the public input. No neural operator is mocked; a width-one convolution keeps the valid word features identical.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\nThe complete suite also exercises training, prediction and evaluation for NRMS, NAML, LSTUR and NPA. These checks use synthetic MIND files and CPU execution; no recommendation-quality or GPU improvement is claimed.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads, 69 fork branches and 24 reachable layer versions across 105 commits, including former TensorFlow paths. The earlier masking work in #1136 established padding exclusion; the regression here is the PyTorch shift still depending on excluded positions. The SLi-Rec fix in #2453 addresses an unrepresentable float16 sentinel, a separate cause.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression cases extend the existing NewsRec model test module.\n- [x] Comment explains why masking precedes the maximum.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+      "validation": {
+        "run": "https://github.com/Afloat16/recommenders/actions/runs/43913345232",
+        "baseline": "38 passed",
+        "before": "8 failed, 4 passed",
+        "after": "50 passed",
+        "versions": [
+          "Python 3.10/PyTorch 2.0.1",
+          "Python 3.11/PyTorch 2.5.1"
+        ],
+        "black": "passed",
+        "diff_check": "passed"
+      },
+      "novelty": {
+        "upstream_pr_heads": 1497,
+        "old_fork_branches": 69,
+        "historical_blobs": 24,
+        "historical_commits": 105,
+        "evidence": [
+          "audit/recommenders-history-layers.py.json"
         ]
       }
     }

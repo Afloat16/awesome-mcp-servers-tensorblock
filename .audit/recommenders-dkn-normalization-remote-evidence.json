@@ -1,0 +1,29 @@
+{
+  "head": "eb6af96ae54feacc80b31fd3cb71869a55edc1ad",
+  "run": "https://github.com/Afloat16/recommenders/actions/runs/43902450955",
+  "jobs": [
+    {
+      "id": 133422394977,
+      "name": "validate (3.11, 2.5.1)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-11-16T16:00:36.7269782Z 71 passed, 1 skipped in 2.21s",
+        "2026-11-16T16:00:39.4940868Z 6 failed, 10 passed, 12 deselected in 1.45s",
+        "2026-11-16T16:00:42.7805543Z 87 passed, 1 skipped in 1.96s",
+        "2026-11-16T16:00:43.0359675Z Native KCNN normalization, dtype reference and optimizer regressions verified."
+      ]
+    },
+    {
+      "id": 133422395606,
+      "name": "validate (3.10, 2.0.1)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-11-16T16:00:52.5733847Z 71 passed, 1 skipped, 1 warning in 2.02s",
+        "2026-11-16T16:00:52.5839498Z Independent CPU half capability probe: \"addmm_impl_cpu_\" not implemented for 'Half'",
+        "2026-11-16T16:00:55.4259838Z 9 passed, 7 skipped, 12 deselected, 2 warnings in 1.27s",
+        "2026-11-16T16:00:59.0190927Z 80 passed, 8 skipped, 3 warnings in 2.04s",
+        "2026-11-16T16:00:59.3832586Z Native KCNN normalization, dtype reference and optimizer regressions verified."
+      ]
+    }
+  ]
+}

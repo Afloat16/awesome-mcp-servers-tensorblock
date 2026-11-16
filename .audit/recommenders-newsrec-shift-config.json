@@ -1,0 +1,41 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/exclude-masked-newsrec-shift-20261116",
+  "head": "b890261b4c6df7b10e7e9af511b96e247fe8bf5e",
+  "tree": "5942487313c02842b17d221ac8dae1ed37ad09d7",
+  "issue": 2474,
+  "title": "Exclude masked NewsRec positions from the attention shift",
+  "status": "published_open",
+  "historical_blobs": 24,
+  "historical_commits": 105,
+  "baseline": "38 passed",
+  "before": "8 failed, 4 passed",
+  "after": "50 passed",
+  "body": "### Description\n\nNewsRec additive attention chooses its stabilizing maximum before excluding masked positions. A high-scoring padding position can drive every valid exponential below the fixed denominator epsilon. Valid title content then disappears, with zero input gradients in float32 and severely attenuated outputs even in float64.\n\nExclude masked scores before choosing the shift. Keep a finite sentinel so entirely masked rows still return finite zeros with zero gradients. The unmasked path and learned parameter structure remain unchanged.\n\nFixes #2474.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43913345232) checks exact candidate `b890261b4c6df7b10e7e9af511b96e247fe8bf5e` on Python 3.10/PyTorch 2.0.1 and Python 3.11/PyTorch 2.5.1:\n\n- Unchanged NewsRec model suite: **38 passed** in both environments.\n- New cases against unchanged staging: **8 failed, 4 passing controls**.\n- Patched complete NewsRec model suite: **50 passed** in both environments; no skips.\n- Float32 and float64 attention outputs, input gradients and parameter gradients match a reference that physically removes masked positions.\n- All-valid masks preserve the unmasked result exactly. Fully masked rows retain finite zero outputs and gradients.\n- Both LSTUR user-combination modes run two actual forward/backward/SGD steps. Predictions, losses, every parameter gradient and updated weights match otherwise identical models with title padding removed at the public input. No neural operator is mocked; a width-one convolution keeps the valid word features identical.\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\n\nThe complete suite also exercises training, prediction and evaluation for NRMS, NAML, LSTUR and NPA. These checks use synthetic MIND files and CPU execution; no recommendation-quality or GPU improvement is claimed.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads, 69 fork branches and 24 reachable layer versions across 105 commits, including former TensorFlow paths. The earlier masking work in #1136 established padding exclusion; the regression here is the PyTorch shift still depending on excluded positions. The SLi-Rec fix in #2453 addresses an unrepresentable float16 sentinel, a separate cause.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Regression cases extend the existing NewsRec model test module.\n- [x] Comment explains why masking precedes the maximum.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation": {
+    "run": "https://github.com/Afloat16/recommenders/actions/runs/43913345232",
+    "jobs": [
+      {
+        "id": 133460836818,
+        "name": "validate (3.11, 2.5.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43913345232/job/133460836818"
+      },
+      {
+        "id": 133460837360,
+        "name": "validate (3.10, 2.0.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43913345232/job/133460837360"
+      }
+    ],
+    "baseline": "38 passed",
+    "before": "8 failed, 4 passed",
+    "after": "50 passed",
+    "black": "passed",
+    "diff_check": "passed"
+  },
+  "number": 2475,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2475"
+}
