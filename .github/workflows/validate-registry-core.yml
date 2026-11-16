@@ -1,0 +1,132 @@
+name: Validate isolated registry correctness fixes
+on:
+  push:
+    branches: ['validation/registry-core-batch2-20261116']
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: quoted-launch-arguments
+            node: '20'
+            head: bf4be0bdeac150a2864b05b6e2da085e1e2b0e58
+            source: packages/config-generator/src/generateConfig.ts
+            regression: packages/config-generator/test/generateConfig.test.ts
+            failures: 12
+          - name: quoted-launch-arguments
+            node: '24'
+            head: bf4be0bdeac150a2864b05b6e2da085e1e2b0e58
+            source: packages/config-generator/src/generateConfig.ts
+            regression: packages/config-generator/test/generateConfig.test.ts
+            failures: 12
+          - name: catalog-fenced-examples
+            node: '20'
+            head: 70a30dab93be3d3b3743bd10b0ebb356a3628dce
+            source: packages/catalog-builder/src/parseMarkdown.ts
+            regression: packages/catalog-builder/test/parseMarkdown.test.ts
+            failures: 12
+          - name: catalog-fenced-examples
+            node: '24'
+            head: 70a30dab93be3d3b3743bd10b0ebb356a3628dce
+            source: packages/catalog-builder/src/parseMarkdown.ts
+            regression: packages/catalog-builder/test/parseMarkdown.test.ts
+            failures: 12
+          - name: catalog-description-punctuation
+            node: '20'
+            head: b39fa83beec700dbf37f0449955df947ac79f583
+            source: packages/catalog-builder/src/parseMarkdown.ts
+            regression: packages/catalog-builder/test/parseMarkdown.test.ts
+            failures: 7
+          - name: catalog-description-punctuation
+            node: '24'
+            head: b39fa83beec700dbf37f0449955df947ac79f583
+            source: packages/catalog-builder/src/parseMarkdown.ts
+            regression: packages/catalog-builder/test/parseMarkdown.test.ts
+            failures: 7
+          - name: catalog-large-blame-output
+            node: '20'
+            head: de1194171e5bace2c0659516d5ceeffbcde5fafa
+            source: packages/catalog-builder/src/sourceMetadata.ts
+            regression: packages/catalog-builder/test/sourceMetadata.test.ts
+            failures: 1
+          - name: catalog-large-blame-output
+            node: '24'
+            head: de1194171e5bace2c0659516d5ceeffbcde5fafa
+            source: packages/catalog-builder/src/sourceMetadata.ts
+            regression: packages/catalog-builder/test/sourceMetadata.test.ts
+            failures: 1
+    env:
+      SOURCE_FILE: ${{ matrix.source }}
+      REGRESSION_FILE: ${{ matrix.regression }}
+      EXPECTED_FAILURES: ${{ matrix.failures }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.head }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Reproduce the regression on unchanged production code
+        run: |
+          git restore --source=9b8152c14c7b14249128868d2c2e8ef0a2e20acb -- "$SOURCE_FILE"
+          set +e
+          npx vitest run "$REGRESSION_FILE" --reporter=json --outputFile=baseline.json
+          result=$?
+          set -e
+          test "$result" -eq 1
+          node --input-type=module <<'JS'
+          import { readFileSync } from "node:fs";
+          const report = JSON.parse(readFileSync("baseline.json", "utf8"));
+          console.log(JSON.stringify({ baselineFailed: report.numFailedTests, baselinePassed: report.numPassedTests }));
+          if (report.numFailedTests !== Number(process.env.EXPECTED_FAILURES)) throw new Error("Unexpected baseline failure count");
+          JS
+      - name: Restore and verify the exact independent candidate
+        run: |
+          git restore --source=${{ matrix.head }} -- "$SOURCE_FILE"
+          git diff --exit-code -- packages
+          npm run catalog:build
+          npm run profiles:build
+          npm test -- --reporter=json --outputFile=candidate.json
+          node --input-type=module <<'JS'
+          import { readFileSync } from "node:fs";
+          const report = JSON.parse(readFileSync("candidate.json", "utf8"));
+          console.log(JSON.stringify({ candidateFailed: report.numFailedTests, candidatePassed: report.numPassedTests, candidatePending: report.numPendingTests }));
+          if (report.numFailedTests !== 0) throw new Error("Candidate regressions failed");
+          JS
+          npm run typecheck
+          npm run build
+          git diff --exit-code -- packages
+      - name: Measure source coverage on the three largest real categories
+        if: matrix.name == 'catalog-large-blame-output'
+        run: |
+          cat > blame-measurement.mjs <<'JS'
+          import { readdirSync, statSync } from "node:fs";
+          import { execFileSync } from "node:child_process";
+          import { readGitLineMetadata } from "./packages/catalog-builder/src/sourceMetadata.ts";
+          const paths = readdirSync("docs").filter(x => x.endsWith(".md")).map(x => `docs/${x}`)
+            .sort((a, b) => statSync(b).size - statSync(a).size).slice(0, 3);
+          for (const path of paths) {
+            const raw = execFileSync("git", ["blame", "--line-porcelain", "--", path], { maxBuffer: 64 * 1024 * 1024 });
+            console.log(JSON.stringify({ phase: process.argv[2], path, blameBytes: raw.length, sourceLines: readGitLineMetadata([path]).size }));
+          }
+          JS
+          git restore --source=9b8152c14c7b14249128868d2c2e8ef0a2e20acb -- "$SOURCE_FILE"
+          node --import tsx blame-measurement.mjs baseline
+          git restore --source=${{ matrix.head }} -- "$SOURCE_FILE"
+          node --import tsx blame-measurement.mjs candidate
+          git diff --exit-code -- packages
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: registry-${{ matrix.name }}-node${{ matrix.node }}
+          path: |
+            baseline.json
+            candidate.json
