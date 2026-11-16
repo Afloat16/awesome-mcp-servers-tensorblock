@@ -1,0 +1,67 @@
+{
+  "run": 43896904939,
+  "jobs": [
+    {
+      "id": 133402816448,
+      "name": "validate (3.10, 2.0.1)",
+      "conclusion": "success"
+    },
+    {
+      "id": 133402816995,
+      "name": "validate (3.10, 2.5.1)",
+      "conclusion": "success"
+    },
+    {
+      "id": 133402817071,
+      "name": "validate (3.11, 2.5.1)",
+      "conclusion": "success"
+    }
+  ],
+  "observations": [
+    {
+      "job": 133402816448,
+      "evidence": [
+        "2026-11-16T15:31:01.1656310Z 12 passed in 1.47s",
+        "2026-11-16T15:31:03.9884733Z 10 passed, 4 skipped, 12 deselected, 1 warning in 1.35s",
+        "2026-11-16T15:31:07.1679449Z 22 passed, 4 skipped, 1 warning in 1.66s",
+        "2026-11-16T15:31:10.9011664Z 12 passed in 1.46s",
+        "2026-11-16T15:31:13.9035998Z 7 failed, 8 passed, 12 deselected in 1.50s",
+        "2026-11-16T15:31:17.0277818Z 27 passed in 1.65s"
+      ]
+    },
+    {
+      "job": 133402816995,
+      "evidence": [
+        "2026-11-16T15:31:07.4793734Z 12 passed in 2.48s",
+        "2026-11-16T15:31:11.8268872Z 4 failed, 10 passed, 12 deselected in 2.64s",
+        "2026-11-16T15:31:16.0998528Z 26 passed in 2.57s",
+        "2026-11-16T15:31:21.2682493Z 12 passed in 2.45s",
+        "2026-11-16T15:31:25.3833292Z 7 failed, 8 passed, 12 deselected in 2.38s",
+        "2026-11-16T15:31:29.7975402Z 27 passed in 2.68s"
+      ]
+    },
+    {
+      "job": 133402817071,
+      "evidence": [
+        "2026-11-16T15:30:47.7561225Z 12 passed in 1.84s",
+        "2026-11-16T15:30:51.1238528Z 4 failed, 10 passed, 12 deselected in 1.96s",
+        "2026-11-16T15:30:54.4098305Z 26 passed in 1.90s",
+        "2026-11-16T15:30:58.2692095Z 12 passed in 1.67s",
+        "2026-11-16T15:31:01.2800265Z 7 failed, 8 passed, 12 deselected in 1.57s",
+        "2026-11-16T15:31:04.4059226Z 27 passed in 1.77s"
+      ]
+    }
+  ],
+  "prs": [
+    {
+      "number": 2453,
+      "head": "8686ca9726be9f617f0ea790bbf3d3ea8fd2c0c2",
+      "body": "### Description\r\n\r\nSLi-Rec's masked attention constructs the TensorFlow-era sentinel `-(2**32)+1` in the score dtype. It cannot be represented in float16, so `full_like` raises before masking even for an entirely valid history. A complete SLi-Rec forward pass under CPU float16 autocast also fails.\r\n\r\nBound this finite sentinel by the score dtype's minimum finite value. Float32, float64 and bfloat16 retain the existing sentinel; float16 uses its representable lower bound. The existing fully padded-row behavior remains finite and unchanged.\r\n\r\nFixes #2450.\r\n\r\n### Validation\r\n\r\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43896904939) checks exact head `8686ca9726be9f617f0ea790bbf3d3ea8fd2c0c2` against unchanged staging:\r\n\r\n- Python 3.10 and 3.11 with PyTorch 2.5.1: unchanged model suite **12 passed**; new cases on the baseline **4 failed, 10 passing controls**; patched model suite **26 passed**.\r\n- Python 3.10 with the declared PyTorch 2.0.1 minimum: **22 passed, 4 skipped**. Independent tiny operator probes confirm that this version lacks the CPU half linear/autocast support required by those four cases. Supported dtype cases run normally.\r\n- Tests cover float16/bfloat16/float32/float64 with empty, partial and full masks, plus complete SLi-Rec autocast forward, backward and optimizer steps.\r\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 reproduces the same four failures and passes all 26 patched tests.\r\n\r\n### History review\r\n\r\nChecked 1,497 upstream PR heads, 69 existing fork branches and all 15 reachable SLi-Rec source versions, including previous TensorFlow paths, the former `sli_rec_pytorch.py` filename and intermediate commits. This fix is limited to attention sentinel representability.\r\n\r\n### Checklist\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Regression tests added to the existing registered model test module.\r\n- [x] Comments explain the numerical choice; public API is unchanged.\r\n- [x] Commits include the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n"
+    },
+    {
+      "number": 2458,
+      "head": "a9147aa957d9793832899e1285febfe95eae77a0",
+      "body": "### Description\r\n\r\nThe adaptive preference-fusion gate reads `time_to_now[:, -1:]`, but the dataset left-aligns history and pads the remaining columns. Short histories therefore supply a padded zero instead of the interval since the latest real behavior. With two observations and a three-day gap, the gate receives `log(3)` at maximum length 2 and zero at maximum length 5.\r\n\r\nUse the existing sequence length to gather the last observed time, and supply a neutral zero for an empty history. Full and truncated histories keep their existing temporal context. The correction changes the fusion feature only; checkpoint parameter shapes are unchanged.\r\n\r\nFixes #2456.\r\n\r\n### Validation\r\n\r\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43896904939) checks exact head `a9147aa957d9793832899e1285febfe95eae77a0` on Python 3.10/PyTorch 2.0.1 and Python 3.10–3.11/PyTorch 2.5.1:\r\n\r\n- Unchanged SLi-Rec suite: **12 passed**.\r\n- New cases on the baseline: **7 failed, 8 passing controls**.\r\n- Patched model suite: **27 passed**.\r\n- Native dataset tests cover short/full/truncated histories, maximum length one, and positive/negative sample groups. Additional cases cover mixed and empty masks and noncontiguous time tensors.\r\n- Complete float32/float64 model predictions, parameter gradients and Adam updates match a separate row-wise reference that selects the last observed event.\r\n- Black and `git diff --check` pass. Local Python 3.12.14/PyTorch 2.5.1 gives the same results.\r\n\r\n### References and history\r\n\r\nThe [SLi-Rec paper, section 3.3](https://www.ijcai.org/proceedings/2019/0585.pdf) uses temporal context to adapt preference fusion and evaluates the interval since a user's last behavior. This patch restores the observed interval as the fusion input.\r\n\r\nChecked 1,497 upstream PR heads, 69 existing fork branches and all 15 reachable SLi-Rec source versions, including former TensorFlow paths, the former `sli_rec_pytorch.py` filename and intermediate commits. All historical variants select the final padded column.\r\n\r\n### Checklist\r\n\r\n- [x] Contribution guidelines and code style followed.\r\n- [x] Regression tests added to the existing registered model test module.\r\n- [x] The code comment explains the padding/recency distinction.\r\n- [x] Commit includes the required `Signed-off-by` trailer.\r\n- [x] Targets `staging`.\r\n"
+    }
+  ]
+}

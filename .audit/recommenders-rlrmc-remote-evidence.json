@@ -1,0 +1,28 @@
+{
+  "head": "f74abf8dffada2f9f4b70286fd043aba4fd12b04",
+  "run": "https://github.com/Afloat16/recommenders/actions/runs/43899465242",
+  "jobs": [
+    {
+      "id": 133411832443,
+      "name": "validate (3.11, 1.26.4, 0.61.2, 1.13.1)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-11-16T15:44:52.8904987Z 12 passed in 1.52s",
+        "2026-11-16T15:44:57.2202845Z 17 failed, 11 passed in 2.92s",
+        "2026-11-16T15:45:02.1109726Z 40 passed in 3.48s",
+        "2026-11-16T15:45:02.3868775Z Native Pymanopt/Numba baseline, seventeen failures and forty passing tests verified."
+      ]
+    },
+    {
+      "id": 133411833189,
+      "name": "validate (3.10, 1.24.4, 0.57.1, 1.10.1)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-11-16T15:44:29.8653589Z 12 passed in 0.73s",
+        "2026-11-16T15:44:32.1442318Z 17 failed, 11 passed in 1.35s",
+        "2026-11-16T15:44:34.6619849Z 40 passed in 1.63s",
+        "2026-11-16T15:44:34.8968109Z Native Pymanopt/Numba baseline, seventeen failures and forty passing tests verified."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "job": 133399030673,
+    "lines": [
+      "2026-11-16T15:24:47.6943573Z 12 passed in 1.00s",
+      "2026-11-16T15:24:50.4477607Z 13 failed, 9 passed, 12 deselected in 1.72s",
+      "2026-11-16T15:24:53.2443215Z 34 passed in 1.76s",
+      "2026-11-16T15:24:53.4448807Z 2 files would be left unchanged.",
+      "2026-11-16T15:24:53.5082990Z Baseline, thirteen expected failures, exact improvement and formatting verified."
+    ]
+  },
+  {
+    "job": 133399030734,
+    "lines": [
+      "2026-11-16T15:24:49.7931184Z 12 passed in 1.81s",
+      "2026-11-16T15:24:53.3616434Z 13 failed, 9 passed, 12 deselected in 2.34s",
+      "2026-11-16T15:24:57.3244396Z 2 files would be left unchanged.",
+      "2026-11-16T15:24:57.3244888Z 34 passed in 2.49s",
+      "2026-11-16T15:24:57.3898767Z Baseline, thirteen expected failures, exact improvement and formatting verified."
+    ]
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "source_files": {
+    "sli_rec.py": {
+      "commits": 74,
+      "versions": 13
+    },
+    "sequential_base.py": {
+      "commits": 6,
+      "versions": 2
+    },
+    "base_model.py": {
+      "commits": 371,
+      "versions": 102
+    },
+    "sequential_base_model.py": {
+      "commits": 100,
+      "versions": 20
+    },
+    "xdeepfm.py": {
+      "commits": 10,
+      "versions": 6
+    }
+  },
+  "scope": "1497 upstream PR heads and 69 pre-existing fork branches, including reachable intermediate and former-path versions",
+  "sli_rec_half_mask": "All 3 PyTorch source versions share the same overflowing torch.full_like(_MASK_PADDING) implementation; 10 legacy versions use the same sentinel in TensorFlow.",
+  "sli_rec_log_softmax": "2 PyTorch source versions share separate softmax/log. 47 legacy branch observations in 102 base_model and 20 sequential_base_model versions reduce to 3 formatting/API variants, all separate softmax/log.",
+  "xdeepfm_zero_norm": "All 6 PyTorch versions use sqrt(mse) for square_loss and sqrt(sum(square)) for CIN regularization.",
+  "sli_rec_recency": "All 15 reachable source blobs under sli_rec.py and sli_rec_pytorch.py use the final padded time_to_now column; former filename versions and intermediate commits were explicitly checked.",
+  "sequential_metric_direction": "All 2 PyTorch sequential-base and 20 historical TensorFlow sequential-base versions initialize best_metric=0 and maximize every eval_metric; no minimum-error direction.",
+  "filename_rename_extension": {
+    "rnn_cell": {
+      "files": [
+        "rnn_cell.py",
+        "rnn_cell_pytorch.py"
+      ],
+      "distinct_blobs": 2,
+      "finding": "Both full-width scans; no earlier bounded recurrence."
+    },
+    "sli_rec": {
+      "files": [
+        "sli_rec.py",
+        "sli_rec_pytorch.py"
+      ],
+      "distinct_blobs": 15,
+      "finding": "Former-suffix versions retain the out-of-range half sentinel and final padded recency column."
+    },
+    "sequential_base": {
+      "files": [
+        "sequential_base.py",
+        "sequential_base_pytorch.py"
+      ],
+      "distinct_blobs": 4,
+      "finding": "Former-suffix versions retain softmax-then-log, maximize every checkpoint metric and reshape ranking groups per batch."
+    },
+    "other_published_models": {
+      "finding": "Full historical filename enumeration found no formerly renamed dkn.py, xdeepfm.py/xDeepFM.py or lightgbm_utils.py basenames beyond the audited current and historical paths."
+    }
+  },
+  "cross_batch_groups": "All 4 PyTorch sequential-base variants and 20 TensorFlow sequential-base-model variants reshape groups per batch. No equivalent cross-batch grouping change found.",
+  "excluded_homogeneous_negative_sampling": {
+    "reason": "Earlier source version bounded rejection sampling and raised on exhausted candidates. Treat same nontermination root cause as already submitted. No new issue or patch.",
+    "blob": "38dedad9f970d0e379a221633b2a575193349e0b",
+    "commits": [
+      "1335ab759a42b1fde4691bf32b8ed1b0b4b88a67",
+      "7dfa993849b68954fb3fca7cbec45251f14a4b8e"
+    ],
+    "paths": [
+      "recommenders/models/deeprec/io/torch/sequential_iterator.py"
+    ]
+  }
+}

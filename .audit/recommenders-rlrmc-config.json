@@ -1,0 +1,16 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/preserve-rlrmc-pair-predictions-20261116",
+  "title": "Preserve RLRMC ratings for repeated pairs and low-memory prediction",
+  "issue": 2464,
+  "tree": "9a952efe7efd6eeeaea43d046847b00a4cd4cffa",
+  "head": "f74abf8dffada2f9f4b70286fd043aba4fd12b04",
+  "validation_head": "a88cb986e421f3c5432ad1bd50020b3717112397",
+  "validation_branch": "validation/recommenders-rlrmc-pairs-20261116",
+  "validation_run": "https://github.com/Afloat16/recommenders/actions/runs/43899465242",
+  "body": "### Description\n\nRLRMC trains on mean-centered ratings. Its low-memory prediction path subtracts the training mean, while its sparse path adds the mean only correctly for unique pairs. Repeated coordinates are combined by CSR construction, which accumulates their offsets and leaves some requested output entries unwritten. A factor score of 10 with training mean 3 consequently returns 7 in low-memory mode and `[16, -3]` for two identical pairs in sparse mode.\n\nRestore the mean in both paths. Score sorted unique pairs with the existing sparse Numba kernel, then map the scores back to every original occurrence. Repeated and unsorted requests now preserve their order and multiplicity, and empty requests return an empty float64 array. This retains sparse scoring without gathering a dense factor array for every requested pair.\n\nFixes #2464.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43899465242) checks exact head `f74abf8dffada2f9f4b70286fd043aba4fd12b04` against unchanged staging using the Pymanopt revision documented in `setup.py`:\n\n- Python 3.10: NumPy 1.24.4, SciPy 1.10.1, Numba 0.57.1.\n- Python 3.11: NumPy 1.26.4, SciPy 1.13.1, Numba 0.61.2.\n- Existing GeoIMC experimental controls: **12 passed**.\n- New tests on unchanged RLRMC: **17 failed, 11 passing controls**.\n- Patched RLRMC and GeoIMC suites: **40 passed**, with no skips, in both environments.\n- Cases cover positive, negative and zero training means; string IDs; noncontiguous factors; unique, interleaved and repeated pairs; batch partitioning; empty and mismatched inputs.\n- Four integration cases run native RLRMC training with and without centering and compare both prediction modes to an independent factor-sum reference.\n- Black and `git diff --check` pass. Local Python 3.12.14 gives the same results.\n\n### History review\n\nChecked 1,497 upstream PR heads and 69 pre-existing fork branches, including 14 RLRMC algorithm source versions from 85 reachable commits under current and former paths. None contains an equivalent prediction correction. The earlier fork change to RLRMC dataset column names concerns data preprocessing and is separate from pair scoring.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Native regressions registered in the experimental CPU test group.\n- [x] Prediction docstring documents repeated pairs and mean restoration.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "pr_number": 2465,
+  "pr_url": "https://github.com/recommenders-team/recommenders/pull/2465"
+}
