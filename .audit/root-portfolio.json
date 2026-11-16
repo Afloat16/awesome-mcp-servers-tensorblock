@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16T18:28:58.254544+00:00",
+  "as_of": "2026-11-16T21:13:23.424Z",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -3114,6 +3114,1062 @@
         "kernel_commits": 74,
         "cauchy_variants": 3
       }
+    },
+    {
+      "repo": "pypose/pypose",
+      "number": 539,
+      "url": "https://github.com/pypose/pypose/pull/539",
+      "title": "Avoid computing discarded B-spline segment endpoints",
+      "body": "Closes #538.\n\n`bspline` computes a right endpoint for every segment and then keeps only the final one. Select the final segment before the endpoint exponential and products. For N controls without extrapolation, the endpoint path now evaluates three Lie exponentials instead of 3*(N-3). The interior samples, cumulative spline formula and multiplication order are preserved.\n\n## Measured effect\n\n[Native validation](https://github.com/Afloat16/pypose/actions/runs/43935472028) checks exact production head `f9f11dd001876446be1a1dc51477ec20e4e59743` on PyTorch 2.5.1 and 2.6.0, Python 3.12, CPU. It measures complete public interpolation calls with four warmups and 21 alternating before/after pairs on one thread. Inputs are synthetic SE3 trajectories.\n\n| Batch / controls / interval | PyTorch 2.5.1 float32 before → after | PyTorch 2.6.0 float32 before → after |\n| --- | --- | --- |\n| 1 / 64 / 0.1 | 4.813 → 4.688 ms | 4.752 → 4.584 ms |\n| 1 / 1024 / 0.1 | 24.382 → 22.529 ms | 22.998 → 21.940 ms |\n| 8 / 256 / 0.5 | 13.531 → 11.429 ms | 13.269 → 11.084 ms |\n| 1 / 4096 / 0.5 | 24.472 → 19.868 ms | 23.766 → 19.137 ms |\n\nAcross all 28 timed cases, including float64 and both intervals, the observed speedup is 1.03–1.31×. The linked run retains every sample and the exact unchanged reference source is loaded from base commit `298e9f08`.\n\n## Correctness\n\n- Complete repository suite on both PyTorch versions: **422 passed, 18 skipped**. The skips require CUDA or the optional sparse backend.\n- **24 focused tests passed on both unchanged and modified code**, including the existing spline tests. New controls check the independent cubic endpoint formula for commuting poses, short extrapolated trajectories, strided inputs and endpoint gradient locality.\n- **60 complete-output/input-gradient comparisons per PyTorch version** cover float32/float64, three batch shapes, one/two/four/nine controls, extrapolation and strided inputs. All output values and input gradients are bitwise equal.\n- Every timed call also checks all output poses for bitwise equality.\n- `git diff --check` passes.\n\nThe history audit covers all 46 reachable spline commits and 31 source versions, including intermediate revisions. The adjacent-logarithm reuse in #497 leaves this endpoint computation intact. This patch changes only the work used to produce the final extra pose.\n\n",
+      "head": "f9f11dd001876446be1a1dc51477ec20e4e59743",
+      "head_ref": "afloat16/spline-final-endpoint-20261116",
+      "state": "open",
+      "draft": false,
+      "merged_at": null,
+      "created_at": "2026-11-16T19:12:59Z",
+      "maintainer_can_modify": false
+    },
+    {
+      "repo": "QwenLM/qwen-code",
+      "number": 17497,
+      "url": "https://github.com/QwenLM/qwen-code/pull/17497",
+      "title": "fix(sdk-python): release cancelled and failed control requests",
+      "body": "## What this PR does\n\nRelease a Python SDK control request's pending reply and timeout whenever the caller exits, including cancellation, write failure and drain failure. A reply or timeout that arrives during a failing write is consumed without replacing the caller's original error. Other requests keep their own replies and timers.\n\n## Why it's needed\n\nCancelling a control request currently leaves its pending entry and timeout alive until another event happens to remove them. Repeated cancellation therefore retains work that has no caller, and a delayed failure can produce an unhandled future exception. A failed write has the same ownership problem.\n\n## Reviewer Test Plan\n\n### How to verify\n\n1. Cancel several control requests after the peer receives them. Their pending entries and timeout callbacks should disappear immediately, while a separate request should still receive its own response.\n2. Fail a write, fail a drain, or cancel while a drain is blocked. The caller should retain the original failure or cancellation, with no abandoned request state.\n3. Allow a request to time out while its drain is blocked, then fail that drain. The original drain error should be preserved and the event loop should not report an unhandled future exception.\n\n### Evidence (Before & After)\n\nThe five new regression cases fail on the unchanged base and pass with this change. The complete local Python SDK suite reports **192 passed, 26 skipped**. Python linting and the configured type check pass. An independent rerun of the original reproduction reports **2 passed**: all 16 cancelled requests leave zero retained entries and zero live timeout callbacks, failed writes leave no event-loop warning, and a later independent request succeeds.\n\nThis is a Draft because repository-wide verification is incomplete. The workspace build reaches the CLI TypeScript compilation and is terminated with status 137, without a TypeScript source diagnostic. Separate attempts with 4096 MB and 3072 MB heap limits have the same outcome. Bundling and the full preflight have not completed. The observed results above cover local Python tests and simulated protocol peers; they do not claim official CLI end-to-end coverage.\n\n### Tested on\n\n| OS | Status |\n| --- | --- |\n| 🍏 macOS | ⚠️ Not tested |\n| 🪟 Windows | ⚠️ Not tested |\n| 🐧 Linux | ✅ Python SDK tests, lint and type check; repository-wide build incomplete |\n\n### Environment (optional)\n\nPython 3.12.14 on Linux. Node.js 24.22.1 and the pinned pnpm 11.24.0 were used for the attempted workspace build.\n\n## Risk & Scope\n\n- Main risk or tradeoff: cleanup must remain idempotent when cancellation, a reply, timeout or shutdown coincide. The regression cases cover those competing outcomes without changing the original exception seen by the caller.\n- Not validated / out of scope: a permanently blocked drain, official CLI end-to-end behavior, macOS, Windows and the complete repository preflight.\n- Breaking changes / migration notes: no public API or protocol change.\n\n## Linked Issues\n\nFixes #17494.\n\n<details>\n<summary>中文说明</summary>\n\n## 本次修改\n\n无论调用者正常结束、取消请求、写入失败还是等待写出失败，都释放 Python SDK 控制请求所持有的待回复状态和超时任务。如果写入尚未完成时已经收到回复或触发超时，会处理相应的完成状态，同时保留调用者原本应收到的异常。其他请求仍使用各自独立的回复和计时器。\n\n## 修改原因\n\n目前取消控制请求后，其待回复记录和超时任务会一直保留，直到其他事件恰好清除它们。反复取消因此会留下已没有调用者等待的工作，随后发生的失败还可能引发未处理的 future 异常。写入失败也存在相同的资源归属问题。\n\n## 审查者验证计划\n\n### 验证方式\n\n1. 在对端收到请求后取消多条控制请求。对应的待回复记录和超时回调应立即消失，另一条独立请求仍应收到自己的回复。\n2. 分别触发写入失败、等待写出失败，以及等待写出受阻时的取消。调用者应保留原始异常或取消结果，不留下无人使用的请求状态。\n3. 在等待写出受阻期间让请求超时，然后令等待写出失败。调用者应收到原始写出异常，事件循环不应报告未处理的 future 异常。\n\n### 修改前后证据\n\n新增的五个回归用例在未修改基线上失败，修改后通过。完整的本地 Python SDK 测试结果为 **192 通过、26 跳过**，Python lint 和配置的类型检查均通过。独立重新运行原始复现脚本的结果为 **2 通过**：16 条取消请求均未残留待回复记录或活动计时器，写入失败没有产生事件循环警告，之后的独立请求可以成功完成。\n\n本 PR 暂为 Draft，因为全仓验证尚未完成。工作区构建在 CLI 的 TypeScript 编译阶段以状态码 137 终止，没有 TypeScript 源码错误诊断；分别使用 4096 MB 和 3072 MB 堆上限的单独尝试结果相同。打包和完整 preflight 尚未完成。上述结果覆盖本地 Python 测试和模拟协议对端，不代表官方 CLI 的端到端验证。\n\n### 测试平台\n\n| 系统 | 状态 |\n| --- | --- |\n| 🍏 macOS | ⚠️ 未测试 |\n| 🪟 Windows | ⚠️ 未测试 |\n| 🐧 Linux | ✅ Python SDK 测试、lint 和类型检查；全仓构建尚未完成 |\n\n### 环境\n\nLinux 上的 Python 3.12.14。工作区构建尝试使用 Node.js 24.22.1 和仓库固定的 pnpm 11.24.0。\n\n## 风险与范围\n\n- 主要风险或取舍：取消、回复、超时和关闭发生在相邻时刻时，清理仍须保持幂等。回归用例覆盖这些竞争结果，并检查调用者收到的原始异常保持不变。\n- 未验证或不在范围内：永久受阻的写出等待、官方 CLI 端到端行为、macOS、Windows 和完整的全仓 preflight。\n- 破坏性变更或迁移：不改变公开 API 或协议。\n\n## 关联问题\n\n修复 #17494。\n\n</details>\n",
+      "head": "e96d8980f129433b09c16dd76ed21e8a4dce5542",
+      "head_ref": "fix/python-control-request-cleanup",
+      "state": "open",
+      "draft": true,
+      "merged_at": null,
+      "created_at": "2026-11-16T20:18:38Z",
+      "maintainer_can_modify": false,
+      "official_ci": {
+        "checked_at": "2026-11-16T21:22:00.004Z",
+        "total_count": 45,
+        "check_runs": [
+          {
+            "name": "Test (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133612305934",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "web-shell E2E Smoke (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133596146451",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Integration Tests (no-AK, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133596145975",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "web-shell E2E Smoke (shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133596145655",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Integration Tests (no-AK, shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133596145645",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Linux unit tests (shard 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133596142257",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Linux unit tests (shard 2/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133596142209",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "fallback-comment",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133586964101",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "review-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133586774109",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "publish-resolution",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133586773926",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "delay-automatic-review",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133586555020",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "ack-review-request",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133586554714",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "resolve-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133586553496",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133585767482",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133584690262",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "SDK Java (none)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450533/job/133584506582",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Managed Agent gate",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450533/job/133584503067",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "review-config",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450510/job/133584496497",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "publish-tmux",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584399879",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "publish-verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584399339",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "publish-triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584399209",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584398057",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584397756",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "tmux-testing",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584397438",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584331873",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Integration Tests (CLI, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584325859",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Test (macos-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584325684",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Test (windows-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584325338",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "macOS unit tests (${{ matrix.group }} ${{ matrix.shard }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584324519",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Lint & Static (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584322456",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Build unit-test tree (Linux, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584322380",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "SDK Python (3.10)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450628/job/133584302190",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "SDK Python (3.12)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450628/job/133584302154",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "SDK Python (3.11)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450628/job/133584302095",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "OpenTUI no-flicker gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450436/job/133584299484",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "TUI parity snapshots (ink vs opentui)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450436/job/133584298284",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "assign",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450232/job/133584249992",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450554/job/133584239360",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450221/job/133584238431",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Installed npm global and npx (${{ matrix.target }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450436/job/133584234164",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Installed npm Node26 private Bun acceptance",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450436/job/133584234135",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Select the Managed Agent tier",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450533/job/133584231976",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450440/job/133584231969",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Check TUI impact",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450436/job/133584231649",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948450628/job/133584230849",
+            "head_sha": "e96d8980f129433b09c16dd76ed21e8a4dce5542"
+          }
+        ]
+      }
+    },
+    {
+      "repo": "QwenLM/qwen-code",
+      "number": 17498,
+      "url": "https://github.com/QwenLM/qwen-code/pull/17498",
+      "title": "fix(sdk-python): wait for process startup before closing a query",
+      "body": "## What this PR does\n\nWait for an in-flight Python SDK process startup before closing the query, then shut down the resulting process and its background work. Repeated shutdown remains harmless, including shutdown requested from an input generator's cleanup.\n\n## Why it's needed\n\nClosing a query while process creation is suspended can currently return before that process exists. Startup can then finish after the query has been marked closed, leaving a live child behind. This matters when applications cancel startup or leave a query context quickly.\n\n## Reviewer Test Plan\n\n### How to verify\n\n1. Pause process creation, begin closing the query, and then allow creation to finish. Shutdown should wait and should return only after the child has exited.\n2. Request shutdown twice during the same pending startup. Both callers should finish without leaving a child or background work alive.\n3. Close before startup, and repeat shutdown after completion. Both operations should remain safe.\n4. Let an asynchronous input generator request shutdown from its cleanup. Cleanup should finish without waiting on itself.\n\n### Evidence (Before & After)\n\nThe original local reproduction starts a real Python child. On the unchanged base that child remains alive after shutdown returns; with this change it has exited when shutdown finishes. The new regression cases cover pending startup, concurrent shutdown callers, shutdown before startup and reentrant generator cleanup. The complete local Python SDK suite reports **192 passed, 26 skipped**. Python linting and the configured type check pass. An independent rerun of the original reproduction together with existing single-query and asynchronous-context happy paths reports **3 passed**.\n\nThis is a Draft because repository-wide verification is incomplete. The workspace build reaches the CLI TypeScript compilation and is terminated with status 137, without a TypeScript source diagnostic. Separate attempts with 4096 MB and 3072 MB heap limits have the same outcome. Bundling and the full preflight have not completed. The observed results above cover local Python tests and real local Python child processes; they do not claim official CLI end-to-end coverage.\n\n### Tested on\n\n| OS | Status |\n| --- | --- |\n| 🍏 macOS | ⚠️ Not tested |\n| 🪟 Windows | ⚠️ Not tested |\n| 🐧 Linux | ✅ Python SDK tests, lint and type check; repository-wide build incomplete |\n\n### Environment (optional)\n\nPython 3.12.14 on Linux. Node.js 24.22.1 and the pinned pnpm 11.24.0 were used for the attempted workspace build.\n\n## Risk & Scope\n\n- Main risk or tradeoff: shutdown now waits for process creation that is already in progress. The existing early-closed guard is preserved so an input generator can finish its own cleanup without a reentrant deadlock.\n- Not validated / out of scope: indefinitely stalled process creation, cancellation of shutdown itself, official CLI end-to-end behavior, macOS, Windows and the complete repository preflight.\n- Breaking changes / migration notes: no public API or protocol change; shutdown now waits for the resource it is responsible for releasing.\n\n## Linked Issues\n\nFixes #17493.\n\n<details>\n<summary>中文说明</summary>\n\n## 本次修改\n\n关闭 Python SDK 查询时，先等待已经开始的进程创建完成，再关闭创建出的进程及其后台任务。重复关闭仍然安全，包括输入生成器在清理阶段再次请求关闭的情况。\n\n## 修改原因\n\n目前在进程创建暂停期间关闭查询，可能会在进程尚不存在时就返回。之后启动操作继续完成，查询虽然已经标记为关闭，却留下仍在运行的子进程。应用在启动期间取消操作或快速退出查询上下文时可能遇到这一问题。\n\n## 审查者验证计划\n\n### 验证方式\n\n1. 暂停进程创建，开始关闭查询，然后允许进程创建完成。关闭操作应等待，并且只在子进程退出后返回。\n2. 在同一次待完成的启动期间发起两次关闭。两个调用者都应正常结束，不遗留子进程或后台任务。\n3. 在启动前关闭，以及在完成关闭后重复关闭。这两种操作都应保持安全。\n4. 让异步输入生成器在自己的清理阶段请求关闭。清理过程应顺利结束，不等待自身而形成死锁。\n\n### 修改前后证据\n\n原始本地复现会启动一个真实的 Python 子进程。在未修改基线上，关闭操作返回后该子进程仍然存活；修改后，关闭完成时子进程已经退出。新增回归用例覆盖待完成的启动、并发关闭调用者、启动前关闭和生成器清理期间的重入关闭。完整本地 Python SDK 测试结果为 **192 通过、26 跳过**，Python lint 和配置的类型检查均通过。独立重新运行原始复现及已有的单查询和异步上下文正常路径，结果为 **3 通过**。\n\n本 PR 暂为 Draft，因为全仓验证尚未完成。工作区构建在 CLI 的 TypeScript 编译阶段以状态码 137 终止，没有 TypeScript 源码错误诊断；分别使用 4096 MB 和 3072 MB 堆上限的单独尝试结果相同。打包和完整 preflight 尚未完成。上述结果覆盖本地 Python 测试和真实的本地 Python 子进程，不代表官方 CLI 的端到端验证。\n\n### 测试平台\n\n| 系统 | 状态 |\n| --- | --- |\n| 🍏 macOS | ⚠️ 未测试 |\n| 🪟 Windows | ⚠️ 未测试 |\n| 🐧 Linux | ✅ Python SDK 测试、lint 和类型检查；全仓构建尚未完成 |\n\n### 环境\n\nLinux 上的 Python 3.12.14。工作区构建尝试使用 Node.js 24.22.1 和仓库固定的 pnpm 11.24.0。\n\n## 风险与范围\n\n- 主要风险或取舍：关闭现在会等待已经开始的进程创建。保留原有的提前返回条件，使输入生成器能够完成自己的清理，避免重入死锁。\n- 未验证或不在范围内：无限期停滞的进程创建、关闭操作本身被取消、官方 CLI 端到端行为、macOS、Windows 和完整的全仓 preflight。\n- 破坏性变更或迁移：不改变公开 API 或协议；关闭现在会等待并释放其负责管理的资源。\n\n## 关联问题\n\n修复 #17493。\n\n</details>\n",
+      "head": "905841175ce10efac4ba68f0b9882a466a262c6f",
+      "head_ref": "fix/python-close-during-start",
+      "state": "open",
+      "draft": true,
+      "merged_at": null,
+      "created_at": "2026-11-16T20:18:57Z",
+      "maintainer_can_modify": false,
+      "official_ci": {
+        "checked_at": "2026-11-16T21:22:00.004Z",
+        "total_count": 45,
+        "check_runs": [
+          {
+            "name": "Test (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133608864652",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Integration Tests (no-AK, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133593480918",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "web-shell E2E Smoke (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133593480907",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "web-shell E2E Smoke (shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133593479425",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Integration Tests (no-AK, shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133593479198",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Linux unit tests (shard 2/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133593477073",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Linux unit tests (shard 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133593476892",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "fallback-comment",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584743172",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "review-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584742397",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "publish-resolution",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584741689",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "delay-automatic-review",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584740986",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "ack-review-request",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584740356",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "resolve-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584740250",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "publish-triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584695924",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "publish-verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584695906",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "publish-tmux",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584695867",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584694371",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584693988",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "tmux-testing",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584693920",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584681266",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "SDK Java (none)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503386/job/133584668398",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Managed Agent gate",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503386/job/133584666367",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Test (macos-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584546191",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "macOS unit tests (${{ matrix.group }} ${{ matrix.shard }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584546153",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Test (windows-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584545249",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Integration Tests (CLI, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584545207",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Lint & Static (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584543170",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Build unit-test tree (Linux, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584543040",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584534751",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "OpenTUI no-flicker gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503272/job/133584514971",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "review-config",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584514744",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "TUI parity snapshots (ink vs opentui)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503272/job/133584514080",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "SDK Python (3.10)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503307/job/133584492389",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "SDK Python (3.11)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503307/job/133584492142",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "SDK Python (3.12)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503307/job/133584492088",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503083/job/133584432984",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503023/job/133584430213",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "assign",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948502430/job/133584427300",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Select the Managed Agent tier",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503386/job/133584427214",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948502442/job/133584427110",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503619/job/133584426643",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Installed npm Node26 private Bun acceptance",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503272/job/133584425497",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Installed npm global and npx (${{ matrix.target }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503272/job/133584424734",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503307/job/133584423240",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          },
+          {
+            "name": "Check TUI impact",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43948503272/job/133584422241",
+            "head_sha": "905841175ce10efac4ba68f0b9882a466a262c6f"
+          }
+        ]
+      }
+    },
+    {
+      "repo": "QwenLM/qwen-code",
+      "number": 17499,
+      "url": "https://github.com/QwenLM/qwen-code/pull/17499",
+      "title": "fix(sdk-python): isolate initialization from caller cancellation",
+      "body": "## What this PR does\n\nKeep the Python SDK's shared initialization alive when one waiting control call is cancelled. Other waiting calls, later calls and prompt input can continue after the initialization reply. Query-owned shutdown still stops those continuations before they write another prompt or control request.\n\n## Why it's needed\n\nEvery initialization waiter currently awaits the same task directly. Cancelling one public call therefore cancels the shared handshake, an unrelated waiting call and prompt input. The transport remains open, but the query can no longer make useful progress. Isolating caller cancellation also requires checking whether the query closed during the handshake, so an initialization error cannot let waiting work resume after shutdown.\n\n## Reviewer Test Plan\n\n### How to verify\n\n1. Delay the initialization reply, start two independent control calls and cancel only one. Deliver a successful initialization reply. The cancelled call should report cancellation, the other call and a later call should receive their own responses, and the prompt should be sent once.\n2. Repeat with both a string prompt and asynchronous input. Include an uncancelled control to verify normal startup behavior.\n3. Close the query during initialization, then separately reject initialization. Waiting controls must terminate and neither input form may write after shutdown. Background input must not produce an unhandled exception.\n\n### Evidence (Before & After)\n\nThe eight new regression cases report **4 failed, 4 passed** on the unchanged base and **8 passed** with this change. The complete local Python SDK suite reports **195 passed, 26 skipped**, with Python linting and the configured type check passing. An independent rerun of the original four-case reproduction reports **4 passed** against the exact proposed commit: cancellation stays with the selected caller, unrelated and later calls succeed, each input form writes one prompt, and the input task is not cancelled.\n\nThis is a Draft because repository-wide verification is incomplete. The workspace build reaches CLI TypeScript compilation and is terminated with status 137, without a TypeScript source diagnostic. Separate attempts with 4096 MB and 3072 MB heap limits have the same outcome. Bundling and the full preflight have not completed. These results cover Python tests with simulated protocol peers; they do not establish official CLI end-to-end coverage.\n\n### Tested on\n\n| OS | Status |\n| --- | --- |\n| 🍏 macOS | ⚠️ Not tested |\n| 🪟 Windows | ⚠️ Not tested |\n| 🐧 Linux | ✅ Python SDK tests, lint and type check; repository-wide build incomplete |\n\n### Environment (optional)\n\nPython 3.12.14 on Linux. Node.js 24.22.1 and the pinned pnpm 11.24.0 were used for the attempted workspace build.\n\n## Risk & Scope\n\n- Main risk or tradeoff: isolating cancellation must preserve query-owned shutdown and initialization failure. The regression cases check both outcomes and require that no prompt or control is written after shutdown.\n- Not validated / out of scope: official CLI end-to-end behavior, macOS, Windows and the complete repository preflight.\n- Breaking changes / migration notes: no public API or protocol change. Cancelling one waiting call no longer cancels unrelated calls or input.\n\n## Linked Issues\n\nFixes #17496.\n\n<details>\n<summary>中文说明</summary>\n\n## 本次修改\n\n取消一个等待初始化的控制调用时，保留 Python SDK 的共享初始化任务。初始化成功后，其他等待中的调用、后续调用和提示输入均可继续。查询自身关闭时，这些任务会在写入新的提示或控制请求前停止。\n\n## 修改原因\n\n目前所有初始化等待者都会直接等待同一个任务，因此取消一个公开调用会连带取消共享握手、其他等待中的调用以及提示输入。此时传输仍然打开，但查询已无法继续正常工作。隔离调用者取消后，还需要检查查询是否已在握手期间关闭，避免初始化失败后等待中的任务继续向已关闭的传输写入。\n\n## 审查者验证计划\n\n### 验证方式\n\n1. 延迟初始化回复，启动两个独立控制调用，然后只取消其中一个。发送初始化成功回复后，被取消的调用应收到取消结果，另一调用和后续调用应分别成功收到自己的回复，提示应只发送一次。\n2. 分别使用字符串提示和异步输入重复测试，并加入没有取消操作的对照，检查正常启动行为。\n3. 分别在初始化期间关闭查询、拒绝初始化。等待中的控制调用必须结束，两种输入都不应在关闭后继续写入，后台输入也不应产生未处理异常。\n\n### 修改前后证据\n\n新增八个回归用例在未修改基线上的结果为 **4 失败、4 通过**，修改后为 **8 通过**。完整本地 Python SDK 测试结果为 **195 通过、26 跳过**，Python lint 和配置的类型检查均通过。独立重新运行原始四例复现脚本，在拟提交的精确版本上得到 **4 通过**：取消仅影响指定调用，其他调用和后续调用均成功，两种输入分别发送一条提示，输入任务没有被取消。\n\n本 PR 暂为 Draft，因为全仓验证尚未完成。工作区构建在 CLI 的 TypeScript 编译阶段以状态码 137 终止，没有 TypeScript 源码错误诊断；分别使用 4096 MB 和 3072 MB 堆上限的单独尝试结果相同。打包和完整 preflight 尚未完成。上述结果覆盖使用模拟协议对端的 Python 测试，不代表官方 CLI 的端到端验证。\n\n### 测试平台\n\n| 系统 | 状态 |\n| --- | --- |\n| 🍏 macOS | ⚠️ 未测试 |\n| 🪟 Windows | ⚠️ 未测试 |\n| 🐧 Linux | ✅ Python SDK 测试、lint 和类型检查；全仓构建尚未完成 |\n\n### 环境\n\nLinux 上的 Python 3.12.14。工作区构建尝试使用 Node.js 24.22.1 和仓库固定的 pnpm 11.24.0。\n\n## 风险与范围\n\n- 主要风险或取舍：隔离调用者取消时，仍须保留查询自身关闭和初始化失败的行为。回归用例覆盖两种情况，并要求关闭后没有新的提示或控制请求写入。\n- 未验证或不在范围内：官方 CLI 端到端行为、macOS、Windows 和完整的全仓 preflight。\n- 破坏性变更或迁移：不改变公开 API 或协议。取消一个等待中的调用不再连带取消其他调用或输入。\n\n## 关联问题\n\n修复 #17496。\n\n</details>\n",
+      "head": "70fa8a1518861d4b7846f758bbbd388792da56e0",
+      "head_ref": "fix/python-initialization-cancellation",
+      "state": "open",
+      "draft": true,
+      "merged_at": null,
+      "created_at": "2026-11-16T20:59:51Z",
+      "maintainer_can_modify": false,
+      "official_ci": {
+        "checked_at": "2026-11-16T21:22:00.004Z",
+        "total_count": 44,
+        "check_runs": [
+          {
+            "name": "Integration Tests (no-AK, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619525369",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "web-shell E2E Smoke (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619525224",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Integration Tests (no-AK, shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619524873",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "web-shell E2E Smoke (shard ${{ matrix.shard }}/2)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619524376",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Linux unit tests (shard 2/2)",
+            "status": "in_progress",
+            "conclusion": null,
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619522398",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Linux unit tests (shard 1/2)",
+            "status": "in_progress",
+            "conclusion": null,
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133619522349",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "fallback-comment",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290959",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-resolution",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290314",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "review-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290101",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "ack-review-request",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609290015",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "resolve-pr",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609289757",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "delay-automatic-review",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609289411",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133609236500",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609213248",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609212182",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "publish-tmux",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609212138",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "verify",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609212031",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "tmux-testing",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609211249",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "triage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609211152",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "authorize",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133609145784",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Java (none)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496326/job/133609131546",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Managed Agent gate",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496326/job/133609129632",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "OpenTUI no-flicker gate",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133609008838",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "TUI parity snapshots (ink vs opentui)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133609008821",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Test (windows-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608969781",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Test (macos-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608969691",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Integration Tests (CLI, No Sandbox)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608968539",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "macOS unit tests (${{ matrix.group }} ${{ matrix.shard }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608968442",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Build unit-test tree (Linux, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965234",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Lint & Static (ubuntu-latest, Node 22.x)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608965181",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Python (3.11)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908742",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Python (3.12)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908711",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "SDK Python (3.10)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608908642",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "review-config",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133608867642",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496115/job/133608866720",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "precheck-pr / precheck",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496214/job/133608864303",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "assign",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955495671/job/133608862384",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955495677/job/133608860898",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Installed npm global and npx (${{ matrix.target }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133608860547",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Installed npm Node26 private Bun acceptance",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133608860291",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Select the Managed Agent tier",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496326/job/133608859595",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Check TUI impact",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496105/job/133608857906",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496117/job/133608857782",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          },
+          {
+            "name": "Classify PR",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/QwenLM/qwen-code/actions/runs/43955496170/job/133608857331",
+            "head_sha": "70fa8a1518861d4b7846f758bbbd388792da56e0"
+          }
+        ]
+      }
+    }
+  ],
+  "prepared_submissions": [
+    {
+      "recorded_at": "2026-11-16T21:09:58.847Z",
+      "repository": "petercorke/robotics-toolbox-python",
+      "fork": "Afloat16/robotics-toolbox-python",
+      "branch": "fix/manipulability-subchain",
+      "head": "c4e6e28d0fd748b46b4059faf52ed19f2b0e0048",
+      "tree": "912a5480fbc37262ae3b0cb79c444d64a868605e",
+      "base": "cee0023535988e4ae9490c81d639a46f2311b8fd",
+      "issue": 943,
+      "status": "prepared_not_submitted",
+      "count_in_actual_prs": 0,
+      "creation_attempt": {
+        "outcome": "403 Resource not accessible by integration",
+        "browser_fallback": "unavailable; browser namespace withdrawn after execution environment failed"
+      },
+      "title": "fix(kinematics): honor the selected manipulability chain",
+      "body": "## Summary\n\nCorrect the requested start/end chain in `manipulability()`, apply the configured Robot tool once, and express Asada inertia in the selected Jacobian's joint coordinates. The present code reverses start/end, omits the ordinary Robot tool, and combines a subchain Jacobian with full-robot inertia.\n\nThis changes results for previously misselected chains and omitted tool transforms, and removes the subchain inertia dimension error. Metric formulas and public signatures stay the same. DH sequences already include their tool and retain their existing behavior.\n\nA supplied full-robot Jacobian retains global joint order and its existing override behavior, independently of start/end arguments. A supplied shorter Jacobian uses the selected chain's joint order. Computed Jacobians always use the selected chain order, including reversed paths. The docstring states the distinction.\n\nContribution owner: @Afloat16. This is an AI-assisted contribution; the required tool attribution is at the end.\n\n## Related issue\n\nFixes #943. The issue was claimed before implementation.\n\n## Validation\n\nPython 3.12.14, NumPy 2.5.5 and SpatialMath 1.1.19 on Linux, with native fknm/frne extensions.\n\n- The initial 116 selected-chain/tool cases produce **93 failures and 23 passes** on unchanged base `cee00235`. Separately, all **48 DH compatibility controls** and **18 supplied-J compatibility controls** pass on that base.\n- Final commit `c4e6e28d0fd748b46b4059faf52ed19f2b0e0048`: the regression file has **194 cases**; together with existing Robot, DHRobot and PoERobot suites, **332 passed, 2 skipped**.\n- Geometric metrics are checked against the public Jacobian and determinant/SVD references. Asada tests use inverse dynamics for unit task accelerations to obtain an independent kinetic-energy reference, including reverse joint order, trajectories and nonidentity tools.\n- Independent final review verifies **12 full-robot supplied-J selections** exactly match the base and **12 selected-chain/axis combinations** match the inverse-dynamics reference. The preceding DH correction separately passes **24/24** independent tool cases.\n- The preceding commit `ad46a757` completes the core run with **2,642 passed, 15 skipped, 12 deselected and 254 subtests passed**. Observation of the final supplied-J revision's complete core rerun was interrupted by loss of the execution environment; its final outcome is unconfirmed. The 332-test result above is for the final code.\n- The new test file passes Ruff and formatting. At `ad46a757`, mypy reports exactly the same eight existing block-annotation errors as the base; its final rerun is unconfirmed.\n\nThe canonical full invocation was attempted. Both base and candidate hit the existing 50-second dynamics integration timeout. Baseline checks also reproduce the slow symbolic-IK timeout and four notebook animation setup errors caused by unavailable sandbox network interfaces. The core run excludes that integration case and notebook animation file, uses `not slow`, and retains the documented blocks exclusion. No unrestricted full-suite success is claimed.\n\n## Checklist\n\n- [x] Checked for competing work and claimed the issue.\n- [x] Conventional Commit title.\n- [ ] Unrestricted local test suite passes; limitations and exact tested revisions are stated above.\n- [x] Added regression and compatibility tests.\n- [x] New test code uses modern type annotations.\n- [x] Updated reST docstrings.\n- [x] One focused selected-chain computation fix.\n- [x] Required versus advisory checks reviewed.\n- [x] Numerical behavior changes described.\n- [x] Diff reviewed and required assistance disclosed.\n- [x] No project-specific data or notebooks added.\n\nAI assistance: ChatGPT (GPT-6 Astra Pro).\n",
+      "prefilled_url": "https://github.com/petercorke/robotics-toolbox-python/compare/main...Afloat16:fix/manipulability-subchain?expand=1&title=fix(kinematics)%3A%20honor%20the%20selected%20manipulability%20chain&body=%23%23%20Summary%0A%0ACorrect%20the%20requested%20start%2Fend%20chain%20in%20%60manipulability()%60%2C%20apply%20the%20configured%20Robot%20tool%20once%2C%20and%20express%20Asada%20inertia%20in%20the%20selected%20Jacobian's%20joint%20coordinates.%20The%20present%20code%20reverses%20start%2Fend%2C%20omits%20the%20ordinary%20Robot%20tool%2C%20and%20combines%20a%20subchain%20Jacobian%20with%20full-robot%20inertia.%0A%0AThis%20changes%20results%20for%20previously%20misselected%20chains%20and%20omitted%20tool%20transforms%2C%20and%20removes%20the%20subchain%20inertia%20dimension%20error.%20Metric%20formulas%20and%20public%20signatures%20stay%20the%20same.%20DH%20sequences%20already%20include%20their%20tool%20and%20retain%20their%20existing%20behavior.%0A%0AA%20supplied%20full-robot%20Jacobian%20retains%20global%20joint%20order%20and%20its%20existing%20override%20behavior%2C%20independently%20of%20start%2Fend%20arguments.%20A%20supplied%20shorter%20Jacobian%20uses%20the%20selected%20chain's%20joint%20order.%20Computed%20Jacobians%20always%20use%20the%20selected%20chain%20order%2C%20including%20reversed%20paths.%20The%20docstring%20states%20the%20distinction.%0A%0AContribution%20owner%3A%20%40Afloat16.%20This%20is%20an%20AI-assisted%20contribution%3B%20the%20required%20tool%20attribution%20is%20at%20the%20end.%0A%0A%23%23%20Related%20issue%0A%0AFixes%20%23943.%20The%20issue%20was%20claimed%20before%20implementation.%0A%0A%23%23%20Validation%0A%0APython%203.12.14%2C%20NumPy%202.5.5%20and%20SpatialMath%201.1.19%20on%20Linux%2C%20with%20native%20fknm%2Ffrne%20extensions.%0A%0A-%20The%20initial%20116%20selected-chain%2Ftool%20cases%20produce%20**93%20failures%20and%2023%20passes**%20on%20unchanged%20base%20%60cee00235%60.%20Separately%2C%20all%20**48%20DH%20compatibility%20controls**%20and%20**18%20supplied-J%20compatibility%20controls**%20pass%20on%20that%20base.%0A-%20Final%20commit%20%60c4e6e28d0fd748b46b4059faf52ed19f2b0e0048%60%3A%20the%20regression%20file%20has%20**194%20cases**%3B%20together%20with%20existing%20Robot%2C%20DHRobot%20and%20PoERobot%20suites%2C%20**332%20passed%2C%202%20skipped**.%0A-%20Geometric%20metrics%20are%20checked%20against%20the%20public%20Jacobian%20and%20determinant%2FSVD%20references.%20Asada%20tests%20use%20inverse%20dynamics%20for%20unit%20task%20accelerations%20to%20obtain%20an%20independent%20kinetic-energy%20reference%2C%20including%20reverse%20joint%20order%2C%20trajectories%20and%20nonidentity%20tools.%0A-%20Independent%20final%20review%20verifies%20**12%20full-robot%20supplied-J%20selections**%20exactly%20match%20the%20base%20and%20**12%20selected-chain%2Faxis%20combinations**%20match%20the%20inverse-dynamics%20reference.%20The%20preceding%20DH%20correction%20separately%20passes%20**24%2F24**%20independent%20tool%20cases.%0A-%20The%20preceding%20commit%20%60ad46a757%60%20completes%20the%20core%20run%20with%20**2%2C642%20passed%2C%2015%20skipped%2C%2012%20deselected%20and%20254%20subtests%20passed**.%20Observation%20of%20the%20final%20supplied-J%20revision's%20complete%20core%20rerun%20was%20interrupted%20by%20loss%20of%20the%20execution%20environment%3B%20its%20final%20outcome%20is%20unconfirmed.%20The%20332-test%20result%20above%20is%20for%20the%20final%20code.%0A-%20The%20new%20test%20file%20passes%20Ruff%20and%20formatting.%20At%20%60ad46a757%60%2C%20mypy%20reports%20exactly%20the%20same%20eight%20existing%20block-annotation%20errors%20as%20the%20base%3B%20its%20final%20rerun%20is%20unconfirmed.%0A%0AThe%20canonical%20full%20invocation%20was%20attempted.%20Both%20base%20and%20candidate%20hit%20the%20existing%2050-second%20dynamics%20integration%20timeout.%20Baseline%20checks%20also%20reproduce%20the%20slow%20symbolic-IK%20timeout%20and%20four%20notebook%20animation%20setup%20errors%20caused%20by%20unavailable%20sandbox%20network%20interfaces.%20The%20core%20run%20excludes%20that%20integration%20case%20and%20notebook%20animation%20file%2C%20uses%20%60not%20slow%60%2C%20and%20retains%20the%20documented%20blocks%20exclusion.%20No%20unrestricted%20full-suite%20success%20is%20claimed.%0A%0A%23%23%20Checklist%0A%0A-%20%5Bx%5D%20Checked%20for%20competing%20work%20and%20claimed%20the%20issue.%0A-%20%5Bx%5D%20Conventional%20Commit%20title.%0A-%20%5B%20%5D%20Unrestricted%20local%20test%20suite%20passes%3B%20limitations%20and%20exact%20tested%20revisions%20are%20stated%20above.%0A-%20%5Bx%5D%20Added%20regression%20and%20compatibility%20tests.%0A-%20%5Bx%5D%20New%20test%20code%20uses%20modern%20type%20annotations.%0A-%20%5Bx%5D%20Updated%20reST%20docstrings.%0A-%20%5Bx%5D%20One%20focused%20selected-chain%20computation%20fix.%0A-%20%5Bx%5D%20Required%20versus%20advisory%20checks%20reviewed.%0A-%20%5Bx%5D%20Numerical%20behavior%20changes%20described.%0A-%20%5Bx%5D%20Diff%20reviewed%20and%20required%20assistance%20disclosed.%0A-%20%5Bx%5D%20No%20project-specific%20data%20or%20notebooks%20added.%0A%0AAI%20assistance%3A%20ChatGPT%20(GPT-6%20Astra%20Pro).%0A",
+      "verified": {
+        "final_related_suite": {
+          "passed": 332,
+          "skipped": 2,
+          "new_cases": 194
+        },
+        "independent_final_review": {
+          "full_width_supplied_J_matches_base": 12,
+          "selected_chain_axes_matches_RNE_energy": 12,
+          "head": "c4e6e28d0fd748b46b4059faf52ed19f2b0e0048",
+          "blocking_findings": []
+        },
+        "preceding_full_core": {
+          "head": "ad46a75733b37c08309ac194f6860b2886a045cb",
+          "passed": 2642,
+          "skipped": 15,
+          "deselected": 12,
+          "subtests_passed": 254
+        },
+        "final_full_core": "outcome unconfirmed after exec-server connection loss",
+        "mypy": "8 known base errors matched at preceding ad46; final rerun outcome unknown"
+      },
+      "evidence_note": "Summaries preserve results actually observed in tool output before the environment outage. Local raw logs could not be recovered after the outage; no raw log contents have been reconstructed."
     }
   ]
 }
