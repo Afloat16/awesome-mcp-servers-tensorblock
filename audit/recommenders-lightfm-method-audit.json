@@ -1,0 +1,169 @@
+{
+  "similar_users": [
+    {
+      "blobs": [
+        "b6c3b3806160bf3b2abad602d8a394993dfb9e05",
+        "d0c1357d46d8a968afe205d0ff6ebbda3cbd71d4",
+        "ed9663b870ccda378e4e6d90cae94a9c244f6f73",
+        "6b10f5d2dd8c98c7e80b936c9cc13091ddd8a585",
+        "aec6cb50879fc524d0e30e1e3e4a93b2c2faf850",
+        "29aa9ca1c3fee6c63a86b5cc68f81883736895e9",
+        "ee561e92d2033e91743ed02dd91798dfaaceeeb1",
+        "8acd9aed6700823d83fe89aa433a378c80a83fef",
+        "2256df53bb3697f9b6cdaf8d1aa162e0530c4b8a",
+        "74641dcc29747725ecf4bef402446eb121a92844",
+        "6606d98f9307c808f5904656a4bcb6f413eb5fa5",
+        "1ceb9dec11e23e8f27c53539f47d5a93f17e73bd",
+        "fcd134527ac776fcc4fb9b0fb01992535a2351d8",
+        "d962c4a8adc8ac9f88137045a47bdd82a7e5011c",
+        "701678262a5defa375b83e64cf701079b117f022",
+        "c4c44df66afdafbab0614c447844bb5eeae6771b",
+        "10d1b3ac3fc87cbaf4f1b44a542d7a8f1467e842",
+        "7a44aa5e5d3cdaa5f1f8d2442cc9541e03efc588",
+        "7659844d0dd56a9233006f4152bac4aa33527653",
+        "5c3261aff1d646734ccc80e208a725be2b48faca",
+        "2d8ad877be04cb6abfb275f050a46cd86d6ec824",
+        "cae3b04d89ae663b149ca23e436a7986fe006b1e",
+        "22546327009b1b238290a1381c0d587188c9059e",
+        "1f05582854668dffe1fdd90a358b762d744192d8",
+        "3d08090678027b54599348cad08427e34ec2e0ef",
+        "11252306041e1b8ab20350ba3b242bdcc37d4fa2",
+        "821f032994521fb7ea8540e928b2a5d3d4887375",
+        "3fb719e7c839a01ec35534e391111c60d95644f9"
+      ],
+      "body": "_, user_representations = model.get_user_representations(features=user_features)\nscores = user_representations.dot(user_representations[user_id, :])\nuser_norms = np.linalg.norm(user_representations, axis=1)\nuser_norms[user_norms == 0] = 1e-10\nscores /= user_norms\nbest = np.argpartition(scores, -(N + 1))[-(N + 1):]\nreturn pd.DataFrame(sorted(zip(best, scores[best] / user_norms[user_id]), key=lambda x: -x[1])[1:], columns=['userID', 'score'])"
+    }
+  ],
+  "similar_items": [
+    {
+      "blobs": [
+        "b6c3b3806160bf3b2abad602d8a394993dfb9e05",
+        "d0c1357d46d8a968afe205d0ff6ebbda3cbd71d4",
+        "ed9663b870ccda378e4e6d90cae94a9c244f6f73",
+        "6b10f5d2dd8c98c7e80b936c9cc13091ddd8a585",
+        "aec6cb50879fc524d0e30e1e3e4a93b2c2faf850",
+        "29aa9ca1c3fee6c63a86b5cc68f81883736895e9",
+        "ee561e92d2033e91743ed02dd91798dfaaceeeb1",
+        "8acd9aed6700823d83fe89aa433a378c80a83fef",
+        "2256df53bb3697f9b6cdaf8d1aa162e0530c4b8a",
+        "74641dcc29747725ecf4bef402446eb121a92844",
+        "6606d98f9307c808f5904656a4bcb6f413eb5fa5",
+        "1ceb9dec11e23e8f27c53539f47d5a93f17e73bd",
+        "fcd134527ac776fcc4fb9b0fb01992535a2351d8",
+        "d962c4a8adc8ac9f88137045a47bdd82a7e5011c",
+        "701678262a5defa375b83e64cf701079b117f022",
+        "c4c44df66afdafbab0614c447844bb5eeae6771b",
+        "10d1b3ac3fc87cbaf4f1b44a542d7a8f1467e842",
+        "7a44aa5e5d3cdaa5f1f8d2442cc9541e03efc588",
+        "7659844d0dd56a9233006f4152bac4aa33527653",
+        "5c3261aff1d646734ccc80e208a725be2b48faca",
+        "2d8ad877be04cb6abfb275f050a46cd86d6ec824",
+        "cae3b04d89ae663b149ca23e436a7986fe006b1e",
+        "22546327009b1b238290a1381c0d587188c9059e",
+        "1f05582854668dffe1fdd90a358b762d744192d8",
+        "3d08090678027b54599348cad08427e34ec2e0ef",
+        "11252306041e1b8ab20350ba3b242bdcc37d4fa2",
+        "821f032994521fb7ea8540e928b2a5d3d4887375",
+        "3fb719e7c839a01ec35534e391111c60d95644f9"
+      ],
+      "body": "_, item_representations = model.get_item_representations(features=item_features)\nscores = item_representations.dot(item_representations[item_id, :])\nitem_norms = np.linalg.norm(item_representations, axis=1)\nitem_norms[item_norms == 0] = 1e-10\nscores /= item_norms\nbest = np.argpartition(scores, -(N + 1))[-(N + 1):]\nreturn pd.DataFrame(sorted(zip(best, scores[best] / item_norms[item_id]), key=lambda x: -x[1])[1:], columns=['itemID', 'score'])"
+    }
+  ],
+  "prepare_test_df": [
+    {
+      "blobs": [
+        "b6c3b3806160bf3b2abad602d8a394993dfb9e05",
+        "ee561e92d2033e91743ed02dd91798dfaaceeeb1",
+        "8acd9aed6700823d83fe89aa433a378c80a83fef",
+        "2256df53bb3697f9b6cdaf8d1aa162e0530c4b8a",
+        "74641dcc29747725ecf4bef402446eb121a92844",
+        "6606d98f9307c808f5904656a4bcb6f413eb5fa5",
+        "1ceb9dec11e23e8f27c53539f47d5a93f17e73bd",
+        "fcd134527ac776fcc4fb9b0fb01992535a2351d8",
+        "d962c4a8adc8ac9f88137045a47bdd82a7e5011c",
+        "701678262a5defa375b83e64cf701079b117f022",
+        "c4c44df66afdafbab0614c447844bb5eeae6771b",
+        "10d1b3ac3fc87cbaf4f1b44a542d7a8f1467e842",
+        "7a44aa5e5d3cdaa5f1f8d2442cc9541e03efc588",
+        "7659844d0dd56a9233006f4152bac4aa33527653",
+        "5c3261aff1d646734ccc80e208a725be2b48faca",
+        "2d8ad877be04cb6abfb275f050a46cd86d6ec824",
+        "cae3b04d89ae663b149ca23e436a7986fe006b1e",
+        "22546327009b1b238290a1381c0d587188c9059e",
+        "1f05582854668dffe1fdd90a358b762d744192d8"
+      ],
+      "body": "test_df = pd.DataFrame(zip(uids[test_idx], iids[test_idx], [list(uid_map.keys())[x] for x in uids[test_idx]], [list(iid_map.keys())[x] for x in iids[test_idx]]), columns=['uid', 'iid', 'userID', 'itemID'])\ndok_weights = weights.todok()\ntest_df['rating'] = test_df.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nreturn test_df[['userID', 'itemID', 'rating']]"
+    },
+    {
+      "blobs": [
+        "d0c1357d46d8a968afe205d0ff6ebbda3cbd71d4"
+      ],
+      "body": "test_uids = uids[test_idx]\ntest_iids = iids[test_idx]\nuid_map_keys = np.array(list(uid_map.keys()))\niid_map_keys = np.array(list(iid_map.keys()))\ncsr_weights = weights.tocsr()\nratings = np.array(csr_weights[test_uids, test_iids]).flatten()\ntest_df = pd.DataFrame({'userID': uid_map_keys[test_uids], 'itemID': iid_map_keys[test_iids], 'rating': ratings})\nreturn test_df"
+    },
+    {
+      "blobs": [
+        "ed9663b870ccda378e4e6d90cae94a9c244f6f73",
+        "6b10f5d2dd8c98c7e80b936c9cc13091ddd8a585"
+      ],
+      "body": "test_df = pd.DataFrame({'uid': uids[test_idx], 'iid': iids[test_idx]})\nuid_map_keys = np.array(list(uid_map.keys()))\ntest_df['userID'] = uid_map_keys[uids[test_idx]]\niid_map_keys = np.array(list(iid_map.keys()))\ntest_df['itemID'] = iid_map_keys[iids[test_idx]]\ndok_weights = weights.todok()\ntest_df['rating'] = test_df.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nreturn test_df[['userID', 'itemID', 'rating']]"
+    },
+    {
+      "blobs": [
+        "aec6cb50879fc524d0e30e1e3e4a93b2c2faf850"
+      ],
+      "body": "test_df = pd.DataFrame()\ntest_df['uid'] = uids[test_idx]\ntest_df['iid'] = iids[test_idx]\nuid_map_keys = list(uid_map.keys())\ntest_df['userID'] = uid_map_keys[uids[test_idx]]\niid_map_keys = list(iid_map.keys())\ntest_df['itemID'] = iid_map_keys[iids[test_idx]]\ndok_weights = weights.todok()\ntest_df['rating'] = test_df.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nreturn test_df[['userID', 'itemID', 'rating']]"
+    },
+    {
+      "blobs": [
+        "29aa9ca1c3fee6c63a86b5cc68f81883736895e9"
+      ],
+      "body": "test_df = pd.DataFrame()\ntest_df['uid'] = uids[test_idx]\ntest_df['iid'] = iids[test_idx]\nuid_map_keys = np.array(list(uid_map.keys()))\ntest_df['userID'] = uid_map_keys[uids[test_idx]]\niid_map_keys = np.array(list(iid_map.keys()))\ntest_df['itemID'] = iid_map_keys[iids[test_idx]]\ndok_weights = weights.todok()\ntest_df['rating'] = test_df.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nreturn test_df[['userID', 'itemID', 'rating']]"
+    }
+  ],
+  "prepare_all_predictions": [
+    {
+      "blobs": [
+        "b6c3b3806160bf3b2abad602d8a394993dfb9e05",
+        "d0c1357d46d8a968afe205d0ff6ebbda3cbd71d4",
+        "ed9663b870ccda378e4e6d90cae94a9c244f6f73",
+        "6b10f5d2dd8c98c7e80b936c9cc13091ddd8a585",
+        "aec6cb50879fc524d0e30e1e3e4a93b2c2faf850",
+        "29aa9ca1c3fee6c63a86b5cc68f81883736895e9",
+        "ee561e92d2033e91743ed02dd91798dfaaceeeb1",
+        "6606d98f9307c808f5904656a4bcb6f413eb5fa5"
+      ],
+      "body": "users, items, preds = ([], [], [])\nitem = list(data.itemID.unique())\nfor user in data.userID.unique():\n    user = [user] * len(item)\n    users.extend(user)\n    items.extend(item)\nall_predictions = pd.DataFrame(data={'userID': users, 'itemID': items})\nall_predictions['uid'] = all_predictions.userID.map(uid_map)\nall_predictions['iid'] = all_predictions.itemID.map(iid_map)\ndok_weights = interactions.todok()\nall_predictions['rating'] = all_predictions.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nall_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)\nall_predictions = all_predictions.drop('rating', axis=1)\nall_predictions['prediction'] = all_predictions.apply(lambda x: model.predict(user_ids=np.array([x['uid']], dtype=np.int32), item_ids=np.array([x['iid']], dtype=np.int32), user_features=user_features, item_features=item_features, num_threads=num_threads)[0], axis=1)\nreturn all_predictions[['userID', 'itemID', 'prediction']]"
+    },
+    {
+      "blobs": [
+        "8acd9aed6700823d83fe89aa433a378c80a83fef"
+      ],
+      "body": "users, items, preds = ([], [], [])\nitem = list(data.itemID.unique())\nfor user in data.userID.unique():\n    user = [user] * len(item)\n    users.extend(user)\n    items.extend(item)\nall_predictions = pd.DataFrame(data={'userID': users, 'itemID': items})\nall_predictions['uid'] = all_predictions.userID.map(uid_map)\nall_predictions['iid'] = all_predictions.itemID.map(iid_map)\ndok_weights = interactions.todok()\nall_predictions['rating'] = all_predictions.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nall_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)\nall_predictions = all_predictions.drop('rating', axis=1)\nall_predictions['prediction'] = all_predictions.apply(lambda x: model.predict(user_ids=int(x['uid']), item_ids=[x['iid']], user_features=user_features, item_features=item_features, num_threads=num_threads)[0], axis=1)\nreturn all_predictions[['userID', 'itemID', 'prediction']]"
+    },
+    {
+      "blobs": [
+        "2256df53bb3697f9b6cdaf8d1aa162e0530c4b8a",
+        "74641dcc29747725ecf4bef402446eb121a92844",
+        "fcd134527ac776fcc4fb9b0fb01992535a2351d8",
+        "d962c4a8adc8ac9f88137045a47bdd82a7e5011c",
+        "701678262a5defa375b83e64cf701079b117f022",
+        "c4c44df66afdafbab0614c447844bb5eeae6771b",
+        "10d1b3ac3fc87cbaf4f1b44a542d7a8f1467e842",
+        "7a44aa5e5d3cdaa5f1f8d2442cc9541e03efc588",
+        "7659844d0dd56a9233006f4152bac4aa33527653",
+        "5c3261aff1d646734ccc80e208a725be2b48faca",
+        "2d8ad877be04cb6abfb275f050a46cd86d6ec824",
+        "cae3b04d89ae663b149ca23e436a7986fe006b1e",
+        "22546327009b1b238290a1381c0d587188c9059e",
+        "1f05582854668dffe1fdd90a358b762d744192d8"
+      ],
+      "body": "users, items, preds = ([], [], [])\nitem = list(data.itemID.unique())\nfor user in data.userID.unique():\n    user = [user] * len(item)\n    users.extend(user)\n    items.extend(item)\nall_predictions = pd.DataFrame(data={'userID': users, 'itemID': items})\nall_predictions['uid'] = all_predictions.userID.map(uid_map)\nall_predictions['iid'] = all_predictions.itemID.map(iid_map)\ndok_weights = interactions.todok()\nall_predictions['rating'] = all_predictions.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nall_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)\nall_predictions = all_predictions.drop('rating', axis=1)\nall_predictions['prediction'] = all_predictions.apply(lambda x: model.predict(user_ids=x['uid'], item_ids=[x['iid']], user_features=user_features, item_features=item_features, num_threads=num_threads)[0], axis=1)\nreturn all_predictions[['userID', 'itemID', 'prediction']]"
+    },
+    {
+      "blobs": [
+        "1ceb9dec11e23e8f27c53539f47d5a93f17e73bd"
+      ],
+      "body": "users, items, preds = ([], [], [])\nitem = list(data.itemID.unique())\nfor user in data.userID.unique():\n    user = [user] * len(item)\n    users.extend(user)\n    items.extend(item)\nall_predictions = pd.DataFrame(data={'userID': users, 'itemID': items})\nall_predictions['uid'] = all_predictions.userID.map(uid_map)\nall_predictions['iid'] = all_predictions.itemID.map(iid_map)\ndok_weights = interactions.todok()\nall_predictions['rating'] = all_predictions.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)\nall_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)\nall_predictions = all_predictions.drop('rating', axis=1)\nall_predictions['prediction'] = all_predictions.apply(lambda x: model.predict(user_ids=np.array([x['uid']]), item_ids=np.array([x['iid']]), user_features=user_features, item_features=item_features, num_threads=num_threads)[0], axis=1)\nreturn all_predictions[['userID', 'itemID', 'prediction']]"
+    }
+  ]
+}

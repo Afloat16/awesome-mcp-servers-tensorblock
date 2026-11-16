@@ -1,0 +1,41 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/exclude-lightfm-query-entity-20261116",
+  "head": "a85bcc5456aba5db8e3616a3b4c164bea7048f74",
+  "tree": "3e7a68f71147179b8452818c24c2173bc0db3823",
+  "title": "Exclude the query entity explicitly from LightFM similarity results",
+  "issue": 2478,
+  "historical_blobs": 28,
+  "historical_commits": 110,
+  "baseline": "4 passed, 1 existing skip",
+  "before": "12 failed, 12 passed",
+  "after": "28 passed, 1 existing skip",
+  "status": "published_open",
+  "body": "### Description\n\nLightFM's similarity helpers retrieve N + 1 candidates and discard the first result. When shared features produce tied cosine scores, that first result need not be the query: the query can remain in the returned recommendations while another eligible entity is omitted. Zero feature representations have the same problem.\n\nExclude the query by its ID before returning the first N sorted candidates. Apply the same small correction to both users and items, preserving cosine scores, descending order and the existing supported N range.\n\nFixes #2478.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43918186395) checks exact head `a85bcc5456aba5db8e3616a3b4c164bea7048f74` with native LightFM 1.17:\n\n| Environment | Original suite | New cases on baseline | Patched full suite |\n| --- | --- | --- | --- |\n| Python 3.10, NumPy 1.24.4, SciPy 1.10.1 | 4 passed, 1 skipped | 12 failed, 12 passed | 28 passed, 1 skipped |\n| Python 3.11, NumPy 1.26.4, SciPy 1.13.1 | 4 passed, 1 skipped | 12 failed, 12 passed | 28 passed, 1 skipped |\n\nThe sole skip is the existing `test_fitting` marked as flaky upstream. All 24 new cases run. Local Python 3.12 gives the same results.\n\nThe tests train actual LightFM models and exercise shared, zero and distinct feature representations, every query ID, and N values 0, 1, 3 and 5. An independent float64 cosine calculation checks returned scores and top-N ordering without prescribing an arbitrary tie order. No model method is mocked.\n\nBlack and `git diff --check` pass. The validation workflow builds the unmodified official LightFM 1.17 revision with its Cython command; no dependency build changes are included in this PR.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads, 69 fork branches and all 28 reachable LightFM utility source versions across 110 commits, including renamed paths and intermediate revisions. Every historical similarity implementation discards the first result by position.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Native regression coverage added to the existing LightFM test module.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation": {
+    "run": "https://github.com/Afloat16/recommenders/actions/runs/43918186395",
+    "jobs": [
+      {
+        "id": 133477954207,
+        "name": "validate (3.10, 1.24.4, 1.10.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43918186395/job/133477954207"
+      },
+      {
+        "id": 133477954735,
+        "name": "validate (3.11, 1.26.4, 1.13.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43918186395/job/133477954735"
+      }
+    ],
+    "baseline": "4 passed, 1 existing skip",
+    "before": "12 failed, 12 passed",
+    "after": "28 passed, 1 existing skip",
+    "black": "passed",
+    "diff_check": "passed"
+  },
+  "number": 2481,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2481"
+}

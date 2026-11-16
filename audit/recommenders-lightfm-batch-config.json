@@ -1,0 +1,269 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/batch-lightfm-evaluation-predictions-20261116",
+  "head": "9db933e55ff92a527fe5fbb1bb06f5bc27724abd",
+  "tree": "425c6d8b7583fa0ae9b1cc80d6fa56a130c85c63",
+  "title": "Batch native LightFM evaluation predictions",
+  "issue": 2479,
+  "historical_blobs": 28,
+  "historical_commits": 110,
+  "baseline": "4 passed, 1 existing skip",
+  "before": "6 failed, 16 passed",
+  "after": "26 passed, 1 existing skip",
+  "status": "published_open",
+  "body": "### Description\n\n`prepare_all_predictions` invokes LightFM separately for every retained user/item pair, repeating native feature construction and input checks. Its interaction lookup also uses row-wise DataFrame callbacks.\n\nRead the pair weights with sparse indexing and pass the retained int32 ID arrays to a single native `predict` call. Preserve the existing `rating < 1` rule, external IDs, user/item ordering, float32 scores, optional user/item features and thread setting. An empty retained set now returns the expected empty schema.\n\nFixes #2479.\n\n### Native validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43918605411) checks exact head `9db933e55ff92a527fe5fbb1bb06f5bc27724abd` with official LightFM 1.17 on both Python 3.10/NumPy 1.24.4/SciPy 1.10.1 and Python 3.11/NumPy 1.26.4/SciPy 1.13.1.\n\n- Original suite: **4 passed, 1 existing skip**.\n- New cases on baseline: **6 failed, 16 passed**. The failures are empty-data, all-seen and single-seen selections, with and without features.\n- Patched full suite: **26 passed, 1 existing skip** on both environments and local Python 3.12.\n- Black and `git diff --check`: passed.\n\nThe existing flaky `test_fitting` remains the only skip. All new cases run against native fitted models. Complete DataFrames match individual native predictions exactly, including pair order and dtypes. Coverage includes all four user/item feature combinations, one/two threads, COO/CSR inputs, duplicate sparse coordinates, fractional/negative interaction weights, and unchanged caller data.\n\n### Complete-function benchmark\n\nFive alternating timed calls per implementation, after warmup, with the same rank-8 fitted WARP model and one CPU thread. Every output DataFrame is checked for exact equality; score digests also match across environments.\n\n| Users \u00d7 items | Optional features | Retained pairs | Python 3.11 before \u2192 after (median) | Python 3.11 speedup | Python 3.10 speedup |\n| --- | --- | --- | --- | --- | --- |\n| 40 \u00d7 40 | No | 1,470 | 110.68 \u2192 1.68 ms | 65.96\u00d7 | 73.90\u00d7 |\n| 40 \u00d7 40 | Yes | 1,470 | 57.06 \u2192 1.75 ms | 32.56\u00d7 | 35.39\u00d7 |\n| 100 \u00d7 150 | No | 13,827 | 1,011.53 \u2192 5.05 ms | 200.47\u00d7 | 263.64\u00d7 |\n| 100 \u00d7 150 | Yes | 13,827 | 509.68 \u2192 5.70 ms | 89.49\u00d7 | 104.01\u00d7 |\n\nThese measurements cover the full `prepare_all_predictions` helper on the stated synthetic inputs, not model training or an entire application. The reproducible benchmark, dependency versions and raw samples are in the validation artifacts.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads, 69 fork branches and all 28 reachable utility source versions across 110 commits, including former paths and intermediate revisions. All four historical prediction variants make per-pair calls. Earlier #1611, #1624 and #1651 fix ID types; #2272/#2273 optimize the separate test-data preparation helper.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Native compatibility and regression cases added to the existing LightFM module.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation": {
+    "run": "https://github.com/Afloat16/recommenders/actions/runs/43918605411",
+    "jobs": [
+      {
+        "id": 133479438285,
+        "name": "validate (3.11, 1.26.4, 1.13.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43918605411/job/133479438285"
+      },
+      {
+        "id": 133479438800,
+        "name": "validate (3.10, 1.24.4, 1.10.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43918605411/job/133479438800"
+      }
+    ],
+    "baseline": "4 passed, 1 existing skip",
+    "before": "6 failed, 16 passed",
+    "after": "26 passed, 1 existing skip",
+    "benchmarks": [
+      {
+        "job": "validate (3.11, 1.26.4, 1.13.1)",
+        "records": [
+          {
+            "users": 40,
+            "items": 40,
+            "optional_features": false,
+            "retained_pairs": 1470,
+            "before_median_seconds": 0.11067786600000318,
+            "after_median_seconds": 0.0016779700000029152,
+            "speedup": 65.95938306394685,
+            "samples": {
+              "before": [
+                0.11024483299999588,
+                0.11102491900000189,
+                0.11180456499999991,
+                0.10996445000000676,
+                0.11067786600000318
+              ],
+              "after": [
+                0.001764420000000655,
+                0.0016887259999975868,
+                0.0016642389999930174,
+                0.0016569080000010672,
+                0.0016779700000029152
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "657d57171cc46c86a04d1c573f286af9f50e4fdf85df0e42f875328a628a41e9"
+          },
+          {
+            "users": 40,
+            "items": 40,
+            "optional_features": true,
+            "retained_pairs": 1470,
+            "before_median_seconds": 0.057059637000008934,
+            "after_median_seconds": 0.0017526119999899947,
+            "speedup": 32.55691333868231,
+            "samples": {
+              "before": [
+                0.057059637000008934,
+                0.05701192500001184,
+                0.057086818000001927,
+                0.05659854200000325,
+                0.057088571000008415
+              ],
+              "after": [
+                0.0017591120000020055,
+                0.0017375289999961296,
+                0.0017526119999899947,
+                0.001737310000009984,
+                0.0017811949999924082
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "5b775771fc12ba460aad0a1e1c3992484ff5781af064bd7e7ee117c23c478d35"
+          },
+          {
+            "users": 100,
+            "items": 150,
+            "optional_features": false,
+            "retained_pairs": 13827,
+            "before_median_seconds": 1.011527321999992,
+            "after_median_seconds": 0.005045718000005195,
+            "speedup": 200.47242473696522,
+            "samples": {
+              "before": [
+                1.011527321999992,
+                1.0302119509999983,
+                1.0052723460000124,
+                1.013011758999994,
+                1.0044932549999999
+              ],
+              "after": [
+                0.005103154000011045,
+                0.0053059299999915766,
+                0.004941230000000019,
+                0.005045718000005195,
+                0.004973480999993285
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "e6b417ce59b9a55d06c08395904a0bcfa444ac8e34e9f3a6865d035a8a5f6ee4"
+          },
+          {
+            "users": 100,
+            "items": 150,
+            "optional_features": true,
+            "retained_pairs": 13827,
+            "before_median_seconds": 0.5096777360000004,
+            "after_median_seconds": 0.005695399000003931,
+            "speedup": 89.48938186765294,
+            "samples": {
+              "before": [
+                0.5053670150000045,
+                0.5071097830000042,
+                0.5096777360000004,
+                0.5108496530000082,
+                0.5182660079999977
+              ],
+              "after": [
+                0.005825705000006565,
+                0.005498802000005298,
+                0.005695399000003931,
+                0.005509928999998692,
+                0.005913699000004158
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "10c3ebcf8f447e332516d7022da291e27771fbeb6ac51032591670a20ec1c6d1"
+          }
+        ]
+      },
+      {
+        "job": "validate (3.10, 1.24.4, 1.10.1)",
+        "records": [
+          {
+            "users": 40,
+            "items": 40,
+            "optional_features": false,
+            "retained_pairs": 1470,
+            "before_median_seconds": 0.10466327599999659,
+            "after_median_seconds": 0.0014163569999823267,
+            "speedup": 73.89611235112515,
+            "samples": {
+              "before": [
+                0.10515410499999689,
+                0.10183516999998687,
+                0.10332135900000594,
+                0.10466327599999659,
+                0.10573631100001535
+              ],
+              "after": [
+                0.0015048779999915496,
+                0.0013725309999870206,
+                0.0014163569999823267,
+                0.0014874519999921176,
+                0.0013517500000261862
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "657d57171cc46c86a04d1c573f286af9f50e4fdf85df0e42f875328a628a41e9"
+          },
+          {
+            "users": 40,
+            "items": 40,
+            "optional_features": true,
+            "retained_pairs": 1470,
+            "before_median_seconds": 0.04724080099998673,
+            "after_median_seconds": 0.0013349660000017138,
+            "speedup": 35.3872690390063,
+            "samples": {
+              "before": [
+                0.047523712000014484,
+                0.04727929800000652,
+                0.04695153099999061,
+                0.04724080099998673,
+                0.046880175000012514
+              ],
+              "after": [
+                0.0014255709999986266,
+                0.0013313700000026074,
+                0.0013384709999968436,
+                0.0013349660000017138,
+                0.001264269999978751
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "5b775771fc12ba460aad0a1e1c3992484ff5781af064bd7e7ee117c23c478d35"
+          },
+          {
+            "users": 100,
+            "items": 150,
+            "optional_features": false,
+            "retained_pairs": 13827,
+            "before_median_seconds": 0.951533875999985,
+            "after_median_seconds": 0.0036091679999969983,
+            "speedup": 263.6435533066835,
+            "samples": {
+              "before": [
+                0.9454958349999742,
+                0.951533875999985,
+                0.9474348290000023,
+                0.9641786420000074,
+                0.9633226589999992
+              ],
+              "after": [
+                0.003427478000020301,
+                0.003585172000015291,
+                0.0039010520000033466,
+                0.0036826980000057574,
+                0.0036091679999969983
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "e6b417ce59b9a55d06c08395904a0bcfa444ac8e34e9f3a6865d035a8a5f6ee4"
+          },
+          {
+            "users": 100,
+            "items": 150,
+            "optional_features": true,
+            "retained_pairs": 13827,
+            "before_median_seconds": 0.4245828699999947,
+            "after_median_seconds": 0.0040822290000051,
+            "speedup": 104.00760711843071,
+            "samples": {
+              "before": [
+                0.4527897480000149,
+                0.41928281900001707,
+                0.42770873700001744,
+                0.42135752400000115,
+                0.4245828699999947
+              ],
+              "after": [
+                0.004005946000006588,
+                0.004131162000021504,
+                0.004081748999993806,
+                0.0041115429999933895,
+                0.0040822290000051
+              ]
+            },
+            "exact_dataframe_parity": true,
+            "score_sha256": "10c3ebcf8f447e332516d7022da291e27771fbeb6ac51032591670a20ec1c6d1"
+          }
+        ]
+      }
+    ],
+    "black": "passed",
+    "diff_check": "passed"
+  },
+  "number": 2482,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2482"
+}

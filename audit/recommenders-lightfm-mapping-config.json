@@ -1,0 +1,41 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/honor-lightfm-evaluation-id-values-20261116",
+  "head": "9ff1b186364cf3a0758e344d669224e7a46dfdae",
+  "tree": "2b8b62aa4de63e7abeaa9abf4e51a56595ca2fdd",
+  "title": "Honor explicit LightFM ID mapping values during evaluation",
+  "issue": 2480,
+  "historical_blobs": 28,
+  "historical_commits": 110,
+  "baseline": "4 passed, 1 existing skip",
+  "before": "22 failed, 8 passed",
+  "after": "34 passed, 1 existing skip",
+  "status": "published_open",
+  "body": "### Description\n\n`prepare_test_df` currently indexes the dictionary's key order to recover external IDs, ignoring the explicit internal indices stored in its values. Reconstructing an equivalent mapping in a different insertion order silently associates the same rating with a different user/item pair. NumPy conversion can also turn mixed integer/string IDs into strings.\n\nBuild the reverse lookups from the mapping values and apply them to the selected internal indices. Preserve external ID types and selected-row order, including repeated or Boolean selections. Return correctly typed empty columns for an empty selection. Clarify that the input mappings go from external IDs to internal indices.\n\nFixes #2480.\n\n### Native validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43919031831) checks exact head `9ff1b186364cf3a0758e344d669224e7a46dfdae` using native LightFM 1.17:\n\n| Environment | Original suite | New cases on baseline | Patched full suite |\n| --- | --- | --- | --- |\n| Python 3.10, NumPy 1.24.4, SciPy 1.10.1 | 4 passed, 1 skipped | 22 failed, 8 passed | 34 passed, 1 skipped |\n| Python 3.11, NumPy 1.26.4, SciPy 1.13.1 | 4 passed, 1 skipped | 22 failed, 8 passed | 34 passed, 1 skipped |\n\nThe skip is the existing flaky `test_fitting`; every new case runs. Local Python 3.12 gives the same results. Black and `git diff --check` pass.\n\nTests create mappings and weighted interactions with the actual LightFM `Dataset`, then compare complete output DataFrames with the original external-ID records. Coverage combines:\n\n- strings, large integers and mixed IDs that distinguish `42` from `\"42\"`;\n- original and independently reordered user/item mappings;\n- full, sliced, repeated, Boolean and empty selections;\n- exact rating values, column dtypes, pair order and unchanged mappings.\n\nNo dataset, mapping method or sparse operation is mocked.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads, 69 fork branches and all 28 reachable utility versions across 110 commits, including older paths and intermediate revisions. The prior #2272/#2273 work reduces test-data preparation overhead but still indexes cached key arrays in insertion order. This correction concerns the ID association and preserves vectorized rating lookup.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Native regression coverage added to the existing LightFM test module.\n- [x] Mapping direction documented.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation": {
+    "run": "https://github.com/Afloat16/recommenders/actions/runs/43919031831",
+    "jobs": [
+      {
+        "id": 133480986003,
+        "name": "validate (3.10, 1.24.4, 1.10.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43919031831/job/133480986003"
+      },
+      {
+        "id": 133480986529,
+        "name": "validate (3.11, 1.26.4, 1.13.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43919031831/job/133480986529"
+      }
+    ],
+    "baseline": "4 passed, 1 existing skip",
+    "before": "22 failed, 8 passed",
+    "after": "34 passed, 1 existing skip",
+    "black": "passed",
+    "diff_check": "passed"
+  },
+  "number": 2483,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2483"
+}

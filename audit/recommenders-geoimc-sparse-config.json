@@ -1,0 +1,41 @@
+{
+  "repository": "Afloat16/recommenders",
+  "base": "6fb74f88b2a271b917be462a2a2a59e100b929da",
+  "base_tree": "601a18ceab63c5166438356549853fb1d9c2ed48",
+  "branch": "Afloat16/train-geoimc-sparse-features-20261116",
+  "title": "Keep GeoIMC entity feature projections sparse during training",
+  "issue": 2476,
+  "historical_blobs": 11,
+  "historical_commits": 60,
+  "baseline": "12 passed",
+  "before": "6 failed, 14 passed",
+  "after": "20 passed",
+  "head": "72b22acedfe747e65e8978f5a67583ef7413fc40",
+  "tree": "c27d01cd823ba18fe07d6d4cabe4bc6e65f7ca08",
+  "body": "### Description\n\nGeoIMC's dataset normalizer already accepts CSR entity features, and inference can project them with the learned factors. Training still uses dense-on-sparse NumPy products: sparse column features reach the Numba residual kernel as object arrays, while sparse row features produce an object-valued gradient and fail in the actual optimizer.\n\nKeep feature matrices on the sparse-compatible left side of the cost and gradient products. Reassociate the column gradient so it projects the residual into the rank space before multiplying by the column features. This avoids the row-count by column-feature-count intermediate and supports either or both feature matrices being CSR.\n\nThe objective, regularization, symmetric middle-factor gradient, solver settings and inference API are preserved. Document the accepted dense/CSR feature combinations in `DataPtr`.\n\nFixes #2476.\n\n### Validation\n\n[Independent validation](https://github.com/Afloat16/recommenders/actions/runs/43915173429) checks exact head `72b22acedfe747e65e8978f5a67583ef7413fc40` with the documented Pymanopt revision `fb36a272cdeecb21992cfd9271eb82baafeb316d`:\n\n| Environment | Unchanged original suite | New cases on baseline | Patched full suite |\n| --- | --- | --- | --- |\n| Python 3.10, NumPy 1.24.4, SciPy 1.10.1, Numba 0.57.1 | 12 passed | 6 failed, 2 passed | 20 passed |\n| Python 3.11, NumPy 1.26.4, SciPy 1.13.1, Numba 0.61.2 | 12 passed | 6 failed, 2 passed | 20 passed |\n\nNo tests are skipped. Local Python 3.12.14 gives the same results.\n\n- All four dense/CSR feature combinations are compared with an independent full-matrix objective evaluated at observed entries.\n- Central finite differences check every entry of all three factor gradients, using symmetric perturbations for the middle factor.\n- Actual Pymanopt/Numba optimization starts from identical factors, decreases the objective, and matches the dense reference's learned factors.\n- Held-out row entities then produce matching cold-start inference scores. Caller feature values and their sparse representations remain unchanged.\n- Black and `git diff --check` pass.\n\nNo solver, sparse operation or numerical kernel is mocked. The reduced intermediate follows from the multiplication order; this PR does not claim a measured peak-memory or runtime improvement.\n\n### History review\n\nReviewed 1,497 pre-existing upstream PR heads, 69 fork branches and all 11 reachable optimizer source versions across 60 commits, including earlier paths and intermediate commits. Both historical optimizer formulations retain the dense-on-sparse products. The shared inference square-root change in #2469 is independent and does not alter training.\n\n### Checklist\n\n- [x] Contribution guidelines and code style followed.\n- [x] Tests extend the existing GeoIMC module and use the documented native dependency.\n- [x] Sparse feature support documented.\n- [x] Commit includes the required `Signed-off-by` trailer.\n- [x] Targets `staging`.\n",
+  "validation": {
+    "run": "https://github.com/Afloat16/recommenders/actions/runs/43915173429",
+    "jobs": [
+      {
+        "id": 133467247161,
+        "name": "validate (3.10, 1.24.4, 0.57.1, 1.10.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43915173429/job/133467247161"
+      },
+      {
+        "id": 133467247691,
+        "name": "validate (3.11, 1.26.4, 0.61.2, 1.13.1)",
+        "conclusion": "success",
+        "url": "https://github.com/Afloat16/recommenders/actions/runs/43915173429/job/133467247691"
+      }
+    ],
+    "baseline": "12 passed",
+    "before": "6 failed, 2 passed",
+    "after": "20 passed",
+    "black": "passed",
+    "diff_check": "passed"
+  },
+  "status": "published_open",
+  "number": 2477,
+  "url": "https://github.com/recommenders-team/recommenders/pull/2477"
+}
