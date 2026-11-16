@@ -20,7 +20,7 @@
       "pr_number": 6111,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6111",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "catalog-large-blame-output",
@@ -40,7 +40,7 @@
       "pr_number": 6113,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6113",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "python-pip-setup-commands",
@@ -60,7 +60,7 @@
       "pr_number": 6107,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6107",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "quoted-launch-arguments",
@@ -80,7 +80,6 @@
       "pr_number": 6110,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6110",
       "merged_at": null,
-      "maintainer_can_modify": false,
       "evidence": [
         {
           "id": 133273022673,
@@ -101,7 +100,8 @@
           ]
         }
       ],
-      "body_pending_update": false
+      "body_pending_update": false,
+      "state": "open"
     },
     {
       "name": "catalog-description-punctuation",
@@ -121,7 +121,7 @@
       "pr_number": 6112,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6112",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "registry-invalid-request-target",
@@ -141,7 +141,7 @@
       "pr_number": 6108,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6108",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "registry-client-own-aliases",
@@ -161,7 +161,7 @@
       "pr_number": 6106,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6106",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "independent-placeholder-configs",
@@ -198,8 +198,8 @@
       "pr_number": 6116,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6116",
       "merged_at": null,
-      "maintainer_can_modify": false,
-      "body_pending_update": false
+      "body_pending_update": false,
+      "state": "open"
     },
     {
       "name": "catalog-build-error-status",
@@ -244,50 +244,8 @@
       "pr_number": 6115,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6115",
       "merged_at": null,
-      "maintainer_can_modify": false,
-      "body_pending_update": false
-    },
-    {
-      "name": "quoted-launch-arguments-followup",
-      "title": "Accept quoted dependency constraints without allowing shell operators",
-      "branch": "validation/quoted-shell-operators-20261116",
-      "sources": [
-        "packages/config-generator/src/generateConfig.ts"
-      ],
-      "regressions": [
-        "packages/config-generator/test/generateConfig.test.ts"
-      ],
-      "expected_baseline_failures": 19,
-      "target_pr": 6110,
-      "target_branch": "fix/quoted-launch-arguments-20261116",
-      "previous_head": "bf4be0bdeac150a2864b05b6e2da085e1e2b0e58",
-      "status": "published_update_description_pending",
-      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
-      "tree": "980a9dc5e140eadfbf11d031af7aba07c0409b9f",
-      "head_sha": "df1d436f86e71a71f2c303659cf47efc39a41aaa",
-      "validation_runs": [
-        43859714230
-      ],
-      "evidence": [
-        {
-          "id": 133273022673,
-          "name": "contracts (quoted-launch-arguments-followup, 24, df1d436f86e71a71f2c303659cf47efc39a41aaa, packag...",
-          "conclusion": "success",
-          "lines": [
-            "2026-11-16T11:40:01.0672619Z {\"baselineFailed\":19,\"baselinePassed\":24}",
-            "2026-11-16T11:40:09.0434912Z {\"candidateFailed\":0,\"candidatePassed\":122,\"candidatePending\":0}"
-          ]
-        },
-        {
-          "id": 133273022788,
-          "name": "contracts (quoted-launch-arguments-followup, 20, df1d436f86e71a71f2c303659cf47efc39a41aaa, packag...",
-          "conclusion": "success",
-          "lines": [
-            "2026-11-16T11:40:09.6269301Z {\"baselineFailed\":19,\"baselinePassed\":24}",
-            "2026-11-16T11:40:15.8743703Z {\"candidateFailed\":0,\"candidatePassed\":122,\"candidatePending\":0}"
-          ]
-        }
-      ]
+      "body_pending_update": false,
+      "state": "open"
     },
     {
       "name": "catalog-inline-code-commands",
@@ -335,8 +293,8 @@
       "pr_number": 6117,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6117",
       "merged_at": null,
-      "maintainer_can_modify": false,
-      "body_pending_update": false
+      "body_pending_update": false,
+      "state": "open"
     },
     {
       "name": "catalog-repository-endpoints",
@@ -384,8 +342,8 @@
       "pr_number": 6120,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6120",
       "merged_at": null,
-      "maintainer_can_modify": false,
-      "body_pending_update": false
+      "body_pending_update": false,
+      "state": "open"
     },
     {
       "name": "catalog-gnu-license-identifiers",
@@ -433,7 +391,7 @@
       "pr_number": 6121,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6121",
       "merged_at": null,
-      "maintainer_can_modify": false
+      "state": "open"
     },
     {
       "name": "incremental-profile-writes",
@@ -483,8 +441,8 @@
       "pr_number": 6114,
       "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6114",
       "merged_at": null,
-      "maintainer_can_modify": false,
-      "body_pending_update": false
+      "body_pending_update": false,
+      "state": "open"
     },
     {
       "name": "duplicate-sidecar-ids",
@@ -500,7 +458,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "a368a2d3f1c2b34b4a02a36776da25e6dac26c8c",
       "head_sha": "e1773721df65e91bd89dd84d51a09af9d07ef92a",
-      "status": "ready_to_publish",
+      "status": "published",
       "evidence": [
         {
           "id": 133283601902,
@@ -529,7 +487,11 @@
       "validation_runs": [
         43862791585
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/duplicate-sidecar-ids-20261116?expand=1&title=Reject%20conflicting%20metadata%20sidecars%20instead%20of%20silently%20overwriting%20them&body=%23%23%20Problem%0A%0ATwo%20metadata%20sidecars%20can%20resolve%20to%20the%20same%20server%20ID%2C%20through%20explicit%20IDs%20or%20a%20filename-derived%20fallback.%20The%20loader%20silently%20lets%20the%20later%20filename%20overwrite%20the%20earlier%20metadata%2C%20so%20renaming%20a%20file%20can%20change%20the%20published%20server%20configuration.%0A%0A%23%23%20Change%0A%0AReject%20duplicate%20IDs%20and%20include%20both%20source%20paths%20in%20the%20error.%20Distinct%20explicit%20and%20filename-derived%20IDs%20keep%20their%20existing%20behavior%3B%20unrelated%20non-JSON%20files%20are%20ignored.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20loader%20produces%20**3%20failures%20and%204%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**96-test%20suite**%2C%20real%20catalog%20generation%2C%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20existing%209%2C846-entry%20catalog%20has%20no%20conflicting%20sidecars%20and%20still%20builds%20with%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283602083)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601902)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/duplicate-sidecar-ids-20261116?expand=1&title=Reject%20conflicting%20metadata%20sidecars%20instead%20of%20silently%20overwriting%20them&body=%23%23%20Problem%0A%0ATwo%20metadata%20sidecars%20can%20resolve%20to%20the%20same%20server%20ID%2C%20through%20explicit%20IDs%20or%20a%20filename-derived%20fallback.%20The%20loader%20silently%20lets%20the%20later%20filename%20overwrite%20the%20earlier%20metadata%2C%20so%20renaming%20a%20file%20can%20change%20the%20published%20server%20configuration.%0A%0A%23%23%20Change%0A%0AReject%20duplicate%20IDs%20and%20include%20both%20source%20paths%20in%20the%20error.%20Distinct%20explicit%20and%20filename-derived%20IDs%20keep%20their%20existing%20behavior%3B%20unrelated%20non-JSON%20files%20are%20ignored.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20loader%20produces%20**3%20failures%20and%204%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**96-test%20suite**%2C%20real%20catalog%20generation%2C%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20existing%209%2C846-entry%20catalog%20has%20no%20conflicting%20sidecars%20and%20still%20builds%20with%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283602083)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601902)%0A",
+      "pr_number": 6123,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6123",
+      "state": "open",
+      "merged_at": null
     },
     {
       "name": "decoded-registry-paths",
@@ -545,7 +507,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "6cc2115624c5eb8237850095dd3116f91264832f",
       "head_sha": "14348fbb200683827f2a4eaaf7e351f621da5546",
-      "status": "ready_to_publish",
+      "status": "published",
       "evidence": [
         {
           "id": 133283601365,
@@ -574,7 +536,11 @@
       "validation_runs": [
         43862791585
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/decoded-registry-paths-20261116?expand=1&title=Resolve%20encoded%20server%20identifiers%20and%20reject%20malformed%20URL%20escapes&body=%23%23%20Problem%0A%0ARegistry%20routes%20pass%20percent-encoded%20path%20segments%20directly%20to%20server%20lookup.%20Encoded%20IDs%20such%20as%20%60postgres%252Dmcp%60%2C%20names%20containing%20spaces%2C%20and%20encoded%20%60owner%252Frepository%60%20aliases%20fail%20to%20resolve%20even%20though%20the%20decoded%20identifier%20is%20supported.%20Malformed%20escapes%20are%20also%20treated%20as%20missing%20servers.%0A%0A%23%23%20Change%0A%0ADecode%20each%20path%20segment%20after%20splitting%20the%20pathname%2C%20preserving%20an%20encoded%20slash%20within%20one%20server%20identifier.%20Return%20a%20JSON%20400%20response%20for%20malformed%20escapes.%20Decode%20only%20once.%0A%0ATests%20compare%20actual%20HTTP%20responses%20for%20three%20encoded%20identifier%20forms%20across%20JSON%20profiles%2C%20HTML%20profiles%2C%20both%20badge%20routes%2C%20and%20installation%20configuration.%20They%20also%20cover%20malformed%20escapes%2C%20subsequent%20health%20requests%2C%20unresolved%20aliases%2C%20and%20double-encoded%20input.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20server%20produces%20**18%20failures%20and%2018%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**112-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601365)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601922)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/decoded-registry-paths-20261116?expand=1&title=Resolve%20encoded%20server%20identifiers%20and%20reject%20malformed%20URL%20escapes&body=%23%23%20Problem%0A%0ARegistry%20routes%20pass%20percent-encoded%20path%20segments%20directly%20to%20server%20lookup.%20Encoded%20IDs%20such%20as%20%60postgres%252Dmcp%60%2C%20names%20containing%20spaces%2C%20and%20encoded%20%60owner%252Frepository%60%20aliases%20fail%20to%20resolve%20even%20though%20the%20decoded%20identifier%20is%20supported.%20Malformed%20escapes%20are%20also%20treated%20as%20missing%20servers.%0A%0A%23%23%20Change%0A%0ADecode%20each%20path%20segment%20after%20splitting%20the%20pathname%2C%20preserving%20an%20encoded%20slash%20within%20one%20server%20identifier.%20Return%20a%20JSON%20400%20response%20for%20malformed%20escapes.%20Decode%20only%20once.%0A%0ATests%20compare%20actual%20HTTP%20responses%20for%20three%20encoded%20identifier%20forms%20across%20JSON%20profiles%2C%20HTML%20profiles%2C%20both%20badge%20routes%2C%20and%20installation%20configuration.%20They%20also%20cover%20malformed%20escapes%2C%20subsequent%20health%20requests%2C%20unresolved%20aliases%2C%20and%20double-encoded%20input.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20server%20produces%20**18%20failures%20and%2018%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**112-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601365)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43862791585%2Fjob%2F133283601922)%0A",
+      "pr_number": 6124,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6124",
+      "state": "open",
+      "merged_at": null
     },
     {
       "name": "registry-cli-special-paths",
@@ -590,7 +556,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "b6e2ce9a2519a8912b6ec1c103e7e45cd877425f",
       "head_sha": "9f5fa499cea5a5238a760f0691c8796f27c8590a",
-      "status": "ready_to_publish",
+      "status": "published",
       "previous_head": "cabad3bd2c2cfaeda0957222180f09d6b44fffad",
       "evidence": [
         {
@@ -620,7 +586,11 @@
       "validation_runs": [
         43863499933
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/registry-cli-special-paths-20261116?expand=1&title=Start%20the%20registry%20API%20from%20paths%20containing%20URL%20punctuation&body=%23%23%20Problem%0A%0AThe%20API%20entrypoint%20constructs%20a%20file%20URL%20by%20concatenating%20%60file%3A%2F%2F%60%20with%20a%20filesystem%20path.%20A%20checkout%20path%20containing%20%60%23%60%2C%20%60%3F%60%2C%20or%20literal%20percent%20escapes%20is%20interpreted%20as%20URL%20syntax%2C%20so%20the%20direct-run%20comparison%20fails%20and%20the%20production%20API%20exits%20without%20starting.%0A%0A%23%23%20Change%0A%0AConvert%20%60import.meta.url%60%20to%20a%20filesystem%20path%20with%20%60fileURLToPath%60%20before%20comparing%20it%20to%20the%20resolved%20entrypoint%20path.%0A%0ARegression%20tests%20compile%20the%20project%20and%20launch%20the%20actual%20production%20Node%20entrypoint%20from%20temporary%20directories%20containing%20those%20characters%2C%20plus%20ordinary%20and%20space-containing%20controls.%20The%20child%20process%20must%20report%20a%20listening%20API%20and%20loaded%20catalog%20before%20cleanup.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20entrypoint%20produces%20**3%20failures%20and%202%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**97-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863499933%2Fjob%2F133286044795)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863499933%2Fjob%2F133286045158)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/registry-cli-special-paths-20261116?expand=1&title=Start%20the%20registry%20API%20from%20paths%20containing%20URL%20punctuation&body=%23%23%20Problem%0A%0AThe%20API%20entrypoint%20constructs%20a%20file%20URL%20by%20concatenating%20%60file%3A%2F%2F%60%20with%20a%20filesystem%20path.%20A%20checkout%20path%20containing%20%60%23%60%2C%20%60%3F%60%2C%20or%20literal%20percent%20escapes%20is%20interpreted%20as%20URL%20syntax%2C%20so%20the%20direct-run%20comparison%20fails%20and%20the%20production%20API%20exits%20without%20starting.%0A%0A%23%23%20Change%0A%0AConvert%20%60import.meta.url%60%20to%20a%20filesystem%20path%20with%20%60fileURLToPath%60%20before%20comparing%20it%20to%20the%20resolved%20entrypoint%20path.%0A%0ARegression%20tests%20compile%20the%20project%20and%20launch%20the%20actual%20production%20Node%20entrypoint%20from%20temporary%20directories%20containing%20those%20characters%2C%20plus%20ordinary%20and%20space-containing%20controls.%20The%20child%20process%20must%20report%20a%20listening%20API%20and%20loaded%20catalog%20before%20cleanup.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20entrypoint%20produces%20**3%20failures%20and%202%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**97-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863499933%2Fjob%2F133286044795)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863499933%2Fjob%2F133286045158)%0A",
+      "pr_number": 6125,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6125",
+      "state": "open",
+      "merged_at": null
     },
     {
       "name": "balanced-catalog-link-destinations",
@@ -636,7 +606,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "a95e1dedbd69a7f27d061deb3507005b930d33ff",
       "head_sha": "9044b88661087989097fe32ad0fd82db32c41f0e",
-      "status": "ready_to_publish",
+      "status": "published",
       "evidence": [
         {
           "id": 133285082383,
@@ -665,7 +635,11 @@
       "validation_runs": [
         43863220510
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/balanced-catalog-link-destinations-20261116?expand=1&title=Preserve%20balanced%20and%20escaped%20parentheses%20in%20catalog%20URLs&body=%23%23%20Problem%0A%0AThe%20Markdown%20entry%20expression%20stops%20a%20link%20destination%20at%20the%20first%20closing%20parenthesis.%20Valid%20URLs%20with%20balanced%20parentheses%20are%20truncated%2C%20and%20escaped%20parentheses%20remain%20incorrect.%20The%20shortened%20URL%20then%20changes%20the%20catalog%20link%20and%20its%20stable%20identifier.%0A%0A%23%23%20Change%0A%0AScan%20the%20destination%20while%20tracking%20nested%20parentheses%20and%20escaped%20delimiters.%20Preserve%20the%20complete%20URL%20and%20reject%20unfinished%20destinations.%20Existing%20descriptions%20and%20source%20line%20numbers%20keep%20their%20current%20handling.%0A%0ATests%20cover%20nested%20pairs%2C%20query%20values%2C%20escaped%20opening%20and%20closing%20parentheses%2C%20encoded-parenthesis%20controls%2C%20incomplete%20destinations%2C%20and%20the%20resulting%20catalog%20URL%20and%20identifier.%20Balanced%20and%20escaped%20parentheses%20are%20valid%20link%20destinations%20under%20the%20%5BCommonMark%20link%20rules%5D(https%3A%2F%2Fspec.commonmark.org%2F0.31.2%2F%23link-destination).%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20parser%20produces%20**9%20failures%20and%2013%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**102-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20real%20catalog%20still%20builds%20with%209%2C846%20entries%20and%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082383)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082428)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/balanced-catalog-link-destinations-20261116?expand=1&title=Preserve%20balanced%20and%20escaped%20parentheses%20in%20catalog%20URLs&body=%23%23%20Problem%0A%0AThe%20Markdown%20entry%20expression%20stops%20a%20link%20destination%20at%20the%20first%20closing%20parenthesis.%20Valid%20URLs%20with%20balanced%20parentheses%20are%20truncated%2C%20and%20escaped%20parentheses%20remain%20incorrect.%20The%20shortened%20URL%20then%20changes%20the%20catalog%20link%20and%20its%20stable%20identifier.%0A%0A%23%23%20Change%0A%0AScan%20the%20destination%20while%20tracking%20nested%20parentheses%20and%20escaped%20delimiters.%20Preserve%20the%20complete%20URL%20and%20reject%20unfinished%20destinations.%20Existing%20descriptions%20and%20source%20line%20numbers%20keep%20their%20current%20handling.%0A%0ATests%20cover%20nested%20pairs%2C%20query%20values%2C%20escaped%20opening%20and%20closing%20parentheses%2C%20encoded-parenthesis%20controls%2C%20incomplete%20destinations%2C%20and%20the%20resulting%20catalog%20URL%20and%20identifier.%20Balanced%20and%20escaped%20parentheses%20are%20valid%20link%20destinations%20under%20the%20%5BCommonMark%20link%20rules%5D(https%3A%2F%2Fspec.commonmark.org%2F0.31.2%2F%23link-destination).%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20parser%20produces%20**9%20failures%20and%2013%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**102-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20real%20catalog%20still%20builds%20with%209%2C846%20entries%20and%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082383)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082428)%0A",
+      "pr_number": 6126,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6126",
+      "state": "open",
+      "merged_at": null
     },
     {
       "name": "catalog-grouped-tool-counts",
@@ -681,7 +655,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "f36e59345b41f9764da0e995ee353a38c9d4b7e6",
       "head_sha": "f229fc785d210cc15aaf0f951f06c8fce2cbdc63",
-      "status": "ready_to_publish",
+      "status": "published",
       "evidence": [
         {
           "id": 133285082440,
@@ -710,7 +684,11 @@
       "validation_runs": [
         43863220510
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/catalog-grouped-tool-counts-20261116?expand=1&title=Parse%20complete%20grouped%20tool%20counts%20without%20truncating%20numeric%20values&body=%23%23%20Problem%0A%0ATool-count%20inference%20accepts%20a%20suffix%20of%20a%20numeric%20expression%3A%20%601%2C234%20tools%60%20becomes%20234%2C%20and%20%601.5%20tools%60%20becomes%205.%20Oversized%20integers%20also%20lose%20precision%20when%20converted%20to%20JavaScript%20numbers.%0A%0A%23%23%20Change%0A%0ARecognize%20complete%20nonnegative%20integers%2C%20including%20correctly%20grouped%20thousands%20separators.%20Reject%20decimal%2C%20malformed%20grouping%2C%20signed%2C%20range%2C%20and%20unsafe-integer%20values%20instead%20of%20publishing%20a%20misleading%20count.%20Preserve%20ordinary%20and%20zero%20counts%2C%20singular%2Fplural%20forms%2C%20and%20explicit%20metadata%20precedence.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20implementation%20produces%20**13%20failures%20and%2018%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20complete%20**111-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20real%20catalog%20still%20builds%20with%209%2C846%20entries%20and%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082476)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082440)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/catalog-grouped-tool-counts-20261116?expand=1&title=Parse%20complete%20grouped%20tool%20counts%20without%20truncating%20numeric%20values&body=%23%23%20Problem%0A%0ATool-count%20inference%20accepts%20a%20suffix%20of%20a%20numeric%20expression%3A%20%601%2C234%20tools%60%20becomes%20234%2C%20and%20%601.5%20tools%60%20becomes%205.%20Oversized%20integers%20also%20lose%20precision%20when%20converted%20to%20JavaScript%20numbers.%0A%0A%23%23%20Change%0A%0ARecognize%20complete%20nonnegative%20integers%2C%20including%20correctly%20grouped%20thousands%20separators.%20Reject%20decimal%2C%20malformed%20grouping%2C%20signed%2C%20range%2C%20and%20unsafe-integer%20values%20instead%20of%20publishing%20a%20misleading%20count.%20Preserve%20ordinary%20and%20zero%20counts%2C%20singular%2Fplural%20forms%2C%20and%20explicit%20metadata%20precedence.%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20implementation%20produces%20**13%20failures%20and%2018%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20complete%20**111-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%20The%20real%20catalog%20still%20builds%20with%209%2C846%20entries%20and%20zero%20errors.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082476)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082440)%0A",
+      "pr_number": 6127,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6127",
+      "state": "open",
+      "merged_at": null
     },
     {
       "name": "registry-head-method",
@@ -726,7 +704,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "d677d9f42d0315142272f761c599491b19bfe68b",
       "head_sha": "aae74bf4afe2e5c4679f039a627ff87c32e8ac0e",
-      "status": "ready_to_publish",
+      "status": "published",
       "evidence": [
         {
           "id": 133285082143,
@@ -755,7 +733,11 @@
       "validation_runs": [
         43863220510
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/registry-head-method-20261116?expand=1&title=Support%20HEAD%20requests%20and%20advertise%20allowed%20registry%20methods&body=%23%23%20Problem%0A%0AEvery%20HEAD%20request%20currently%20returns%20405%2C%20including%20requests%20for%20working%20health%2C%20search%2C%20profile%2C%20badge%2C%20and%20installation%20endpoints.%20Method-rejection%20responses%20also%20omit%20the%20%60Allow%60%20header.%0A%0A%23%23%20Change%0A%0ARoute%20HEAD%20through%20the%20same%20handlers%20as%20GET%3B%20Node%20suppresses%20the%20response%20body.%20Advertise%20GET%2C%20HEAD%2C%20and%20OPTIONS%20consistently%20in%20CORS%20responses%20and%20the%20%60Allow%60%20header%20for%20OPTIONS%20and%20405%20responses.%20Document%20the%20supported%20behavior.%0A%0AThe%20HTTP%20integration%20tests%20compare%20status%20and%20representation%20headers%20for%2015%20routes%2C%20including%20error%20responses%2C%20and%20verify%20empty%20HEAD%20bodies%2C%20preflight%20behavior%2C%20and%20rejected%20methods.%20These%20changes%20follow%20%5BHTTP%20method%20and%20Allow%20semantics%5D(https%3A%2F%2Fwww.rfc-editor.org%2Frfc%2Frfc9110.html%23section-10.2.1).%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20server%20produces%20**20%20failures%20and%2016%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**112-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082443)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082143)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:fix/registry-head-method-20261116?expand=1&title=Support%20HEAD%20requests%20and%20advertise%20allowed%20registry%20methods&body=%23%23%20Problem%0A%0AEvery%20HEAD%20request%20currently%20returns%20405%2C%20including%20requests%20for%20working%20health%2C%20search%2C%20profile%2C%20badge%2C%20and%20installation%20endpoints.%20Method-rejection%20responses%20also%20omit%20the%20%60Allow%60%20header.%0A%0A%23%23%20Change%0A%0ARoute%20HEAD%20through%20the%20same%20handlers%20as%20GET%3B%20Node%20suppresses%20the%20response%20body.%20Advertise%20GET%2C%20HEAD%2C%20and%20OPTIONS%20consistently%20in%20CORS%20responses%20and%20the%20%60Allow%60%20header%20for%20OPTIONS%20and%20405%20responses.%20Document%20the%20supported%20behavior.%0A%0AThe%20HTTP%20integration%20tests%20compare%20status%20and%20representation%20headers%20for%2015%20routes%2C%20including%20error%20responses%2C%20and%20verify%20empty%20HEAD%20bodies%2C%20preflight%20behavior%2C%20and%20rejected%20methods.%20These%20changes%20follow%20%5BHTTP%20method%20and%20Allow%20semantics%5D(https%3A%2F%2Fwww.rfc-editor.org%2Frfc%2Frfc9110.html%23section-10.2.1).%0A%0A%23%23%20Validation%0A%0AThe%20unchanged%20server%20produces%20**20%20failures%20and%2016%20passes**%20in%20the%20focused%20suite.%20On%20Node.js%2020%20and%2024%2C%20the%20fix%20passes%20the%20full%20**112-test%20suite**%2C%20catalog%20and%20profile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds.%0A%0A-%20%5BNode.js%2020%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082443)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863220510%2Fjob%2F133285082143)%0A",
+      "pr_number": 6128,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6128",
+      "state": "open",
+      "merged_at": null
     },
     {
       "name": "bounded-search-ranking",
@@ -771,7 +753,7 @@
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "tree": "96783d4b188763fd7f9ec3eead1c1eee647f1bc3",
       "head_sha": "edace3dd202c5aafa4a0290f07625b4c393c8a49",
-      "status": "ready_to_publish",
+      "status": "published",
       "evidence": [
         {
           "id": 133286687376,
@@ -801,7 +783,11 @@
       "validation_runs": [
         43863688716
       ],
-      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:perf/bounded-search-ranking-20261116?expand=1&title=Keep%20only%20the%20requested%20best%20matches%20while%20ranking%20catalog%20searches&body=%23%23%20Problem%0A%0ACatalog%20search%20scores%20and%20sorts%20every%20matching%20entry%20before%20returning%20at%20most%20100%20results.%20Common%20queries%20and%20unfiltered%20listings%20therefore%20retain%20and%20sort%20thousands%20of%20entries%20that%20cannot%20appear%20in%20the%20response.%0A%0A%23%23%20Change%0A%0AKeep%20a%20sorted%20result%20list%20bounded%20by%20the%20normalized%20request%20limit.%20Skip%20candidates%20that%20cannot%20improve%20the%20current%20results%20and%20use%20binary%20insertion%20for%20candidates%20that%20can.%20Preserve%20scoring%2C%20filtering%2C%20category%2Fname%20ordering%2C%20and%20original%20order%20for%20exact%20ties.%0A%0A%23%23%20Validation%0A%0AThe%20focused%20ordering%20suite%20passes%20all%20**24%20tests**%20on%20the%20unchanged%20and%20modified%20implementations.%20It%20checks%20result%20limits%2C%20ranked%20and%20unfiltered%20ordering%2C%20exact%20ties%2C%20filters%2C%20and%20unchanged%20input%20order.%20The%20complete%20**106-test%20suite**%2C%20catalog%2Fprofile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds%20pass%20on%20Node.js%2020%20and%2024.%0A%0AA%20Node.js%2020%20benchmark%20uses%20the%20real%20**9%2C846-entry%20catalog**%2C%20five%20query%20forms%2C%20and%20limits%201%2C%205%2C%2025%2C%20and%20100.%20All%2020%20result%20sets%20have%20exactly%20the%20same%20serialized%20summaries%20before%20and%20after.%20Each%20measurement%20uses%20five%20warmup%20calls%2C%20then%20five%20samples%20of%20ten%20calls.%0A%0AFor%20the%20default%20limit%20of%2025%3A%0A%0A%7C%20Query%20%7C%20Before%20%7C%20After%20%7C%0A%7C%20---%20%7C%20---%3A%20%7C%20---%3A%20%7C%0A%7C%20Empty%20query%20%7C%203.058%20ms%20%7C%200.230%20ms%20%7C%0A%7C%20mcp%20%7C%206.890%20ms%20%7C%203.332%20ms%20%7C%0A%7C%20search%20%7C%205.054%20ms%20%7C%203.987%20ms%20%7C%0A%7C%20postgres%20%7C%204.016%20ms%20%7C%203.590%20ms%20%7C%0A%7C%20search%20mcp%20%7C%208.936%20ms%20%7C%205.365%20ms%20%7C%0A%0AThese%20are%20in-process%20search%20times%20on%20the%20validation%20runner%2C%20excluding%20network%20latency.%0A%0A-%20%5BNode.js%2020%20tests%20and%20full%20benchmark%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863688716%2Fjob%2F133286688010)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863688716%2Fjob%2F133286687376)%0A"
+      "prefilled_url": "https://github.com/TensorBlock/awesome-mcp-servers/compare/main...Afloat16:awesome-mcp-servers-tensorblock:perf/bounded-search-ranking-20261116?expand=1&title=Keep%20only%20the%20requested%20best%20matches%20while%20ranking%20catalog%20searches&body=%23%23%20Problem%0A%0ACatalog%20search%20scores%20and%20sorts%20every%20matching%20entry%20before%20returning%20at%20most%20100%20results.%20Common%20queries%20and%20unfiltered%20listings%20therefore%20retain%20and%20sort%20thousands%20of%20entries%20that%20cannot%20appear%20in%20the%20response.%0A%0A%23%23%20Change%0A%0AKeep%20a%20sorted%20result%20list%20bounded%20by%20the%20normalized%20request%20limit.%20Skip%20candidates%20that%20cannot%20improve%20the%20current%20results%20and%20use%20binary%20insertion%20for%20candidates%20that%20can.%20Preserve%20scoring%2C%20filtering%2C%20category%2Fname%20ordering%2C%20and%20original%20order%20for%20exact%20ties.%0A%0A%23%23%20Validation%0A%0AThe%20focused%20ordering%20suite%20passes%20all%20**24%20tests**%20on%20the%20unchanged%20and%20modified%20implementations.%20It%20checks%20result%20limits%2C%20ranked%20and%20unfiltered%20ordering%2C%20exact%20ties%2C%20filters%2C%20and%20unchanged%20input%20order.%20The%20complete%20**106-test%20suite**%2C%20catalog%2Fprofile%20generation%2C%20TypeScript%20checking%2C%20and%20package%20builds%20pass%20on%20Node.js%2020%20and%2024.%0A%0AA%20Node.js%2020%20benchmark%20uses%20the%20real%20**9%2C846-entry%20catalog**%2C%20five%20query%20forms%2C%20and%20limits%201%2C%205%2C%2025%2C%20and%20100.%20All%2020%20result%20sets%20have%20exactly%20the%20same%20serialized%20summaries%20before%20and%20after.%20Each%20measurement%20uses%20five%20warmup%20calls%2C%20then%20five%20samples%20of%20ten%20calls.%0A%0AFor%20the%20default%20limit%20of%2025%3A%0A%0A%7C%20Query%20%7C%20Before%20%7C%20After%20%7C%0A%7C%20---%20%7C%20---%3A%20%7C%20---%3A%20%7C%0A%7C%20Empty%20query%20%7C%203.058%20ms%20%7C%200.230%20ms%20%7C%0A%7C%20mcp%20%7C%206.890%20ms%20%7C%203.332%20ms%20%7C%0A%7C%20search%20%7C%205.054%20ms%20%7C%203.987%20ms%20%7C%0A%7C%20postgres%20%7C%204.016%20ms%20%7C%203.590%20ms%20%7C%0A%7C%20search%20mcp%20%7C%208.936%20ms%20%7C%205.365%20ms%20%7C%0A%0AThese%20are%20in-process%20search%20times%20on%20the%20validation%20runner%2C%20excluding%20network%20latency.%0A%0A-%20%5BNode.js%2020%20tests%20and%20full%20benchmark%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863688716%2Fjob%2F133286688010)%0A-%20%5BNode.js%2024%20validation%5D(https%3A%2F%2Fgithub.com%2FAfloat16%2Fawesome-mcp-servers-tensorblock%2Factions%2Fruns%2F43863688716%2Fjob%2F133286687376)%0A",
+      "pr_number": 6122,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6122",
+      "state": "open",
+      "merged_at": null
     }
   ],
   "validation_batch3": {
@@ -815,7 +801,7 @@
     "tree": "fc9cef9388a5fa25d312b8954122a32b7b5d6380",
     "branch": "validation/registry-core-batch4-20261116"
   },
-  "updated_at": "2026-11-16T12:16:29.769Z",
+  "updated_at": "2026-11-16T12:24:50.994Z",
   "validation_batch5": {
     "head": "1e9de25824b8aebcedafb1fb55f152905ab906c8",
     "tree": "771740a470b8865ff87ffa9fe78ec357903fdd06",
@@ -831,5 +817,12 @@
     "tree": "588cb05c7cd5ee897f92798efe00221859c59b04",
     "branch": "validation/registry-core-batch7-20261116"
   },
-  "submission_blocker": "Cloud browser tool calls are timing out before submission; ready candidates have verified commits, full CI evidence, bodies and prefilled compare links. GitHub connector PR creation previously returned 403."
+  "status": {
+    "target": 20,
+    "published": 20,
+    "open": 20,
+    "merged": 0,
+    "closed_unmerged": 0,
+    "validation": "All independent commits passed catalog/profile generation, complete tests, TypeScript checks and package builds on Node 20 and 24."
+  }
 }
