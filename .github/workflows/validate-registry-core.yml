@@ -1,0 +1,101 @@
+name: Validate isolated registry correctness fixes
+on:
+  push:
+    branches: ['validation/registry-core-batch3-20261116']
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: independent-placeholder-configs
+            node: '20'
+            head: 11820601832e2710a6b11225d458e7b2efb49851
+            source: packages/config-generator/src/generateConfig.ts
+            regression: packages/config-generator/test/generateConfig.test.ts
+            failures: 5
+          - name: independent-placeholder-configs
+            node: '24'
+            head: 11820601832e2710a6b11225d458e7b2efb49851
+            source: packages/config-generator/src/generateConfig.ts
+            regression: packages/config-generator/test/generateConfig.test.ts
+            failures: 5
+          - name: catalog-build-error-status
+            node: '20'
+            head: 4c7d32b138c162a59d4631ed45839c4c8bff92e7
+            source: packages/catalog-builder/src/cli.ts
+            regression: packages/catalog-builder/test/cli.test.ts
+            failures: 3
+          - name: catalog-build-error-status
+            node: '24'
+            head: 4c7d32b138c162a59d4631ed45839c4c8bff92e7
+            source: packages/catalog-builder/src/cli.ts
+            regression: packages/catalog-builder/test/cli.test.ts
+            failures: 3
+          - name: quoted-launch-arguments-followup
+            node: '20'
+            head: df1d436f86e71a71f2c303659cf47efc39a41aaa
+            source: packages/config-generator/src/generateConfig.ts
+            regression: packages/config-generator/test/generateConfig.test.ts
+            failures: 20
+          - name: quoted-launch-arguments-followup
+            node: '24'
+            head: df1d436f86e71a71f2c303659cf47efc39a41aaa
+            source: packages/config-generator/src/generateConfig.ts
+            regression: packages/config-generator/test/generateConfig.test.ts
+            failures: 20
+    env:
+      SOURCE_FILE: ${{ matrix.source }}
+      REGRESSION_FILE: ${{ matrix.regression }}
+      EXPECTED_FAILURES: ${{ matrix.failures }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.head }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Reproduce the regression on unchanged production code
+        run: |
+          git restore --source=9b8152c14c7b14249128868d2c2e8ef0a2e20acb -- "$SOURCE_FILE"
+          set +e
+          npx vitest run "$REGRESSION_FILE" --reporter=json --outputFile=baseline.json
+          result=$?
+          set -e
+          test "$result" -eq 1
+          node --input-type=module <<'JS'
+          import { readFileSync } from "node:fs";
+          const report = JSON.parse(readFileSync("baseline.json", "utf8"));
+          console.log(JSON.stringify({ baselineFailed: report.numFailedTests, baselinePassed: report.numPassedTests }));
+          if (report.numFailedTests !== Number(process.env.EXPECTED_FAILURES)) throw new Error("Unexpected baseline failure count");
+          JS
+      - name: Restore and verify the exact independent candidate
+        run: |
+          git restore --source=${{ matrix.head }} -- "$SOURCE_FILE"
+          git diff --exit-code -- packages
+          npm run catalog:build
+          npm run profiles:build
+          npm test -- --reporter=json --outputFile=candidate.json
+          node --input-type=module <<'JS'
+          import { readFileSync } from "node:fs";
+          const report = JSON.parse(readFileSync("candidate.json", "utf8"));
+          console.log(JSON.stringify({ candidateFailed: report.numFailedTests, candidatePassed: report.numPassedTests, candidatePending: report.numPendingTests }));
+          if (report.numFailedTests !== 0) throw new Error("Candidate regressions failed");
+          JS
+          npm run typecheck
+          npm run build
+          git diff --exit-code -- packages
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: registry-${{ matrix.name }}-node${{ matrix.node }}
+          path: |
+            baseline.json
+            candidate.json
