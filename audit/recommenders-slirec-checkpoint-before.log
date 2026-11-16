@@ -1,0 +1,479 @@
+FF.FFF.FFF.                                                              [100%]
+=================================== FAILURES ===================================
+______ test_slirec_checkpoint_direction_and_patience[logloss-scores0-2-3] ______
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_directi0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed5b745580>
+metric = 'logloss', scores = [0.6, 0.4, 0.5, 0.3], best_epoch = 2
+epochs_seen = 3
+
+    @pytest.mark.parametrize(
+        "metric, scores, best_epoch, epochs_seen",
+        [
+            ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+            ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+            ("f1", [0.0, 0.0, 0.0], 1, 2),
+            ("logloss", [0.0, 0.0, 0.0], 1, 2),
+            ("auc", [0.5, float("nan"), 0.8], 1, 2),
+            ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+        ],
+    )
+    def test_slirec_checkpoint_direction_and_patience(
+        synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+        )
+        observed_states = []
+    
+        def evaluate(*args, **kwargs):
+            observed_states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return {metric: scores[len(observed_states) - 1]}
+    
+        # Prescribed metric trajectories isolate checkpoint and patience semantics;
+        # the public training loop still performs real forward/backward/Adam steps.
+        monkeypatch.setattr(model, "run_eval", evaluate)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=len(scores),
+            batch_size=60,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            early_stop=1,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+>       assert model.best_epoch == best_epoch
+E       assert 1 == 2
+E        +  where 1 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:380: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'logloss': 0.6}
+eval valid at epoch 2: {'logloss': 0.4}
+early stop at epoch 2!
+best epoch: 1
+_______ test_slirec_checkpoint_direction_and_patience[rmse-scores1-2-3] ________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_directi1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed7339a270>
+metric = 'rmse', scores = [0.6, 0.4, 0.5, 0.3], best_epoch = 2, epochs_seen = 3
+
+    @pytest.mark.parametrize(
+        "metric, scores, best_epoch, epochs_seen",
+        [
+            ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+            ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+            ("f1", [0.0, 0.0, 0.0], 1, 2),
+            ("logloss", [0.0, 0.0, 0.0], 1, 2),
+            ("auc", [0.5, float("nan"), 0.8], 1, 2),
+            ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+        ],
+    )
+    def test_slirec_checkpoint_direction_and_patience(
+        synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+        )
+        observed_states = []
+    
+        def evaluate(*args, **kwargs):
+            observed_states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return {metric: scores[len(observed_states) - 1]}
+    
+        # Prescribed metric trajectories isolate checkpoint and patience semantics;
+        # the public training loop still performs real forward/backward/Adam steps.
+        monkeypatch.setattr(model, "run_eval", evaluate)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=len(scores),
+            batch_size=60,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            early_stop=1,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+>       assert model.best_epoch == best_epoch
+E       assert 1 == 2
+E        +  where 1 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:380: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'rmse': 0.6}
+eval valid at epoch 2: {'rmse': 0.4}
+early stop at epoch 2!
+best epoch: 1
+______ test_slirec_checkpoint_direction_and_patience[ndcg@2-scores3-2-3] _______
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_directi3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed590f4110>
+metric = 'ndcg@2', scores = [0.0, 0.5, 0.4, 0.8], best_epoch = 2
+epochs_seen = 3
+
+    @pytest.mark.parametrize(
+        "metric, scores, best_epoch, epochs_seen",
+        [
+            ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+            ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+            ("f1", [0.0, 0.0, 0.0], 1, 2),
+            ("logloss", [0.0, 0.0, 0.0], 1, 2),
+            ("auc", [0.5, float("nan"), 0.8], 1, 2),
+            ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+        ],
+    )
+    def test_slirec_checkpoint_direction_and_patience(
+        synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+        )
+        observed_states = []
+    
+        def evaluate(*args, **kwargs):
+            observed_states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return {metric: scores[len(observed_states) - 1]}
+    
+        # Prescribed metric trajectories isolate checkpoint and patience semantics;
+        # the public training loop still performs real forward/backward/Adam steps.
+        monkeypatch.setattr(model, "run_eval", evaluate)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=len(scores),
+            batch_size=60,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            early_stop=1,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+>       assert model.best_epoch == best_epoch
+E       assert 0 == 2
+E        +  where 0 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:380: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'ndcg@2': 0.0}
+early stop at epoch 1!
+best epoch: 0
+________ test_slirec_checkpoint_direction_and_patience[f1-scores4-1-2] _________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_directi4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed59049fd0>
+metric = 'f1', scores = [0.0, 0.0, 0.0], best_epoch = 1, epochs_seen = 2
+
+    @pytest.mark.parametrize(
+        "metric, scores, best_epoch, epochs_seen",
+        [
+            ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+            ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+            ("f1", [0.0, 0.0, 0.0], 1, 2),
+            ("logloss", [0.0, 0.0, 0.0], 1, 2),
+            ("auc", [0.5, float("nan"), 0.8], 1, 2),
+            ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+        ],
+    )
+    def test_slirec_checkpoint_direction_and_patience(
+        synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+        )
+        observed_states = []
+    
+        def evaluate(*args, **kwargs):
+            observed_states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return {metric: scores[len(observed_states) - 1]}
+    
+        # Prescribed metric trajectories isolate checkpoint and patience semantics;
+        # the public training loop still performs real forward/backward/Adam steps.
+        monkeypatch.setattr(model, "run_eval", evaluate)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=len(scores),
+            batch_size=60,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            early_stop=1,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+>       assert model.best_epoch == best_epoch
+E       assert 0 == 1
+E        +  where 0 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:380: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'f1': 0.0}
+early stop at epoch 1!
+best epoch: 0
+______ test_slirec_checkpoint_direction_and_patience[logloss-scores5-1-2] ______
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_directi5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed58f2c9e0>
+metric = 'logloss', scores = [0.0, 0.0, 0.0], best_epoch = 1, epochs_seen = 2
+
+    @pytest.mark.parametrize(
+        "metric, scores, best_epoch, epochs_seen",
+        [
+            ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+            ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+            ("f1", [0.0, 0.0, 0.0], 1, 2),
+            ("logloss", [0.0, 0.0, 0.0], 1, 2),
+            ("auc", [0.5, float("nan"), 0.8], 1, 2),
+            ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+        ],
+    )
+    def test_slirec_checkpoint_direction_and_patience(
+        synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+        )
+        observed_states = []
+    
+        def evaluate(*args, **kwargs):
+            observed_states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return {metric: scores[len(observed_states) - 1]}
+    
+        # Prescribed metric trajectories isolate checkpoint and patience semantics;
+        # the public training loop still performs real forward/backward/Adam steps.
+        monkeypatch.setattr(model, "run_eval", evaluate)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=len(scores),
+            batch_size=60,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            early_stop=1,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+>       assert model.best_epoch == best_epoch
+E       assert 0 == 1
+E        +  where 0 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:380: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'logloss': 0.0}
+early stop at epoch 1!
+best epoch: 0
+_______ test_slirec_checkpoint_direction_and_patience[rmse-scores7-2-3] ________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_directi7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed58f2eae0>
+metric = 'rmse', scores = [0.5, 0.4, nan, 0.3], best_epoch = 2, epochs_seen = 3
+
+    @pytest.mark.parametrize(
+        "metric, scores, best_epoch, epochs_seen",
+        [
+            ("logloss", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("rmse", [0.6, 0.4, 0.5, 0.3], 2, 3),
+            ("auc", [0.2, 0.8, 0.7, 0.9], 2, 3),
+            ("ndcg@2", [0.0, 0.5, 0.4, 0.8], 2, 3),
+            ("f1", [0.0, 0.0, 0.0], 1, 2),
+            ("logloss", [0.0, 0.0, 0.0], 1, 2),
+            ("auc", [0.5, float("nan"), 0.8], 1, 2),
+            ("rmse", [0.5, 0.4, float("nan"), 0.3], 2, 3),
+        ],
+    )
+    def test_slirec_checkpoint_direction_and_patience(
+        synthetic_slirec, tmp_path, monkeypatch, metric, scores, best_epoch, epochs_seen
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=8, enable_BN=False, user_dropout=False
+        )
+        observed_states = []
+    
+        def evaluate(*args, **kwargs):
+            observed_states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return {metric: scores[len(observed_states) - 1]}
+    
+        # Prescribed metric trajectories isolate checkpoint and patience semantics;
+        # the public training loop still performs real forward/backward/Adam steps.
+        monkeypatch.setattr(model, "run_eval", evaluate)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=len(scores),
+            batch_size=60,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            early_stop=1,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+>       assert model.best_epoch == best_epoch
+E       assert 1 == 2
+E        +  where 1 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:380: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'rmse': 0.5}
+eval valid at epoch 2: {'rmse': 0.4}
+early stop at epoch 2!
+best epoch: 1
+______ test_slirec_checkpoint_matches_actual_validation_optimum[logloss] _______
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_matches0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed58f850a0>
+metric = 'logloss'
+
+    @pytest.mark.parametrize("metric", ["logloss", "rmse", "auc"])
+    def test_slirec_checkpoint_matches_actual_validation_optimum(
+        synthetic_slirec, tmp_path, monkeypatch, metric
+    ):
+        model = _build_model(
+            synthetic_slirec,
+            max_seq_length=8,
+            init_value=0.1,
+            enable_BN=False,
+            user_dropout=False,
+        )
+        observed = []
+        states = []
+        original_eval = model.run_eval
+    
+        def record_actual_evaluation(*args, **kwargs):
+            result = original_eval(*args, **kwargs)
+            observed.append(result[metric])
+            states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return result
+    
+        monkeypatch.setattr(model, "run_eval", record_actual_evaluation)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=3,
+            batch_size=60,
+            learning_rate=0.005,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            metrics=["auc", "logloss", "rmse"],
+            early_stop=0,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+        assert len(set(observed)) > 1  # exercise an actual choice between checkpoints
+        optimum = np.argmax(observed) if metric == "auc" else np.argmin(observed)
+>       assert model.best_epoch == optimum + 1
+E       assert 3 == (0 + 1)
+E        +  where 3 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:427: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'auc': 0.5938, 'logloss': 0.7017, 'rmse': 0.5042816673249187, 'mean_mrr': 0.4833, 'ndcg@2': 0.4405, 'ndcg@4': 0.5655, 'ndcg@6': 0.6138, 'group_auc': 0.625}
+eval valid at epoch 2: {'auc': 0.5703, 'logloss': 0.7051, 'rmse': 0.5059644256269407, 'mean_mrr': 0.4625, 'ndcg@2': 0.3616, 'ndcg@4': 0.5491, 'ndcg@6': 0.5975, 'group_auc': 0.5938}
+eval valid at epoch 3: {'auc': 0.5977, 'logloss': 0.7067, 'rmse': 0.506754378372797, 'mean_mrr': 0.525, 'ndcg@2': 0.4077, 'ndcg@4': 0.5952, 'ndcg@6': 0.6436, 'group_auc': 0.625}
+best epoch: 3
+________ test_slirec_checkpoint_matches_actual_validation_optimum[rmse] ________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slire...ch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-metric-direction/pytest-of-agent/pytest-1/test_slirec_checkpoint_matches1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed5904b830>
+metric = 'rmse'
+
+    @pytest.mark.parametrize("metric", ["logloss", "rmse", "auc"])
+    def test_slirec_checkpoint_matches_actual_validation_optimum(
+        synthetic_slirec, tmp_path, monkeypatch, metric
+    ):
+        model = _build_model(
+            synthetic_slirec,
+            max_seq_length=8,
+            init_value=0.1,
+            enable_BN=False,
+            user_dropout=False,
+        )
+        observed = []
+        states = []
+        original_eval = model.run_eval
+    
+        def record_actual_evaluation(*args, **kwargs):
+            result = original_eval(*args, **kwargs)
+            observed.append(result[metric])
+            states.append(
+                {name: value.detach().clone() for name, value in model.state_dict().items()}
+            )
+            return result
+    
+        monkeypatch.setattr(model, "run_eval", record_actual_evaluation)
+        model.fit(
+            os.path.join(synthetic_slirec["dir"], "train_data"),
+            os.path.join(synthetic_slirec["dir"], "valid_data"),
+            epochs=3,
+            batch_size=60,
+            learning_rate=0.005,
+            train_num_ngs=4,
+            valid_num_ngs=4,
+            eval_metric=metric,
+            metrics=["auc", "logloss", "rmse"],
+            early_stop=0,
+            save_model=True,
+            model_dir=str(tmp_path),
+        )
+        assert len(set(observed)) > 1  # exercise an actual choice between checkpoints
+        optimum = np.argmax(observed) if metric == "auc" else np.argmin(observed)
+>       assert model.best_epoch == optimum + 1
+E       assert 3 == (0 + 1)
+E        +  where 3 = SLiRecModel(\n  (user_lookup): Embedding(11, 16)\n  (item_lookup): Embedding(41, 32)\n  (cate_lookup): Embedding(6, 8)\n  ...      (0-1): 2 x Dropout(p=0.3, inplace=False)\n    )\n    (out): Linear(in_features=64, out_features=1, bias=True)\n  )\n).best_epoch
+
+tests/unit/recommenders/models/test_sli_rec.py:427: AssertionError
+----------------------------- Captured stdout call -----------------------------
+eval valid at epoch 1: {'auc': 0.5938, 'logloss': 0.7017, 'rmse': 0.5042816673249187, 'mean_mrr': 0.4833, 'ndcg@2': 0.4405, 'ndcg@4': 0.5655, 'ndcg@6': 0.6138, 'group_auc': 0.625}
+eval valid at epoch 2: {'auc': 0.5703, 'logloss': 0.7051, 'rmse': 0.5059644256269407, 'mean_mrr': 0.4625, 'ndcg@2': 0.3616, 'ndcg@4': 0.5491, 'ndcg@6': 0.5975, 'group_auc': 0.5938}
+eval valid at epoch 3: {'auc': 0.5977, 'logloss': 0.7067, 'rmse': 0.506754378372797, 'mean_mrr': 0.525, 'ndcg@2': 0.4077, 'ndcg@4': 0.5952, 'ndcg@6': 0.6436, 'group_auc': 0.625}
+best epoch: 3
+=========================== short test summary info ============================
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_direction_and_patience[logloss-scores0-2-3]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_direction_and_patience[rmse-scores1-2-3]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_direction_and_patience[ndcg@2-scores3-2-3]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_direction_and_patience[f1-scores4-1-2]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_direction_and_patience[logloss-scores5-1-2]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_direction_and_patience[rmse-scores7-2-3]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_matches_actual_validation_optimum[logloss]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_checkpoint_matches_actual_validation_optimum[rmse]
+8 failed, 3 passed, 12 deselected in 6.35s

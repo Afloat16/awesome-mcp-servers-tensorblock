@@ -1,0 +1,14 @@
+eval valid at epoch 1: {'auc': 0.5938, 'logloss': 0.7017, 'rmse': 0.5042816673249187, 'mean_mrr': 0.4833, 'ndcg@2': 0.4405, 'ndcg@4': 0.5655, 'ndcg@6': 0.6138, 'group_auc': 0.625}
+eval valid at epoch 2: {'auc': 0.5703, 'logloss': 0.7051, 'rmse': 0.5059644256269407, 'mean_mrr': 0.4625, 'ndcg@2': 0.3616, 'ndcg@4': 0.5491, 'ndcg@6': 0.5975, 'group_auc': 0.5938}
+eval valid at epoch 3: {'auc': 0.5977, 'logloss': 0.7067, 'rmse': 0.506754378372797, 'mean_mrr': 0.525, 'ndcg@2': 0.4077, 'ndcg@4': 0.5952, 'ndcg@6': 0.6436, 'group_auc': 0.625}
+eval valid at epoch 4: {'auc': 0.5938, 'logloss': 0.7066, 'rmse': 0.506655701635736, 'mean_mrr': 0.6083, 'ndcg@2': 0.5327, 'ndcg@4': 0.6577, 'ndcg@6': 0.7061, 'group_auc': 0.6875}
+early stop at epoch 4!
+best epoch: 3
+{"metric": "logloss", "observed": [0.7017, 0.7051, 0.7067, 0.7066], "selected_epoch": 3, "actual_min_epoch": 1}
+eval valid at epoch 1: {'auc': 0.5938, 'logloss': 0.7017, 'rmse': 0.5042816673249187, 'mean_mrr': 0.4833, 'ndcg@2': 0.4405, 'ndcg@4': 0.5655, 'ndcg@6': 0.6138, 'group_auc': 0.625}
+eval valid at epoch 2: {'auc': 0.5703, 'logloss': 0.7051, 'rmse': 0.5059644256269407, 'mean_mrr': 0.4625, 'ndcg@2': 0.3616, 'ndcg@4': 0.5491, 'ndcg@6': 0.5975, 'group_auc': 0.5938}
+eval valid at epoch 3: {'auc': 0.5977, 'logloss': 0.7067, 'rmse': 0.506754378372797, 'mean_mrr': 0.525, 'ndcg@2': 0.4077, 'ndcg@4': 0.5952, 'ndcg@6': 0.6436, 'group_auc': 0.625}
+eval valid at epoch 4: {'auc': 0.5938, 'logloss': 0.7066, 'rmse': 0.506655701635736, 'mean_mrr': 0.6083, 'ndcg@2': 0.5327, 'ndcg@4': 0.6577, 'ndcg@6': 0.7061, 'group_auc': 0.6875}
+early stop at epoch 4!
+best epoch: 3
+{"metric": "rmse", "observed": [0.5042816673249187, 0.5059644256269407, 0.506754378372797, 0.506655701635736], "selected_epoch": 3, "actual_min_epoch": 1}

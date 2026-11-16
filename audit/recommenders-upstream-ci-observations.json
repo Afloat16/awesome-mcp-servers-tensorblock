@@ -1,0 +1,17 @@
+[
+  {
+    "n": 2447,
+    "url": "https://github.com/recommenders-team/recommenders/actions/runs/43882839803/job/133353134000",
+    "reason": "The Aliyun Docker package index had an unexpected size (73831 bytes versus 74485 in the release metadata), and apt exited with code 100 during host setup before project tests ran."
+  },
+  {
+    "n": 2449,
+    "url": "https://github.com/recommenders-team/recommenders/actions/runs/43884547842/job/133359140948",
+    "reason": "The Aliyun Docker package index had an unexpected size (73831 bytes versus 74485 in the release metadata), and apt exited with code 100 during host setup before project tests ran."
+  },
+  {
+    "n": 2455,
+    "url": "https://github.com/recommenders-team/recommenders/actions/runs/43888820974/job/133374249182",
+    "reason": "The Python 3.10 CPU/Spark job stopped while building its Docker image: adding the deadsnakes PPA raised `http.client.IncompleteRead` before Python installation or project tests ran."
+  }
+]

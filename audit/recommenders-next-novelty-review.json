@@ -1,0 +1,30 @@
+{
+  "source_files": {
+    "sli_rec.py": {
+      "commits": 74,
+      "versions": 13
+    },
+    "sequential_base.py": {
+      "commits": 6,
+      "versions": 2
+    },
+    "base_model.py": {
+      "commits": 371,
+      "versions": 102
+    },
+    "sequential_base_model.py": {
+      "commits": 100,
+      "versions": 20
+    },
+    "xdeepfm.py": {
+      "commits": 10,
+      "versions": 6
+    }
+  },
+  "scope": "1497 upstream PR heads and 69 pre-existing fork branches, including reachable intermediate and former-path versions",
+  "sli_rec_half_mask": "All 3 PyTorch source versions share the same overflowing torch.full_like(_MASK_PADDING) implementation; 10 legacy versions use the same sentinel in TensorFlow.",
+  "sli_rec_log_softmax": "2 PyTorch source versions share separate softmax/log. 47 legacy branch observations in 102 base_model and 20 sequential_base_model versions reduce to 3 formatting/API variants, all separate softmax/log.",
+  "xdeepfm_zero_norm": "All 6 PyTorch versions use sqrt(mse) for square_loss and sqrt(sum(square)) for CIN regularization.",
+  "sli_rec_recency": "All 13 source versions across 74 commits take the last padded time_to_now column for alpha fusion; no observed-event gather in intermediate or old-path history.",
+  "sequential_metric_direction": "All 2 PyTorch sequential-base and 20 historical TensorFlow sequential-base versions initialize best_metric=0 and maximize every eval_metric; no minimum-error direction."
+}

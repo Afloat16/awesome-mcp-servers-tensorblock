@@ -1,0 +1,383 @@
+FFFF........FFF                                                          [100%]
+=================================== FAILURES ===================================
+_____________ test_slirec_fusion_uses_latest_observed_time[5-1-0] ______________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/test_slirec_fusion_uses_latest0')
+maximum = 5, history_length = 1, batch_num_ngs = 0
+
+    @pytest.mark.parametrize("batch_num_ngs", [0, 2])
+    @pytest.mark.parametrize(
+        "maximum, history_length", [(5, 1), (5, 2), (5, 5), (5, 7), (1, 1), (1, 3)]
+    )
+    def test_slirec_fusion_uses_latest_observed_time(
+        synthetic_slirec, tmp_path, maximum, history_length, batch_num_ngs
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=maximum, enable_BN=False, user_dropout=False
+        ).eval()
+        start, day = 1300000000, 86400
+        latest = start + (history_length - 1) * day
+        items = ",".join(f"I{i + 1}" for i in range(history_length))
+        categories = ",".join(["C1"] * history_length)
+        timestamps = ",".join(str(start + i * day) for i in range(history_length))
+        data = tmp_path / "recency.tsv"
+        data.write_text(
+            "\n".join(
+                f"1\tU1\tI{target}\tC1\t{latest + 3 * day}\t"
+                f"{items}\t{categories}\t{timestamps}"
+                for target in range(1, 9)
+            )
+            + "\n"
+        )
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    str(data), batch_size=8, batch_num_ngs=batch_num_ngs
+                )
+            )
+        )
+        observed = []
+        hook = model.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: observed.append(args[0].detach().clone())
+        )
+        with torch.no_grad():
+            model(batch)
+        hook.remove()
+        assert len(observed) == 1
+        assert observed[0].shape[0] == 8 * (batch_num_ngs + 1)
+>       torch.testing.assert_close(
+            observed[0][:, -1],
+            torch.full_like(observed[0][:, -1], np.log(3.0)),
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 8 / 8 (100.0%)
+E       Greatest absolute difference: 1.0986123085021973 at index (0,) (up to 1e-05 allowed)
+E       Greatest relative difference: 1.0 at index (0,) (up to 1.3e-06 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:355: AssertionError
+_____________ test_slirec_fusion_uses_latest_observed_time[5-1-2] ______________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/test_slirec_fusion_uses_latest1')
+maximum = 5, history_length = 1, batch_num_ngs = 2
+
+    @pytest.mark.parametrize("batch_num_ngs", [0, 2])
+    @pytest.mark.parametrize(
+        "maximum, history_length", [(5, 1), (5, 2), (5, 5), (5, 7), (1, 1), (1, 3)]
+    )
+    def test_slirec_fusion_uses_latest_observed_time(
+        synthetic_slirec, tmp_path, maximum, history_length, batch_num_ngs
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=maximum, enable_BN=False, user_dropout=False
+        ).eval()
+        start, day = 1300000000, 86400
+        latest = start + (history_length - 1) * day
+        items = ",".join(f"I{i + 1}" for i in range(history_length))
+        categories = ",".join(["C1"] * history_length)
+        timestamps = ",".join(str(start + i * day) for i in range(history_length))
+        data = tmp_path / "recency.tsv"
+        data.write_text(
+            "\n".join(
+                f"1\tU1\tI{target}\tC1\t{latest + 3 * day}\t"
+                f"{items}\t{categories}\t{timestamps}"
+                for target in range(1, 9)
+            )
+            + "\n"
+        )
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    str(data), batch_size=8, batch_num_ngs=batch_num_ngs
+                )
+            )
+        )
+        observed = []
+        hook = model.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: observed.append(args[0].detach().clone())
+        )
+        with torch.no_grad():
+            model(batch)
+        hook.remove()
+        assert len(observed) == 1
+        assert observed[0].shape[0] == 8 * (batch_num_ngs + 1)
+>       torch.testing.assert_close(
+            observed[0][:, -1],
+            torch.full_like(observed[0][:, -1], np.log(3.0)),
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 24 / 24 (100.0%)
+E       Greatest absolute difference: 1.0986123085021973 at index (0,) (up to 1e-05 allowed)
+E       Greatest relative difference: 1.0 at index (0,) (up to 1.3e-06 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:355: AssertionError
+_____________ test_slirec_fusion_uses_latest_observed_time[5-2-0] ______________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/test_slirec_fusion_uses_latest2')
+maximum = 5, history_length = 2, batch_num_ngs = 0
+
+    @pytest.mark.parametrize("batch_num_ngs", [0, 2])
+    @pytest.mark.parametrize(
+        "maximum, history_length", [(5, 1), (5, 2), (5, 5), (5, 7), (1, 1), (1, 3)]
+    )
+    def test_slirec_fusion_uses_latest_observed_time(
+        synthetic_slirec, tmp_path, maximum, history_length, batch_num_ngs
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=maximum, enable_BN=False, user_dropout=False
+        ).eval()
+        start, day = 1300000000, 86400
+        latest = start + (history_length - 1) * day
+        items = ",".join(f"I{i + 1}" for i in range(history_length))
+        categories = ",".join(["C1"] * history_length)
+        timestamps = ",".join(str(start + i * day) for i in range(history_length))
+        data = tmp_path / "recency.tsv"
+        data.write_text(
+            "\n".join(
+                f"1\tU1\tI{target}\tC1\t{latest + 3 * day}\t"
+                f"{items}\t{categories}\t{timestamps}"
+                for target in range(1, 9)
+            )
+            + "\n"
+        )
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    str(data), batch_size=8, batch_num_ngs=batch_num_ngs
+                )
+            )
+        )
+        observed = []
+        hook = model.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: observed.append(args[0].detach().clone())
+        )
+        with torch.no_grad():
+            model(batch)
+        hook.remove()
+        assert len(observed) == 1
+        assert observed[0].shape[0] == 8 * (batch_num_ngs + 1)
+>       torch.testing.assert_close(
+            observed[0][:, -1],
+            torch.full_like(observed[0][:, -1], np.log(3.0)),
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 8 / 8 (100.0%)
+E       Greatest absolute difference: 1.0986123085021973 at index (0,) (up to 1e-05 allowed)
+E       Greatest relative difference: 1.0 at index (0,) (up to 1.3e-06 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:355: AssertionError
+_____________ test_slirec_fusion_uses_latest_observed_time[5-2-2] ______________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+tmp_path = PosixPath('/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/test_slirec_fusion_uses_latest3')
+maximum = 5, history_length = 2, batch_num_ngs = 2
+
+    @pytest.mark.parametrize("batch_num_ngs", [0, 2])
+    @pytest.mark.parametrize(
+        "maximum, history_length", [(5, 1), (5, 2), (5, 5), (5, 7), (1, 1), (1, 3)]
+    )
+    def test_slirec_fusion_uses_latest_observed_time(
+        synthetic_slirec, tmp_path, maximum, history_length, batch_num_ngs
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=maximum, enable_BN=False, user_dropout=False
+        ).eval()
+        start, day = 1300000000, 86400
+        latest = start + (history_length - 1) * day
+        items = ",".join(f"I{i + 1}" for i in range(history_length))
+        categories = ",".join(["C1"] * history_length)
+        timestamps = ",".join(str(start + i * day) for i in range(history_length))
+        data = tmp_path / "recency.tsv"
+        data.write_text(
+            "\n".join(
+                f"1\tU1\tI{target}\tC1\t{latest + 3 * day}\t"
+                f"{items}\t{categories}\t{timestamps}"
+                for target in range(1, 9)
+            )
+            + "\n"
+        )
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    str(data), batch_size=8, batch_num_ngs=batch_num_ngs
+                )
+            )
+        )
+        observed = []
+        hook = model.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: observed.append(args[0].detach().clone())
+        )
+        with torch.no_grad():
+            model(batch)
+        hook.remove()
+        assert len(observed) == 1
+        assert observed[0].shape[0] == 8 * (batch_num_ngs + 1)
+>       torch.testing.assert_close(
+            observed[0][:, -1],
+            torch.full_like(observed[0][:, -1], np.log(3.0)),
+        )
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 24 / 24 (100.0%)
+E       Greatest absolute difference: 1.0986123085021973 at index (0,) (up to 1e-05 allowed)
+E       Greatest relative difference: 1.0 at index (0,) (up to 1.3e-06 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:355: AssertionError
+______ test_slirec_fusion_ignores_padding_with_empty_and_mixed_histories _______
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+
+    def test_slirec_fusion_ignores_padding_with_empty_and_mixed_histories(
+        synthetic_slirec,
+    ):
+        model = _build_model(
+            synthetic_slirec, max_seq_length=5, enable_BN=False, user_dropout=False
+        ).eval()
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    os.path.join(synthetic_slirec["dir"], "test_data"), batch_size=4
+                )
+            )
+        )
+        lengths = [0, 1, 3, 5]
+        batch["mask"].zero_()
+        times = torch.full((4, 10), 123.0)
+        batch["time_to_now"] = times[:, ::2]  # a noncontiguous time-feature view
+        for row, length in enumerate(lengths):
+            batch["mask"][row, :length] = 1
+            batch["time_to_now"][row, :length] = torch.arange(
+                length, 0, -1, dtype=torch.float32
+            )
+        observed = []
+        hook = model.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: observed.append(args[0].detach().clone())
+        )
+        with torch.no_grad():
+            output = model(batch)
+        hook.remove()
+        assert torch.isfinite(output).all()
+>       torch.testing.assert_close(observed[0][:, -1], torch.tensor([0.0, 1.0, 1.0, 1.0]))
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 3 / 4 (75.0%)
+E       Greatest absolute difference: 123.0 at index (0,) (up to 1e-05 allowed)
+E       Greatest relative difference: inf at index (0,) (up to 1.3e-06 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:391: AssertionError
+________ test_slirec_recency_matches_reference_optimizer_step[float32] _________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+dtype = torch.float32
+
+    @pytest.mark.parametrize("dtype", ["float32", "float64"])
+    def test_slirec_recency_matches_reference_optimizer_step(synthetic_slirec, dtype):
+        dtype = getattr(torch, dtype)
+        model = _build_model(
+            synthetic_slirec,
+            max_seq_length=9,
+            init_value=0.5,
+            enable_BN=False,
+            user_dropout=False,
+        ).to(dtype=dtype)
+        reference = copy.deepcopy(model)
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    os.path.join(synthetic_slirec["dir"], "test_data"), batch_size=8
+                )
+            )
+        )
+        batch = {
+            key: value.to(dtype=dtype) if value.is_floating_point() else value
+            for key, value in batch.items()
+        }
+        # Independent row-wise reference: retain only observed events, then take the
+        # final event's time feature. All synthetic rows contain real observations.
+        expected_time = torch.stack(
+            [
+                times[mask.bool()][-1]
+                for times, mask in zip(batch["time_to_now"], batch["mask"])
+            ]
+        ).unsqueeze(1)
+        hook = reference.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: (torch.cat([args[0][:, :-1], expected_time], dim=1),)
+        )
+        optimizers = [
+            torch.optim.Adam(m.parameters(), lr=0.001) for m in (model, reference)
+        ]
+        predictions = [m(batch) for m in (model, reference)]
+        hook.remove()
+>       torch.testing.assert_close(predictions[0], predictions[1])
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 6 / 8 (75.0%)
+E       Greatest absolute difference: 4.509330749511719 at index (5, 0) (up to 1e-05 allowed)
+E       Greatest relative difference: 0.17452892661094666 at index (5, 0) (up to 1.3e-06 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:432: AssertionError
+________ test_slirec_recency_matches_reference_optimizer_step[float64] _________
+
+synthetic_slirec = {'dir': '/workspace/scratch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec...tch/4bed741d4966/worktrees/recommenders/slirec-recency-feature/pytest-of-agent/pytest-0/slirec_pt0/category_vocab.pkl'}
+dtype = torch.float64
+
+    @pytest.mark.parametrize("dtype", ["float32", "float64"])
+    def test_slirec_recency_matches_reference_optimizer_step(synthetic_slirec, dtype):
+        dtype = getattr(torch, dtype)
+        model = _build_model(
+            synthetic_slirec,
+            max_seq_length=9,
+            init_value=0.5,
+            enable_BN=False,
+            user_dropout=False,
+        ).to(dtype=dtype)
+        reference = copy.deepcopy(model)
+        batch = model._to_tensors(
+            next(
+                model.iterator.load_data_from_file(
+                    os.path.join(synthetic_slirec["dir"], "test_data"), batch_size=8
+                )
+            )
+        )
+        batch = {
+            key: value.to(dtype=dtype) if value.is_floating_point() else value
+            for key, value in batch.items()
+        }
+        # Independent row-wise reference: retain only observed events, then take the
+        # final event's time feature. All synthetic rows contain real observations.
+        expected_time = torch.stack(
+            [
+                times[mask.bool()][-1]
+                for times, mask in zip(batch["time_to_now"], batch["mask"])
+            ]
+        ).unsqueeze(1)
+        hook = reference.fcn_alpha.register_forward_pre_hook(
+            lambda module, args: (torch.cat([args[0][:, :-1], expected_time], dim=1),)
+        )
+        optimizers = [
+            torch.optim.Adam(m.parameters(), lr=0.001) for m in (model, reference)
+        ]
+        predictions = [m(batch) for m in (model, reference)]
+        hook.remove()
+>       torch.testing.assert_close(predictions[0], predictions[1])
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 6 / 8 (75.0%)
+E       Greatest absolute difference: 4.509322411547462 at index (5, 0) (up to 1e-07 allowed)
+E       Greatest relative difference: 0.17452856905595118 at index (5, 0) (up to 1e-07 allowed)
+
+tests/unit/recommenders/models/test_sli_rec.py:432: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_fusion_uses_latest_observed_time[5-1-0]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_fusion_uses_latest_observed_time[5-1-2]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_fusion_uses_latest_observed_time[5-2-0]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_fusion_uses_latest_observed_time[5-2-2]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_fusion_ignores_padding_with_empty_and_mixed_histories
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_recency_matches_reference_optimizer_step[float32]
+FAILED tests/unit/recommenders/models/test_sli_rec.py::test_slirec_recency_matches_reference_optimizer_step[float64]
+7 failed, 8 passed, 12 deselected in 7.57s
