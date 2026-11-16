@@ -1,0 +1,50 @@
+[
+  {
+    "name": "balanced-catalog-link-destinations",
+    "title": "Preserve balanced and escaped parentheses in catalog URLs",
+    "branch": "fix/balanced-catalog-link-destinations-20261116",
+    "sources": [
+      "packages/catalog-builder/src/parseMarkdown.ts"
+    ],
+    "regressions": [
+      "packages/catalog-builder/test/parseMarkdown.test.ts"
+    ],
+    "expected_baseline_failures": 9,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "a95e1dedbd69a7f27d061deb3507005b930d33ff",
+    "head_sha": "9044b88661087989097fe32ad0fd82db32c41f0e",
+    "status": "candidate"
+  },
+  {
+    "name": "catalog-grouped-tool-counts",
+    "title": "Parse complete grouped tool counts without truncating numeric values",
+    "branch": "fix/catalog-grouped-tool-counts-20261116",
+    "sources": [
+      "packages/catalog-builder/src/buildCatalog.ts"
+    ],
+    "regressions": [
+      "packages/catalog-builder/test/buildCatalog.test.ts"
+    ],
+    "expected_baseline_failures": 13,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "f36e59345b41f9764da0e995ee353a38c9d4b7e6",
+    "head_sha": "f229fc785d210cc15aaf0f951f06c8fce2cbdc63",
+    "status": "candidate"
+  },
+  {
+    "name": "registry-head-method",
+    "title": "Support HEAD requests and advertise allowed registry methods",
+    "branch": "fix/registry-head-method-20261116",
+    "sources": [
+      "packages/registry-api/src/server.ts"
+    ],
+    "regressions": [
+      "packages/registry-api/test/server.test.ts"
+    ],
+    "expected_baseline_failures": 20,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "d677d9f42d0315142272f761c599491b19bfe68b",
+    "head_sha": "aae74bf4afe2e5c4679f039a627ff87c32e8ac0e",
+    "status": "candidate"
+  }
+]
