@@ -1,0 +1,11 @@
+{
+  "updated_at": "2026-11-16T20:12:14.667327+00:00",
+  "root_actual": 70,
+  "files": [
+    "audit/root-portfolio.json",
+    "audit/pypose-spline-final-endpoint-config.json",
+    "audit/pypose-spline-final-endpoint-published.json"
+  ],
+  "format": "base64(gzip(JSON mapping relative paths to UTF-8 text)))",
+  "sha256": "e6a25e6d8b99350815f6d8dafe64a69d365168bd9b8088bb4405587f2a80efee"
+}
