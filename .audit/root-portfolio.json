@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16T22:58:55.026600+00:00",
+  "as_of": "2026-11-16 23:26:50 UTC",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -4631,29 +4631,29 @@
       "number": 3952,
       "url": "https://github.com/affaan-m/ECC/pull/3952",
       "title": "fix(session): preserve recordings when fallback writes fail",
-      "head": "0083c6e8ec334e3875e621540ce62420f7a999d0",
+      "head": "f314b2f2e309134ea48097f475276a3a6e14089d",
       "head_ref": "fix/atomic-session-recordings-20261116",
       "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
       "state": "open",
       "draft": false,
       "merged": false,
       "created_at": "2026-11-16T22:56:17Z",
-      "updated_at": "2026-11-16T22:56:29Z",
+      "updated_at": "2026-11-16T23:16:19Z",
       "merged_at": null,
-      "body": "## What Changed\n\nPublish fallback canonical-session JSON recordings through the existing atomic writer, so readers see a complete snapshot and a failed write keeps the previously saved session history.\n\nThe writer gains an opt-in `preserveExistingMode` option. Recording files keep their existing POSIX read/write/execute permission bits; newly created recordings retain the previous `0666 & ~umask` behavior. Other atomic-writer callers keep their current defaults. Recording reads also use the existing bounded Windows sharing retry.\n\n## Why This Change\n\nThe fallback currently writes directly to the published JSON file. If a write partially succeeds and then fails, for example with `ENOSPC`, the previous recording has already been truncated. A later save treats the invalid JSON as a missing recording and loses the accumulated history. During an initial write, readers can also observe an incomplete file.\n\nThe regression tests inject a failure after writing actual partial bytes. They check visibility during the write, preservation after failure, temporary-file cleanup, and recovery on the next successful save for both fallback entry paths.\n\n## Testing Done\n\n- Linux Node 18, 20 and 22, macOS Node 22, and Windows Node 22: all four partial-write regressions fail against exact base `8abdf329` and pass against candidate `0083c6e8`.\n- The POSIX permission control passes before and after the change on Linux and macOS, including creation umask and replacement of files with `0600`, `0640`, and `0660` permissions.\n- Full `npm test` on clean Ubuntu / Node 22: candidate **490/490 test files pass**, with complete execution integrity. The runner reports 9,998 passing assertions.\n- The exact-base full run completes **488 passed / 1 failed**. Its failure is `lib/claude-settings.test.js`, “atomic settings updates reject parent replacement at rename,” at the staging-descriptor assertion. That test and its settings implementation are unchanged by this PR; this is not claimed as a fix for that failure.\n- Changed-file ESLint passes. Six related test files pass. Combined changed-source coverage is **97.35% lines/statements, 85.15% branches, 100% functions**.\n- Local focused tests and the same six-file coverage run pass.\n- [Exact-base/candidate full suites and five platform/runtime jobs](https://github.com/Afloat16/ECC/actions/runs/43973080665).\n\n- [ ] Manual testing completed\n- [ ] Automated full suite passes locally (`node tests/run-all.js`)\n- [x] Edge cases considered and tested\n\n## Type of Change\n\n- [x] `fix:` Bug fix\n\n## Security & Quality Checklist\n\n- [x] No secrets or API keys committed\n- [x] No sensitive data exposed in regression fixtures\n- [x] Follows conventional commits format\n- [x] Independent code and regression-test review completed\n\nAtomic publication does not serialize multiple concurrent read/modify/write operations; multi-writer history merging is outside this change. The existing handling of a permanently unreadable or invalid recording remains unchanged.\n\nThe three-file patch has no dependency, package manifest, shell-script, or published-path changes.\n",
+      "body": "## What Changed\n\nPublish fallback canonical-session JSON recordings through the existing atomic writer, so readers see a complete snapshot and a failed write keeps the previously saved session history.\n\nThe writer gains an opt-in `preserveExistingMode` option. Recording files keep their existing POSIX read/write/execute permission bits; newly created recordings retain the previous `0666 & ~umask` behavior. Other atomic-writer callers keep their current defaults. Recording reads also use the existing bounded Windows sharing retry.\n\n## Why This Change\n\nThe fallback currently writes directly to the published JSON file. If a write partially succeeds and then fails, for example with `ENOSPC`, the previous recording has already been truncated. A later save treats the invalid JSON as a missing recording and loses the accumulated history. During an initial write, readers can also observe an incomplete file.\n\nThe regression tests inject a failure after writing actual partial bytes. They check visibility during the write, preservation after failure, temporary-file cleanup, and recovery on the next successful save for both fallback entry paths.\n\n## Testing Done\n\n- Linux Node 18, 20 and 22, macOS Node 22, and Windows Node 22: all four partial-write regressions fail against exact base `8abdf329` and pass against candidate `f314b2f2`.\n- The POSIX permission control passes before and after the change on Linux and macOS, including creation umask and replacement of files with `0600`, `0640`, and `0660` permissions.\n- Full `npm test` on clean Ubuntu / Node 22: candidate **490/490 test files pass**, with complete execution integrity. The runner reports 9,998 passing assertions.\n- The exact-base full run completes **488 passed / 1 failed**. Its failure is `lib/claude-settings.test.js`, “atomic settings updates reject parent replacement at rename,” at the staging-descriptor assertion. That test and its settings implementation are unchanged by this PR; this is not claimed as a fix for that failure.\n- Changed-file ESLint passes. Six related test files pass. Combined changed-source coverage is **97.35% lines/statements, 85.21% branches, 100% functions**.\n- Local focused tests and the same six-file coverage run pass.\n- [Initial exact-base/candidate comparison](https://github.com/Afloat16/ECC/actions/runs/43973080665) · [Final-head full suite and five platform/runtime jobs](https://github.com/Afloat16/ECC/actions/runs/43976386940).\n\n- [ ] Manual testing completed\n- [ ] Automated full suite passes locally (`node tests/run-all.js`)\n- [x] Edge cases considered and tested\n\n## Type of Change\n\n- [x] `fix:` Bug fix\n\n## Security & Quality Checklist\n\n- [x] No secrets or API keys committed\n- [x] No sensitive data exposed in regression fixtures\n- [x] Follows conventional commits format\n- [x] Independent code and regression-test review completed\n\nAtomic publication does not serialize multiple concurrent read/modify/write operations; multi-writer history merging is outside this change. The existing handling of a permanently unreadable or invalid recording remains unchanged.\n\nThe three-file patch has no dependency, package manifest, shell-script, or published-path changes.\n\n## Review Follow-up\n\nCommit `f314b2f2` reads the existing permission bits before creating the temporary file and uses them as its creation mode. The later `fchmod` restores existing bits masked by the process umask.\n\nThe strengthened regression inspects the actual file mode both before and after writing staged bytes. On POSIX, it fails at the initial PR head (**4 passed / 1 failed**) and passes after the fix (**5 passed / 0 failed**). The final head passes the Linux Node 18/20/22, macOS Node 22 and Windows Node 22 jobs, as well as the complete **490-file** Ubuntu / Node 22 suite. The Windows job runs the four platform-independent failure cases.\n",
       "maintainer_can_modify": false,
       "batch_owner": "root",
       "fork_validation_urls": [
-        "https://github.com/Afloat16/ECC/actions/runs/43973080665"
+        "https://github.com/Afloat16/ECC/actions/runs/43976386940"
       ],
       "validation_summary": {
         "repository": "affaan-m/ECC",
         "pr": 3952,
         "url": "https://github.com/affaan-m/ECC/pull/3952",
-        "production_head": "0083c6e8ec334e3875e621540ce62420f7a999d0",
+        "production_head": "f314b2f2e309134ea48097f475276a3a6e14089d",
         "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
-        "validation_head": "dfec3fba0230916e3838893baf0d1a63d62f4471",
-        "validation_run": "https://github.com/Afloat16/ECC/actions/runs/43973080665",
+        "validation_head": "08e97ec813375e4a86622e68dcdeb259208c9cf8",
+        "validation_run": "https://github.com/Afloat16/ECC/actions/runs/43976386940",
         "regressions": {
           "ubuntu_node_versions": [
             18,
@@ -4717,7 +4717,20 @@
             "passed": 9992,
             "failed": 1
           },
-          "assertion_count_limitation": "The legacy test runner may not count every assertion format. Complete executed-file counts and integrity checks are the full-suite evidence."
+          "assertion_count_limitation": "The legacy test runner may not count every assertion format. Complete executed-file counts and integrity checks are the full-suite evidence.",
+          "initial_candidate": {
+            "counts": {
+              "planned": 490,
+              "attempted": 490,
+              "completed": 490,
+              "passed": 490,
+              "failed": 0
+            },
+            "integrity": {
+              "ok": true,
+              "errors": []
+            }
+          }
         },
         "related_suite": {
           "counts": {
@@ -4735,7 +4748,7 @@
         "coverage": {
           "lines": 97.35,
           "statements": 97.35,
-          "branches": 85.15,
+          "branches": 85.21,
           "functions": 100
         },
         "eslint": "passed",
@@ -4744,14 +4757,128 @@
           "Atomic publication does not serialize concurrent read/modify/write transactions.",
           "Permanent read-error handling is unchanged.",
           "A full local suite was not claimed. Clean Ubuntu / Node22 full candidate suite is verified."
-        ]
+        ],
+        "initial_production_head": "0083c6e8ec334e3875e621540ce62420f7a999d0",
+        "initial_validation_run": "https://github.com/Afloat16/ECC/actions/runs/43973080665",
+        "review_followup": {
+          "fixed": "Staging is created using existingMode ?? mode before any bytes are written, with final fchmod preserving the old rwx bits masked by umask.",
+          "before": {
+            "passed": 4,
+            "failed": 1
+          },
+          "after": {
+            "passed": 5,
+            "failed": 0
+          },
+          "platforms": "All five OS/Node regression jobs passed; Windows runs four non-POSIX cases.",
+          "comments": [
+            "https://github.com/affaan-m/ECC/pull/3952#discussion_r4592861223",
+            "https://github.com/affaan-m/ECC/pull/3952#discussion_r4592900621"
+          ],
+          "reply_ids": [
+            4592935572,
+            4592940172
+          ],
+          "independent_review": "Read-only review and actual 5-case regression rerun passed."
+        }
       },
       "evidence_checkpoint": {
         "repository": "Afloat16/ECC",
-        "branch": "audit/ecc-atomic-recording-3952-20261116",
-        "commit": "164cfca93066fd63715ee372637741eb785b06b2",
-        "tree": "e11f979d066e4b11d02adf637b1161eab2e0400e",
-        "path": ".audit/ecc-atomic-session-recording/verification.json"
+        "commit": "090d91262b7bd0080c47636c9fd8e2db80133c4d",
+        "path": ".audit/ecc-atomic-session-recording/verification.json",
+        "branch": "audit/ecc-atomic-recording-3952-20261116"
+      }
+    },
+    {
+      "repo": "affaan-m/ECC",
+      "number": 3953,
+      "url": "https://github.com/affaan-m/ECC/pull/3953",
+      "title": "fix(session): preserve aliases with inherited object names",
+      "head": "b504f3cdd73090dc9f4f51b8ebacf8bb5777c641",
+      "head_ref": "fix/session-alias-own-keys-20261116",
+      "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "created_at": "2026-11-16T23:11:14Z",
+      "updated_at": "2026-11-16T23:11:28Z",
+      "merged_at": null,
+      "body": "## What Changed\n\nTreat stored alias names as own JSON entries when resolving, creating, deleting, renaming, or updating aliases. Define new entries explicitly so a valid `__proto__` name is serialized as an ordinary property.\n\nExisting JSON-owned `__proto__`, `constructor`, `toString`, and `hasOwnProperty` records remain readable and writable. The public snapshot shape, accepted-name rules, transaction lock, and atomic publication behavior stay the same.\n\n## Why This Change\n\nThese names pass the existing alias-name validation, but the alias dictionary inherits properties from `Object.prototype`.\n\n- An absent inherited name resolves to a non-null session record with an undefined path.\n- Creating `__proto__` reports success but loses the record when the dictionary is serialized.\n- Other inherited names are incorrectly reported as existing, and renaming an ordinary alias to one is rejected.\n- Deleting, renaming, or changing the title of a missing inherited name can report success or mutate the inherited object.\n\nAll of these failures come from the same dictionary-key handling issue.\n\n## Testing Done\n\n- Exact-base regressions: **2 passed / 15 failed**. Candidate: **17 passed / 0 failed**.\n- The same before/after regression passes on Linux with Node 18, 20 and 22, Windows with Node 22, and macOS with Node 22.\n- Full `npm test` on clean Ubuntu / Node 22: **490/490 test files pass**, with complete execution integrity.\n- All four alias suites pass, including existing concurrent-writer, sharing-retry, and legacy JSON cases.\n- Changed-file ESLint passes. Changed-source coverage: **97.37% lines/statements, 97.24% branches, 100% functions**.\n- The new tests use an isolated `ECC_AGENT_DATA_HOME`, assert the exact fixture path, and restore any built-in properties that the old implementation mutates while demonstrating its failures.\n- [Exact-base/candidate platform regressions and full suite](https://github.com/Afloat16/ECC/actions/runs/43976024993), candidate `b504f3cd` against base `8abdf329`.\n\n- [ ] Manual testing completed\n- [ ] Automated full suite passes locally (`node tests/run-all.js`)\n- [x] Edge cases considered and tested\n\n## Type of Change\n\n- [x] `fix:` Bug fix\n\n## Security & Quality Checklist\n\n- [x] No secrets or API keys committed\n- [x] No sensitive data exposed in regression fixtures\n- [x] Follows conventional commits format\n- [x] Independent code and regression-test review completed\n\nThe two-file patch has no dependency, package manifest, shell-script, or published-path changes.\n",
+      "maintainer_can_modify": false,
+      "batch_owner": "root",
+      "fork_validation_urls": [
+        "https://github.com/Afloat16/ECC/actions/runs/43976024993"
+      ],
+      "validation_summary": {
+        "repository": "affaan-m/ECC",
+        "pr": 3953,
+        "production_head": "b504f3cdd73090dc9f4f51b8ebacf8bb5777c641",
+        "base": "8abdf329ecbc9315dc4e3334a5702782f70b8b02",
+        "validation_head": "7038cececb9eab411af2fb2f2f0fa0af7569f0cc",
+        "validation_run": "https://github.com/Afloat16/ECC/actions/runs/43976024993",
+        "regression": {
+          "baseline": {
+            "passed": 2,
+            "failed": 15
+          },
+          "candidate": {
+            "passed": 17,
+            "failed": 0
+          },
+          "platforms": [
+            "Ubuntu / Node18",
+            "Ubuntu / Node20",
+            "Ubuntu / Node22",
+            "Windows / Node22",
+            "macOS / Node22"
+          ]
+        },
+        "full": {
+          "counts": {
+            "planned": 490,
+            "attempted": 490,
+            "completed": 490,
+            "passed": 490,
+            "failed": 0
+          },
+          "integrity": {
+            "ok": true,
+            "errors": []
+          }
+        },
+        "related": {
+          "counts": {
+            "planned": 4,
+            "attempted": 4,
+            "completed": 4,
+            "passed": 4,
+            "failed": 0
+          },
+          "integrity": {
+            "ok": true,
+            "errors": []
+          }
+        },
+        "coverage": {
+          "lines": 97.37,
+          "statements": 97.37,
+          "branches": 97.24,
+          "functions": 100
+        },
+        "eslint": "passed",
+        "independent_review": "Read-only source and test review found no substantive regression.",
+        "history": {
+          "source_blobs": 18,
+          "all_sha_verified": true,
+          "original_and_renamed_plugin_path_checked": true,
+          "prior_equivalent_found": false
+        }
+      },
+      "evidence_checkpoint": {
+        "repository": "Afloat16/ECC",
+        "commit": "9dcbc94172a256d19f5e61aa79bd5b94c733901e",
+        "path": ".audit/ecc-alias-own-keys/verification.json",
+        "branch": "audit/ecc-alias-own-keys-3953-20261116"
       }
     }
   ],

@@ -1,10 +1,10 @@
 # 开源改进任务进度
 
-更新时间：2026-11-16T22:58:55.026600+00:00
+更新时间：2026-11-16 23:26:50 UTC
 
-任务仍在进行。当前已实际创建 **317 条 PR**：**293 条 Open / 非 Draft、3 条 Draft、12 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **12**。
+任务仍在进行。当前已实际创建 **319 条 PR**：**295 条 Open / 非 Draft、3 条 Draft、12 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **12**。
 
-按已核实的仓库限额，当前提交计划为 730 项，Ready / Merged 覆盖 **305 / 730**，还差 **425**。这只是提交状态统计，不代表已经合并；按 Merged 统计仍为 **12**。另有 **28 项 Prepared** 尚未创建上游 PR。
+按已核实的仓库限额，当前提交计划为 730 项，Ready / Merged 覆盖 **307 / 730**，还差 **423**。这只是提交状态统计，不代表已经合并；按 Merged 统计仍为 **12**。另有 **28 项 Prepared** 尚未创建上游 PR。
 
 ## 最新实质结果
 
@@ -46,7 +46,7 @@
 | [storytold/craft-anything](https://github.com/storytold/craft-anything) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [JetBrains/thinkrail](https://github.com/JetBrains/thinkrail) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
-| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 1 | 1 | 0 | 0 | 0 | 0 | 19 |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 2 | 2 | 0 | 0 | 0 | 0 | 18 |
 | [carla-simulator/carla](https://github.com/carla-simulator/carla) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [ranxianglei/billion-context](https://github.com/ranxianglei/billion-context) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [milind-soni/OpenMausBot](https://github.com/milind-soni/OpenMausBot) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
@@ -57,7 +57,7 @@
 | [TensorBlock/awesome-mcp-servers](https://github.com/TensorBlock/awesome-mcp-servers) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [Edge0-AI/Edge0](https://github.com/Edge0-AI/Edge0) | 20 | 9 | 9 | 0 | 0 | 0 | 2 | 11 |
 | [betaflight/betaflight](https://github.com/betaflight/betaflight) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
-| [affaan-m/ECC](https://github.com/affaan-m/ECC) | 10 | 2 | 2 | 0 | 0 | 0 | 0 | 8 |
+| [affaan-m/ECC](https://github.com/affaan-m/ECC) | 10 | 3 | 3 | 0 | 0 | 0 | 0 | 7 |
 | [microsoft/onnxruntime](https://github.com/microsoft/onnxruntime) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 
 仓库限额优先于 20 项目标。Haystack、Trimesh、vLLM 已达到现有并发上限；ECC 当前上限为 10 个同时开放 PR、20 分钟最多创建 5 个。Genesis-Embodied-AI 整个组织排除。排名按 merged PR 数核实，GestaltX 的显著领先排除保持生效。
@@ -80,6 +80,7 @@
 
 - [affaan-m/ECC #3951 — fix(session): report the latest model from Codex rollouts](https://github.com/affaan-m/ECC/pull/3951) — Open / 非 Draft
 - [affaan-m/ECC #3952 — fix(session): preserve recordings when fallback writes fail](https://github.com/affaan-m/ECC/pull/3952) — Open / 非 Draft
+- [affaan-m/ECC #3953 — fix(session): preserve aliases with inherited object names](https://github.com/affaan-m/ECC/pull/3953) — Open / 非 Draft
 - [AgriciDaniel/claude-seo #488 — fix(page_checks): match the JSON-LD media type exactly](https://github.com/AgriciDaniel/claude-seo/pull/488) — Open / 非 Draft
 - [AgriciDaniel/claude-seo #489 — fix(preload): avoid scoring empty or unreadable speculation rule sets](https://github.com/AgriciDaniel/claude-seo/pull/489) — Open / 非 Draft
 - [AgriciDaniel/claude-seo #490 — fix(schema): reject non-JSON numeric constants in page markup](https://github.com/AgriciDaniel/claude-seo/pull/490) — Open / 非 Draft
@@ -355,6 +356,7 @@
 - [TensorBlock/awesome-mcp-servers #6127 — Parse complete grouped tool counts without truncating numeric values](https://github.com/TensorBlock/awesome-mcp-servers/pull/6127) — Open / 非 Draft
 - [TensorBlock/awesome-mcp-servers #6128 — Support HEAD requests and advertise allowed registry methods](https://github.com/TensorBlock/awesome-mcp-servers/pull/6128) — Open / 非 Draft
 - [thedotmack/claude-mem #6230 — fix(aider): honor working-directory config precedence](https://github.com/thedotmack/claude-mem/pull/6230) — Open / 非 Draft
+- [thedotmack/claude-mem #6231 — fix(aider): preserve quoted file paths in flow lists](https://github.com/thedotmack/claude-mem/pull/6231) — Open / 非 Draft
 - [Toni-SM/skrl #504 — Handle multidimensional categorical action spaces](https://github.com/Toni-SM/skrl/pull/504) — Open / 非 Draft
 - [Toni-SM/skrl #506 — Preserve zero probabilities when sampling JAX actions](https://github.com/Toni-SM/skrl/pull/506) — Open / 非 Draft
 - [Toni-SM/skrl #508 — Parse nested operations in generated model expressions](https://github.com/Toni-SM/skrl/pull/508) — Open / 非 Draft
@@ -432,3 +434,10 @@
 每个根本问题只算一项改进；重复历史实现、未创建的分支和内部验证 PR 均不计实际上游 PR。完整正文、head SHA、验证范围与原始证据在 portfolio-20261116.json、prepared-submissions.json 和四份来源 portfolio 中保留。完整组合文件超过连接器单次读取大小时，请按 index.json 的来源与路径读取。
 
 PyPose complex CG 的等价共轭内积在历史版本存在，因此排除；ECC macOS stocktake mtime 初始假设经 Apple 源码核对不成立，也已排除。ECC OpenCode 最新模型选择同样存在历史实现，不作为新改进提交。
+
+## 本次追加与执行状态
+
+- [ECC #3953](https://github.com/affaan-m/ECC/pull/3953)：合法别名与继承属性重名时仍正确保存和查询；17项回归、五组平台/运行时验证及完整490个测试文件通过。
+- [ECC #3952 最终修订](https://github.com/affaan-m/ECC/pull/3952)：临时文件写入期间权限窗口已修复。f314b2f2 的五组验证及完整490文件通过，审查线程已回复。
+- [claude-mem #6231](https://github.com/thedotmack/claude-mem/pull/6231)：Aider flow-list 路径引号、方括号、逗号解析与卸载保留；70项相关测试及真实配置/CLI对照完成。
+- 执行环境连接中断；已完成成果保存远端，中断且未返回的构建/测试结果未知，不计成功。
