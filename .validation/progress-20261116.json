@@ -155,8 +155,24 @@
       "expected_baseline_failures": 5,
       "tree": "c94970690020bbf13f7c300e55ffb5f423880477",
       "head_sha": "11820601832e2710a6b11225d458e7b2efb49851",
-      "status": "validation_pending",
-      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+      "status": "ready_to_publish",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "validation_runs": [
+        43859062490
+      ],
+      "baseline": {
+        "failed": 5,
+        "passed": 13
+      },
+      "candidate": {
+        "passed": 97,
+        "failed": 0,
+        "pending": 0
+      },
+      "jobs": [
+        133270783371,
+        133270783816
+      ]
     },
     {
       "name": "catalog-build-error-status",
@@ -169,10 +185,11 @@
         "packages/catalog-builder/test/cli.test.ts"
       ],
       "expected_baseline_failures": 3,
-      "tree": "6c52956a2d045412f34c8fc7aa5674ad76585814",
-      "head_sha": "4c7d32b138c162a59d4631ed45839c4c8bff92e7",
+      "tree": "ea77f61f4260e25dbceebc3900a4e7c2a4ad7db8",
+      "head_sha": "408c38a8a7959455498dc3d79f83078e13f73452",
       "status": "validation_pending",
-      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb"
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "previous_head": "4c7d32b138c162a59d4631ed45839c4c8bff92e7"
     },
     {
       "name": "quoted-launch-arguments-followup",
@@ -184,7 +201,7 @@
       "regressions": [
         "packages/config-generator/test/generateConfig.test.ts"
       ],
-      "expected_baseline_failures": 20,
+      "expected_baseline_failures": 19,
       "target_pr": 6110,
       "target_branch": "fix/quoted-launch-arguments-20261116",
       "previous_head": "bf4be0bdeac150a2864b05b6e2da085e1e2b0e58",
@@ -259,8 +276,14 @@
     }
   ],
   "validation_batch3": {
-    "head": "59e438b65109bdd0021f0f041d927f76bd926a77",
-    "tree": "9f071eb18383756e6e491818a1544c9838c7d442",
-    "branch": "validation/registry-core-batch3-20261116"
+    "head": "8184d2ab81310f626d69a740f5b7447396ad3280",
+    "tree": "7ecc08023c6107697d389c1236bea596c81c5f23",
+    "branch": "validation/registry-core-batch3-20261116",
+    "previous_head": "59e438b65109bdd0021f0f041d927f76bd926a77"
+  },
+  "validation_batch4": {
+    "head": "8e0c06f17fc0e0a58f325bc82be7c5b231e0a18f",
+    "tree": "fc9cef9388a5fa25d312b8954122a32b7b5d6380",
+    "branch": "validation/registry-core-batch4-20261116"
   }
 }
