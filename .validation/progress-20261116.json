@@ -1,0 +1,146 @@
+{
+  "repository": "TensorBlock/awesome-mcp-servers",
+  "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+  "candidates": [
+    {
+      "name": "catalog-fenced-examples",
+      "title": "Exclude fenced Markdown examples from the MCP catalog",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/catalog-fenced-examples-20261116",
+      "source": "packages/catalog-builder/src/parseMarkdown.ts",
+      "regression": "packages/catalog-builder/test/parseMarkdown.test.ts",
+      "expected_baseline_failures": 12,
+      "status": "published",
+      "head_sha": "70a30dab93be3d3b3743bd10b0ebb356a3628dce",
+      "tree": "96af94fc601b291f74b531f1e3d52918abf25bea",
+      "body": "## Problem\n\nThe Markdown scanner currently treats entry-shaped lines and category headings inside fenced examples as live catalog content. A documentation example can therefore create a phantom server or change the category of a real entry after the code block.\n\n## Change\n\nTrack backtick and tilde fences before scanning headings or entries. Close a fence only with the same marker, sufficient length, and whitespace-only suffix. Preserve source line numbers, ignore an unclosed block through EOF, and keep invalid fence-like lines from suppressing real entries. The tests cover indented fences, longer closing markers, false closers, CRLF input, and categories inside examples. Fence handling follows the [CommonMark rules](https://spec.commonmark.org/0.31.2/#fenced-code-blocks).\n\n## Validation\n\nTested the exact independent commit on Node.js 20 and 24. With unchanged production code, the focused suite has **12 failures and 15 passes**. With this fix, the complete suite has **107 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on both runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448423)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448485)\n",
+      "validation_runs": [
+        43855460282
+      ],
+      "pr_number": 6111,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6111",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    },
+    {
+      "name": "catalog-large-blame-output",
+      "title": "Keep source timestamps for large catalog category files",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/catalog-large-blame-output-20261116",
+      "source": "packages/catalog-builder/src/sourceMetadata.ts",
+      "regression": "packages/catalog-builder/test/sourceMetadata.test.ts",
+      "expected_baseline_failures": 1,
+      "status": "published",
+      "head_sha": "de1194171e5bace2c0659516d5ceeffbcde5fafa",
+      "tree": "bd256a21a9d3e457ac69c38cca9b9d1e01a9e74f",
+      "body": "## Problem\n\nThe synchronous Git invocation uses Node's default 1 MiB captured-output limit. Once line-porcelain blame output exceeds that limit, the command throws and the optional-metadata catch silently drops every timestamp and source PR number for the category.\n\n## Change\n\nSet an explicit bounded 64 MiB capture limit. Add an integration test that creates a real temporary Git repository with 2,048 entries, verifies that blame output exceeds 1 MiB, and checks every resulting timestamp and PR number. Keep the existing behavior for builds outside Git checkouts.\n\n## Validation\n\nTested the exact independent commit on Node.js 20 and 24. With unchanged production code, the focused suite has **1 failure and 2 passes**. With this fix, the complete suite has **94 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on both runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448336)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448222)\n\nThe three largest current category files retain identical source coverage before and after the change. At the tested base, the largest produces **944,754 bytes** of blame output and **1,593 source lines**, so this addresses growth past the buffer boundary; it does not claim that this current file has already lost metadata.\n",
+      "validation_runs": [
+        43855460282
+      ],
+      "pr_number": 6113,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6113",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    },
+    {
+      "name": "python-pip-setup-commands",
+      "title": "Skip Python pip setup steps when generating MCP launch configs",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/python-pip-setup-commands-20261116",
+      "regression": "packages/config-generator/test/generateConfig.test.ts",
+      "expected_baseline_failures": 13,
+      "status": "published",
+      "head_sha": "21240711b7150c83663b1e235be3d194829dd968",
+      "tree": "4ffd20ec9729fbe66614d080cdfa2bf7d8d83f44",
+      "body": "## Problem\n\nA metadata sequence containing `python -m pip install ...` followed by the actual server command currently selects the installation step as the MCP process. The generated client configuration installs dependencies and exits instead of starting the server. The existing AI Memory Book catalog entry reproduces this with its install-then-run metadata.\n\n## Change\n\nTreat `python`/`python3 -m pip` and `-m pip.__main__` as setup commands, so the existing selection logic continues to the next runnable command. Preserve runnable modules such as `pip_server` and `pipx`. If no launch command remains, keep the existing remote-endpoint or placeholder fallback.\n\nThe regression tests cover all four installer forms, subsequent launch selection, installer-only metadata, remote fallback, legitimate Python modules, and the real catalog entry across all four client formats.\n\n## Validation\n\nTested the exact independent commit on Node.js 20, 22, and 24. With unchanged production code, the focused suite has **13 failures and 15 passes**. With this fix, the complete suite has **107 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on all three runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43854100905/job/133253820040)\n- [Node.js 22 and 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43853420025)\n",
+      "validation_runs": [
+        43853420025,
+        43854100905
+      ],
+      "pr_number": 6107,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6107",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    },
+    {
+      "name": "quoted-launch-arguments",
+      "title": "Preserve quoted MCP launch arguments and reject incomplete commands",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/quoted-launch-arguments-20261116",
+      "source": "packages/config-generator/src/generateConfig.ts",
+      "regression": "packages/config-generator/test/generateConfig.test.ts",
+      "expected_baseline_failures": 12,
+      "status": "published",
+      "head_sha": "bf4be0bdeac150a2864b05b6e2da085e1e2b0e58",
+      "tree": "0e484c0fd50f731f848b24f98270cffde2997e25",
+      "body": "## Problem\n\nThe launch-command tokenizer drops empty quoted arguments and removes backslashes that are literal inside single quotes or before ordinary characters in double quotes. This changes the argv passed to the MCP server: an empty option value can consume the next option, and a quoted path can point to the wrong file. Incomplete quotes or a dangling escape are also accepted as a different command.\n\n## Change\n\nTrack whether an argument has started independently of its length, apply quote-aware escaping, preserve escaped trailing spaces, and handle line continuations. Reject incomplete token sequences so command selection can use the next launch command or the existing fallback. The regression cases exercise the generated configuration for all four clients, together with unchanged quoted-space and escaped-character controls.\n\n## Validation\n\nTested the exact independent commit on Node.js 20 and 24. With unchanged production code, the focused suite has **12 failures and 17 passes**. With this fix, the complete suite has **108 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on both runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448519)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258447923)\n",
+      "validation_runs": [
+        43855460282
+      ],
+      "pr_number": 6110,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6110",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    },
+    {
+      "name": "catalog-description-punctuation",
+      "title": "Preserve punctuation inside whitespace-separated catalog descriptions",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/catalog-description-punctuation-20261116",
+      "source": "packages/catalog-builder/src/parseMarkdown.ts",
+      "regression": "packages/catalog-builder/test/parseMarkdown.test.ts",
+      "expected_baseline_failures": 7,
+      "status": "published",
+      "head_sha": "b39fa83beec700dbf37f0449955df947ac79f583",
+      "tree": "68dfaeca431c66017a0b4cd8650421b61cc09391",
+      "body": "## Problem\n\nWhitespace-separated descriptions are supported, but their first internal colon or spaced dash is mistaken for the entry separator. For example, `Fetch https://example.com/api for live results.` loses `Fetch https`, and `Runs at 12:30 UTC.` loses `Runs at 12`. This corrupts both profile text and the text available to search.\n\n## Change\n\nRecognize the initial separator only before textual content starts. Preserve punctuation within fallback descriptions while retaining leading status icons, metadata links, and the existing colon/hyphen/em-dash/en-dash forms. Add regressions for URLs, times, ordinary and Unicode descriptions, plus initial-separator controls.\n\n## Validation\n\nTested the exact independent commit on Node.js 20 and 24. With unchanged production code, the focused suite has **7 failures and 17 passes**. With this fix, the complete suite has **104 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on both runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448321)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43855460282/job/133258448526)\n",
+      "validation_runs": [
+        43855460282
+      ],
+      "pr_number": 6112,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6112",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    },
+    {
+      "name": "registry-invalid-request-target",
+      "title": "Reject malformed HTTP targets without terminating the registry API",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/registry-invalid-request-target-20261116",
+      "regression": "packages/registry-api/test/requestTargets.test.ts",
+      "expected_baseline_failures": 4,
+      "status": "published",
+      "head_sha": "e0021164e31727198e72b0967e2c01cf8cc202d0",
+      "tree": "f2b353a6c5d96e8df984a21878fad9fcfd1eb7b9",
+      "body": "## Problem\n\nThe HTTP handler constructs a `URL` before entering its error handler. A malformed request target such as `//[` or `http://localhost:bad` throws from that constructor, escapes the async request callback, and terminates the API process under Node's default unhandled-rejection behavior. The failed request can therefore interrupt unrelated clients.\n\n## Change\n\nCatch URL-construction errors at the request boundary and return the existing JSON error format with status 400. Route dispatch remains unchanged for valid targets.\n\nThe regressions launch the real API in an isolated child process, send four malformed targets over HTTP, check the 400 response, and then check `/health` in the **same process**. This exercises process survival without changing global rejection handling or relying on a mocked URL parser.\n\n## Validation\n\nTested the exact independent commit on Node.js 20, 22, and 24. All **4** new HTTP regressions fail against unchanged production code. With this fix, the complete suite has **96 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on all three runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43854100905/job/133253819541)\n- [Node.js 22 and 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43853420025)\n",
+      "validation_runs": [
+        43853420025,
+        43854100905
+      ],
+      "pr_number": 6108,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6108",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    },
+    {
+      "name": "registry-client-own-aliases",
+      "title": "Reject inherited property names as MCP client aliases",
+      "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+      "branch": "fix/registry-client-own-aliases-20261116",
+      "regression": "packages/registry-api/test/server.test.ts",
+      "expected_baseline_failures": 4,
+      "status": "published",
+      "head_sha": "4723f592cf0abb6d0c2bf6cfea0e73d005cbb9d2",
+      "tree": "17a18e492910e6c342dd565d5d88e9510431af8d",
+      "body": "## Problem\n\nThe install-config endpoint looks up the requested client on a normal object without checking ownership. Names such as `constructor` and `__proto__` therefore resolve to inherited values and incorrectly receive a successful configuration response instead of the documented unsupported-client error. Case variants also reach the same path after lowercasing.\n\n## Change\n\nRequire an own property of `CLIENT_ALIASES` before returning the alias. Keep the existing case-insensitive aliases and the existing 400/no-store error response. Add HTTP regressions for inherited names, mixed-case variants, and an ordinary unsupported name.\n\n## Validation\n\nTested the exact independent commit on Node.js 20, 22, and 24. With unchanged production code, the focused suite has **4 failures and 17 passes**. With this fix, the complete suite has **97 passes**, with no failures or skips. Catalog generation, profile generation, TypeScript checking, and the package build also pass on all three runtimes.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43854100905/job/133253819975)\n- [Node.js 22 and 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43853420025)\n",
+      "validation_runs": [
+        43853420025,
+        43854100905
+      ],
+      "pr_number": 6106,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6106",
+      "merged_at": null,
+      "maintainer_can_modify": false
+    }
+  ]
+}
