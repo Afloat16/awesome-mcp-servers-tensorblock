@@ -1,0 +1,18 @@
+[
+  {
+    "name": "bounded-search-ranking",
+    "title": "Keep only the requested best matches while ranking catalog searches",
+    "branch": "perf/bounded-search-ranking-20261116",
+    "sources": [
+      "packages/registry-api/src/search.ts"
+    ],
+    "regressions": [
+      "packages/registry-api/test/search.test.ts"
+    ],
+    "expected_baseline_failures": 0,
+    "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
+    "tree": "96783d4b188763fd7f9ec3eead1c1eee647f1bc3",
+    "head_sha": "edace3dd202c5aafa4a0290f07625b4c393c8a49",
+    "status": "candidate"
+  }
+]
