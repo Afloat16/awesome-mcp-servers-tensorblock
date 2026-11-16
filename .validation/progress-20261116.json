@@ -101,7 +101,7 @@
           ]
         }
       ],
-      "body_pending_update": true
+      "body_pending_update": false
     },
     {
       "name": "catalog-description-punctuation",
@@ -176,7 +176,7 @@
       "expected_baseline_failures": 5,
       "tree": "c94970690020bbf13f7c300e55ffb5f423880477",
       "head_sha": "11820601832e2710a6b11225d458e7b2efb49851",
-      "status": "ready_to_publish",
+      "status": "published",
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "validation_runs": [
         43859062490
@@ -194,7 +194,12 @@
         133270783371,
         133270783816
       ],
-      "body": "## Problem\n\nEvery fallback installation configuration returns the same module-level placeholder object. Mutating a returned command, argument list, or nested configuration can therefore change configurations subsequently generated for another server or client.\n\n## Change\n\nCreate a fresh placeholder object and argument array for each call. Regression tests cover independent results across all four clients and mutations of one result followed by another generation.\n\n## Validation\n\nOn both Node.js 20 and 24, the unchanged implementation produces **5 failures and 13 passes** in the focused suite. The fix passes the complete **97-test suite**, catalog generation, profile generation, TypeScript checking, and package builds.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859062490/job/133270783371)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859062490/job/133270783816)\n"
+      "body": "## Problem\n\nEvery fallback installation configuration returns the same module-level placeholder object. Mutating a returned command, argument list, or nested configuration can therefore change configurations subsequently generated for another server or client.\n\n## Change\n\nCreate a fresh placeholder object and argument array for each call. Regression tests cover independent results across all four clients and mutations of one result followed by another generation.\n\n## Validation\n\nOn both Node.js 20 and 24, the unchanged implementation produces **5 failures and 13 passes** in the focused suite. The fix passes the complete **97-test suite**, catalog generation, profile generation, TypeScript checking, and package builds.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859062490/job/133270783371)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859062490/job/133270783816)\n",
+      "pr_number": 6116,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6116",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "body_pending_update": false
     },
     {
       "name": "catalog-build-error-status",
@@ -209,7 +214,7 @@
       "expected_baseline_failures": 3,
       "tree": "ea77f61f4260e25dbceebc3900a4e7c2a4ad7db8",
       "head_sha": "408c38a8a7959455498dc3d79f83078e13f73452",
-      "status": "ready_to_publish",
+      "status": "published",
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "previous_head": "4c7d32b138c162a59d4631ed45839c4c8bff92e7",
       "validation_runs": [
@@ -235,7 +240,12 @@
           ]
         }
       ],
-      "body": "## Problem\n\nThe catalog CLI writes validation errors to its diagnostic file but still exits successfully. A build or deployment can therefore continue after duplicate URLs, malformed entries, or missing documentation mirrors have invalidated the catalog.\n\n## Change\n\nSet a failing process exit code when catalog validation reports errors, after writing the catalog and diagnostics. Valid builds continue to exit successfully.\n\nThe regression tests invoke the actual CLI in temporary workspaces and check exit status together with the generated diagnostic files for three error cases and two valid controls.\n\n## Validation\n\nOn both Node.js 20 and 24, the unchanged CLI produces **3 failures and 2 passes** in the focused suite. The fix passes the complete **97-test suite**, catalog generation, profile generation, TypeScript checking, and package builds. The repository's real catalog still builds with **9,846 entries and zero errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859714230/job/133273022861)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859714230/job/133273022244)\n"
+      "body": "## Problem\n\nThe catalog CLI writes validation errors to its diagnostic file but still exits successfully. A build or deployment can therefore continue after duplicate URLs, malformed entries, or missing documentation mirrors have invalidated the catalog.\n\n## Change\n\nSet a failing process exit code when catalog validation reports errors, after writing the catalog and diagnostics. Valid builds continue to exit successfully.\n\nThe regression tests invoke the actual CLI in temporary workspaces and check exit status together with the generated diagnostic files for three error cases and two valid controls.\n\n## Validation\n\nOn both Node.js 20 and 24, the unchanged CLI produces **3 failures and 2 passes** in the focused suite. The fix passes the complete **97-test suite**, catalog generation, profile generation, TypeScript checking, and package builds. The repository's real catalog still builds with **9,846 entries and zero errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859714230/job/133273022861)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859714230/job/133273022244)\n",
+      "pr_number": 6115,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6115",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "body_pending_update": false
     },
     {
       "name": "quoted-launch-arguments-followup",
@@ -292,7 +302,7 @@
       "expected_baseline_failures": 6,
       "tree": "6b02cbe5c1b8e341c5ac4a6bbc276836e881ff05",
       "head_sha": "b769238778a1e09e61779c012847553db66cff38",
-      "status": "ready_to_publish",
+      "status": "published",
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "validation_runs": [
         43859544516
@@ -321,7 +331,12 @@
           ]
         }
       ],
-      "body": "## Problem\n\nThe installation-command expression can start at a closing backtick and consume prose until the next opening backtick. A description such as two code spans separated by “requires npm and Git” can consequently publish that prose as an installation command. Substrings such as `pipeline_summary` are also mistaken for `pip` commands.\n\n## Change\n\nExtract complete inline-code spans first, matching the opening and closing backtick runs, then recognize supported command words within each span. Preserve actual setup commands and the existing pip3, pipx, and pnpm forms.\n\n## Validation\n\nOn Node.js 20 and 24, the unchanged implementation produces **6 failures and 17 passes** in the focused suite. The fix passes the full **103-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog contains **9,846 entries and zero build errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423391)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272422875)\n"
+      "body": "## Problem\n\nThe installation-command expression can start at a closing backtick and consume prose until the next opening backtick. A description such as two code spans separated by “requires npm and Git” can consequently publish that prose as an installation command. Substrings such as `pipeline_summary` are also mistaken for `pip` commands.\n\n## Change\n\nExtract complete inline-code spans first, matching the opening and closing backtick runs, then recognize supported command words within each span. Preserve actual setup commands and the existing pip3, pipx, and pnpm forms.\n\n## Validation\n\nOn Node.js 20 and 24, the unchanged implementation produces **6 failures and 17 passes** in the focused suite. The fix passes the full **103-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog contains **9,846 entries and zero build errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423391)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272422875)\n",
+      "pr_number": 6117,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6117",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "body_pending_update": false
     },
     {
       "name": "catalog-repository-endpoints",
@@ -336,7 +351,7 @@
       "expected_baseline_failures": 7,
       "tree": "733c7ddfff6b9cb21b98d40a750d112311747c43",
       "head_sha": "56faa92f1d4eecb334a360145c9130fb6ed531b1",
-      "status": "ready_to_publish",
+      "status": "published",
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "validation_runs": [
         43859544516
@@ -365,7 +380,12 @@
           ]
         }
       ],
-      "body": "## Problem\n\nA GitHub repository page whose path contains `mcp` or ends in `/sse` is inferred to be a remote MCP endpoint. Installation configuration can then send clients to a repository HTML page. This affects existing entries including Learn MCP Server, Chatpack, and Semgrep MCP.\n\n## Change\n\nExclude GitHub repository-page URLs from endpoint inference. Keep explicit endpoint metadata authoritative, and preserve real endpoint inference for other hosts, including `gitlab.com/api/v4/mcp` and GitHub Pages.\n\nTests cover GitHub URL variants, valid remote endpoint controls, metadata precedence, and the three affected catalog entries. An explicitly configured endpoint is intentionally governed by its metadata.\n\n## Validation\n\nOn Node.js 20 and 24, unchanged production code produces **7 failures and 17 passes** in the focused suite. The fix passes the complete **104-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog contains **9,846 entries and zero build errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423326)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423359)\n"
+      "body": "## Problem\n\nA GitHub repository page whose path contains `mcp` or ends in `/sse` is inferred to be a remote MCP endpoint. Installation configuration can then send clients to a repository HTML page. This affects existing entries including Learn MCP Server, Chatpack, and Semgrep MCP.\n\n## Change\n\nExclude GitHub repository-page URLs from endpoint inference. Keep explicit endpoint metadata authoritative, and preserve real endpoint inference for other hosts, including `gitlab.com/api/v4/mcp` and GitHub Pages.\n\nTests cover GitHub URL variants, valid remote endpoint controls, metadata precedence, and the three affected catalog entries. An explicitly configured endpoint is intentionally governed by its metadata.\n\n## Validation\n\nOn Node.js 20 and 24, unchanged production code produces **7 failures and 17 passes** in the focused suite. The fix passes the complete **104-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog contains **9,846 entries and zero build errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423326)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423359)\n",
+      "pr_number": 6120,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6120",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "body_pending_update": false
     },
     {
       "name": "catalog-gnu-license-identifiers",
@@ -380,7 +400,7 @@
       "expected_baseline_failures": 8,
       "tree": "f96c6ca54de39d9b6ec65b791555cf3f990894e7",
       "head_sha": "0034b4ffa21aa46bfdd3b6bd4032d55930b645b6",
-      "status": "ready_to_publish",
+      "status": "published",
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "validation_runs": [
         43859544516
@@ -409,7 +429,11 @@
           ]
         }
       ],
-      "body": "## Problem\n\nGNU license inference truncates version-choice suffixes: for example, a description stating `GPL-3.0-only` becomes `GPL-3.0`. This discards part of the stated identifier in the catalog and generated profiles. Eight existing entries are affected by this inference.\n\n## Change\n\nPreserve `-only` and `-or-later` suffixes for the supported GNU license versions. Keep existing unsuffixed identifiers and explicit metadata precedence unchanged. Regression coverage includes the actual Folio entry and suffix variants.\n\nThe distinction is part of the SPDX identifiers, for example [GPL-3.0-only](https://spdx.org/licenses/GPL-3.0-only.html) and [GPL-3.0-or-later](https://spdx.org/licenses/GPL-3.0-or-later.html). This change preserves the identifier stated in the description.\n\n## Validation\n\nOn Node.js 20 and 24, unchanged production code produces **8 failures and 18 passes** in the focused suite. The fix passes the full **106-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog contains **9,846 entries and zero build errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423333)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423290)\n"
+      "body": "## Problem\n\nGNU license inference truncates version-choice suffixes: for example, a description stating `GPL-3.0-only` becomes `GPL-3.0`. This discards part of the stated identifier in the catalog and generated profiles. Eight existing entries are affected by this inference.\n\n## Change\n\nPreserve `-only` and `-or-later` suffixes for the supported GNU license versions. Keep existing unsuffixed identifiers and explicit metadata precedence unchanged. Regression coverage includes the actual Folio entry and suffix variants.\n\nThe distinction is part of the SPDX identifiers, for example [GPL-3.0-only](https://spdx.org/licenses/GPL-3.0-only.html) and [GPL-3.0-or-later](https://spdx.org/licenses/GPL-3.0-or-later.html). This change preserves the identifier stated in the description.\n\n## Validation\n\nOn Node.js 20 and 24, unchanged production code produces **8 failures and 18 passes** in the focused suite. The fix passes the full **106-test suite**, catalog and profile generation, TypeScript checking, and package builds. The real catalog contains **9,846 entries and zero build errors**.\n\n- [Node.js 20 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423333)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423290)\n",
+      "pr_number": 6121,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6121",
+      "merged_at": null,
+      "maintainer_can_modify": false
     },
     {
       "name": "incremental-profile-writes",
@@ -424,7 +448,7 @@
       "expected_baseline_failures": 2,
       "tree": "fe8bde66435c7d09fb857665835dc585b8963f6e",
       "head_sha": "e8d1f42a6c77f53947c4b1fdeb0b3861e40ddd6a",
-      "status": "ready_to_publish",
+      "status": "published",
       "base_sha": "9b8152c14c7b14249128868d2c2e8ef0a2e20acb",
       "validation_runs": [
         43859544516
@@ -455,7 +479,12 @@
           ]
         }
       ],
-      "body": "## Problem\n\nEvery profile build deletes and rewrites every JSON profile, even when the catalog has not changed. This performs avoidable filesystem work and changes modification times for unchanged profiles.\n\n## Change\n\nCompare each expected profile's serialized contents with the existing file and write only changed or new profiles. Remove stale JSON profiles after processing the expected files. Preserve unrelated files.\n\nRegression tests check unchanged modification times, one changed profile alongside an unchanged one, stale-profile removal, unrelated-file preservation, and an empty catalog.\n\n## Validation\n\nOn Node.js 20 and 24, unchanged production code produces **2 failures and 3 passes** in the focused suite. The fix passes the complete **95-test suite**, catalog and profile generation, TypeScript checking, and package builds.\n\nA Node.js 20 benchmark rebuilds the repository's **9,846-profile catalog** three times with unchanged input:\n\n| Measurement | Before | After |\n| --- | ---: | ---: |\n| Median profile-writing time | 547.54 ms | 225.83 ms |\n| JSON profiles rewritten per rebuild | 9,846 | 0 |\n\nThe output bytes have the same SHA-256 digest before and after. These measurements cover repeated unchanged builds on the validation runner; they do not claim a speedup for the initial build.\n\n- [Node.js 20 tests and benchmark](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423293)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423460)\n"
+      "body": "## Problem\n\nEvery profile build deletes and rewrites every JSON profile, even when the catalog has not changed. This performs avoidable filesystem work and changes modification times for unchanged profiles.\n\n## Change\n\nCompare each expected profile's serialized contents with the existing file and write only changed or new profiles. Remove stale JSON profiles after processing the expected files. Preserve unrelated files.\n\nRegression tests check unchanged modification times, one changed profile alongside an unchanged one, stale-profile removal, unrelated-file preservation, and an empty catalog.\n\n## Validation\n\nOn Node.js 20 and 24, unchanged production code produces **2 failures and 3 passes** in the focused suite. The fix passes the complete **95-test suite**, catalog and profile generation, TypeScript checking, and package builds.\n\nA Node.js 20 benchmark rebuilds the repository's **9,846-profile catalog** three times with unchanged input:\n\n| Measurement | Before | After |\n| --- | ---: | ---: |\n| Median profile-writing time | 547.54 ms | 225.83 ms |\n| JSON profiles rewritten per rebuild | 9,846 | 0 |\n\nThe output bytes have the same SHA-256 digest before and after. These measurements cover repeated unchanged builds on the validation runner; they do not claim a speedup for the initial build.\n\n- [Node.js 20 tests and benchmark](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423293)\n- [Node.js 24 validation](https://github.com/Afloat16/awesome-mcp-servers-tensorblock/actions/runs/43859544516/job/133272423460)\n",
+      "pr_number": 6114,
+      "pr_url": "https://github.com/TensorBlock/awesome-mcp-servers/pull/6114",
+      "merged_at": null,
+      "maintainer_can_modify": false,
+      "body_pending_update": false
     }
   ],
   "validation_batch3": {
@@ -469,5 +498,5 @@
     "tree": "fc9cef9388a5fa25d312b8954122a32b7b5d6380",
     "branch": "validation/registry-core-batch4-20261116"
   },
-  "updated_at": "2026-11-16T11:50:36.700Z"
+  "updated_at": "2026-11-16T11:59:16.095Z"
 }
