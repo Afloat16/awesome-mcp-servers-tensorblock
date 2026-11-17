@@ -1,10 +1,14 @@
 # 开源改进任务进度
 
-更新时间：2026-11-16 23:32:27 UTC
+更新时间：2026-11-17 14:45:03（北京时间）
 
-任务仍在进行。当前已实际创建 **320 条 PR**：**296 条 Open / 非 Draft、3 条 Draft、12 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **12**。
+任务仍在进行。当前已实际创建 **320 条 PR**：**290 条 Open / 非 Draft、3 条 Draft、18 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **18**。
 
-按已核实的仓库限额，当前提交计划为 730 项，Ready / Merged 覆盖 **308 / 730**，还差 **422**。这只是提交状态统计，不代表已经合并；按 Merged 统计仍为 **12**。另有 **28 项 Prepared** 尚未创建上游 PR。
+原提交计划为 730 项，Ready / Merged 覆盖 **308 / 730**，原计划尚缺 **422**。ECC 当前另有 10 条账号开放 PR，已满并发上限，其中 7 项原计划缺口按用户限额例外暂停；应用当前并发限额后尚缺 **415**。本轮实际 merged 为 **18**，另有 **28 项 Prepared** 尚未创建上游 PR。
+
+最新合并：[ECC #3951](https://github.com/affaan-m/ECC/pull/3951)、[#3952](https://github.com/affaan-m/ECC/pull/3952)、[#3953](https://github.com/affaan-m/ECC/pull/3953)，[Unstructured #4782](https://github.com/Unstructured-IO/unstructured/pull/4782)、[#4786](https://github.com/Unstructured-IO/unstructured/pull/4786)，[Geomstats #2238](https://github.com/geomstats/geomstats/pull/2238)。
+
+claude-mem #6230、#6231 在原 head 官方 CI 全绿后补充了审查要求的测试，新的测试提交正在验证；#6232 的原始官方成功日志已完整保存。
 
 ## 最新实质结果
 
@@ -30,7 +34,7 @@
 | [Eigenwise/atomic-agents](https://github.com/Eigenwise/atomic-agents) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [geoopt/geoopt](https://github.com/geoopt/geoopt) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [huggingface/lerobot](https://github.com/huggingface/lerobot) | 20 | 0 | 0 | 0 | 0 | 0 | 2 | 20 |
-| [geomstats/geomstats](https://github.com/geomstats/geomstats) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
+| [geomstats/geomstats](https://github.com/geomstats/geomstats) | 20 | 20 | 19 | 0 | 1 | 0 | 0 | 0 |
 | [deepset-ai/haystack](https://github.com/deepset-ai/haystack) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | [huggingface/sentence-transformers](https://github.com/huggingface/sentence-transformers) | 20 | 0 | 0 | 0 | 0 | 0 | 20 | 20 |
 | [mikedh/trimesh](https://github.com/mikedh/trimesh) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -53,21 +57,21 @@
 | [carla-simulator/carla](https://github.com/carla-simulator/carla) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [ranxianglei/billion-context](https://github.com/ranxianglei/billion-context) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [milind-soni/OpenMausBot](https://github.com/milind-soni/OpenMausBot) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
-| [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
+| [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) | 20 | 20 | 18 | 0 | 2 | 0 | 0 | 0 |
 | [agentes-chat/agentes-chat](https://github.com/agentes-chat/agentes-chat) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [QwenLM/qwen-code](https://github.com/QwenLM/qwen-code) | 20 | 3 | 0 | 3 | 0 | 0 | 0 | 20 |
 | [vllm-project/vllm](https://github.com/vllm-project/vllm) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | [TensorBlock/awesome-mcp-servers](https://github.com/TensorBlock/awesome-mcp-servers) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [Edge0-AI/Edge0](https://github.com/Edge0-AI/Edge0) | 20 | 9 | 9 | 0 | 0 | 0 | 2 | 11 |
 | [betaflight/betaflight](https://github.com/betaflight/betaflight) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
-| [affaan-m/ECC](https://github.com/affaan-m/ECC) | 10 | 3 | 3 | 0 | 0 | 0 | 0 | 7 |
+| [affaan-m/ECC](https://github.com/affaan-m/ECC) | 10 | 3 | 0 | 0 | 3 | 0 | 0 | 7 |
 | [microsoft/onnxruntime](https://github.com/microsoft/onnxruntime) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 
 仓库限额优先于 20 项目标。Haystack、Trimesh、vLLM 已达到现有并发上限；ECC 当前上限为 10 个同时开放 PR、20 分钟最多创建 5 个。Genesis-Embodied-AI 整个组织排除。排名按 merged PR 数核实，GestaltX 的显著领先排除保持生效。
 
 ## 检查与发布限制
 
-- This task remains incomplete. Ready/Open, Draft, Prepared and Merged are separate states. Only 12 actual PRs in this batch have been verified merged; the submission-plan coverage number is not a merged-completion claim.
+- This task remains incomplete. Ready/Open, Draft, Prepared and Merged are separate states. Only 18 actual PRs in this batch have been verified merged; the submission-plan coverage number is not a merged-completion claim.
 - Existing repository exclusions and merged-PR ranking eligibility remain in effect. All Genesis-Embodied-AI repositories are excluded.
 - Qwen has three Draft PRs. Selected official build/static/unit/Python checks pass; full preflight and CLI E2E remain unverified. Previously denied telemetry-related CLI execution is not retried.
 - PR creation for Sentence Transformers, Robotics Toolbox, Manifold SDF, Edge0 and Kornia returned 403. Complete prepared materials are retained without alternate-channel retries.

@@ -1,25 +1,27 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-16 23:32:27 UTC",
+  "updated_at": "2026-11-17T06:45:03.427089+00:00",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "counts": {
     "actual": 320,
-    "ready_open": 296,
+    "ready_open": 290,
     "draft": 3,
-    "merged": 12,
+    "merged": 18,
     "closed_unmerged": 9,
     "prepared_not_created": 28,
     "target": 730,
     "remaining_ready_or_merged": 422,
-    "open_total": 299,
+    "open_total": 293,
     "effective_ready_or_merged": 308,
-    "remaining_merged_to_target": 718
+    "remaining_merged_to_target": 712,
+    "remaining_deferred_for_cap": 7,
+    "remaining_ready_or_merged_after_cap_exemptions": 415
   },
   "scope": {
     "eligible_repositories": 40,
     "uncapped_repositories": 36,
-    "cap_full_repositories": 3,
+    "cap_full_repositories": 4,
     "target_per_uncapped": 20,
     "total_ready_or_merged_target": 730,
     "basis": "Repositories with prior merged Afloat16 contributions and more than 1000 stars; ranking uses merged PR counts.",
@@ -137,9 +139,9 @@
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
         "actual": 20,
-        "ready": 20,
+        "ready": 19,
         "draft": 0,
-        "merged": 0,
+        "merged": 1,
         "closed_unmerged": 0,
         "effective": 20,
         "prepared_not_created": 0,
@@ -442,9 +444,9 @@
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
         "actual": 20,
-        "ready": 20,
+        "ready": 18,
         "draft": 0,
-        "merged": 0,
+        "merged": 2,
         "closed_unmerged": 0,
         "effective": 20,
         "prepared_not_created": 0,
@@ -540,16 +542,32 @@
           "window_minutes": 20,
           "max_created_per_window": 5,
           "source": "https://github.com/affaan-m/ECC/blob/d4b97e60dd7d8cdf01962881776a758769c0ba85/CONTRIBUTING.md",
-          "current_open_author_prs": 3
+          "current_open_author_prs": 10,
+          "current_open_numbers": [
+            3960,
+            3961,
+            3962,
+            3963,
+            3964,
+            3965,
+            3966,
+            3977,
+            3979,
+            3980
+          ],
+          "checked_at": "2026-11-17T06:45:03.427089+00:00",
+          "current_cap_full": true
         },
         "actual": 3,
-        "ready": 3,
+        "ready": 0,
         "draft": 0,
-        "merged": 0,
+        "merged": 3,
         "closed_unmerged": 0,
         "effective": 3,
         "prepared_not_created": 0,
-        "remaining_to_target": 7
+        "remaining_to_target": 7,
+        "remaining_deferred_for_cap": 7,
+        "actionable_remaining_under_cap": 0
       },
       {
         "repository": "microsoft/onnxruntime",
@@ -565,7 +583,7 @@
         "remaining_to_target": 20
       }
     ],
-    "capped_with_new_capacity": 1
+    "capped_with_new_capacity": 0
   },
   "counting_rules": {
     "actual": "A PR with an existing upstream URL. Draft and closed-unmerged are included only in the actual-created total.",
@@ -583,26 +601,26 @@
     {
       "owner": "merged_inventory",
       "repository": "Afloat16/geoopt",
-      "commit": "bb01729d3aa035783a485bbe24b52e29f516d177",
+      "commit": "7957beb98357b4d427b32dbc852d1b52ac12ff36",
       "path": ".audit/merged-inventory-portfolio.json",
       "count": 62,
-      "url": "https://raw.githubusercontent.com/Afloat16/geoopt/bb01729d3aa035783a485bbe24b52e29f516d177/.audit/merged-inventory-portfolio.json"
+      "url": "https://raw.githubusercontent.com/Afloat16/geoopt/7957beb98357b4d427b32dbc852d1b52ac12ff36/.audit/merged-inventory-portfolio.json"
     },
     {
       "owner": "open_pr_audit",
-      "repository": "Afloat16/manifold",
-      "commit": "3c3bd700e8906731a75324965b1d35a63c0f3895",
-      "path": "contribution-validation/task-recovery/open-pr-audit-portfolio.json",
+      "repository": "Afloat16/rea",
+      "commit": "e259f13b0fb0a40acdc2847ded8e8b1d53b3ea0c",
+      "path": "contribution-validation/open-pr-audit-portfolio-20261117.json",
       "count": 88,
-      "url": "https://raw.githubusercontent.com/Afloat16/manifold/3c3bd700e8906731a75324965b1d35a63c0f3895/contribution-validation/task-recovery/open-pr-audit-portfolio.json"
+      "url": "https://raw.githubusercontent.com/Afloat16/rea/e259f13b0fb0a40acdc2847ded8e8b1d53b3ea0c/contribution-validation/open-pr-audit-portfolio-20261117.json"
     },
     {
       "owner": "repository_rules",
       "repository": "Afloat16/Edge0",
-      "commit": "58f036d140a0e7ae230260a61389aec64c881d31",
+      "commit": "37edde3e9640c59ecf2f0935d84fc2f52e4fc072",
       "path": "repository-rules-portfolio.json",
       "count": 93,
-      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/58f036d140a0e7ae230260a61389aec64c881d31/repository-rules-portfolio.json"
+      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/37edde3e9640c59ecf2f0935d84fc2f52e4fc072/repository-rules-portfolio.json"
     }
   ],
   "prepared_relative_path": "prepared-submissions.json",
