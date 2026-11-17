@@ -1,16 +1,18 @@
 # 开源改进任务进度
 
-更新时间：2026-11-17 15:03:06（北京时间）
+更新时间：2026-11-17 15:32:16（北京时间）
 
-任务仍在进行。当前已实际创建 **323 条 PR**：**291 条 Open / 非 Draft、5 条 Draft、18 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **18**。
+任务仍在进行。当前已实际创建 **324 条 PR**：**293 条 Open / 非 Draft、4 条 Draft、18 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **18**。
 
-原提交计划为 730 项，Ready / Merged 覆盖 **309 / 730**，原计划尚缺 **421**。ECC 当前另有 10 条账号开放 PR，已满并发上限，其中 7 项原计划缺口按用户限额例外暂停；应用当前并发限额后尚缺 **414**。另有 **28 项 Prepared** 尚未创建上游 PR。
+原提交计划为 730 项，Ready / Merged 覆盖 **311 / 730**，原计划尚缺 **419**。ECC 当前另有 10 条账号开放 PR，已满并发上限，其中 7 项原计划缺口按用户限额例外暂停；应用当前并发限额后尚缺 **412**。另有 **28 项 Prepared** 尚未创建上游 PR。
 
-本次新增：[PyPose #543](https://github.com/pypose/pypose/pull/543) 已为 Open / 非 Draft；[claude-mem #6276](https://github.com/thedotmack/claude-mem/pull/6276) 和 [REA #11815](https://github.com/morluto/rea/pull/11815) 已实际创建为 Draft，分别等待官方验证及仓库规定的 Ready 条件。
+本次新增：[PyPose #545](https://github.com/pypose/pypose/pull/545) 已为 Open / 非 Draft。两版 CPU Torch 各通过 426 项完整测试、18 跳过；26 项新独立回归在原版通过。在 65,536 个对应点下，完整 public 调用的反向传播保留存储减少 1.5 MiB（float32）或 3 MiB（float64）。受控姿态对照明确使用已有 gelsd 求解器，默认 QR 近零系数边界及首次失败记录完整保留。[完整验证与历史证据](https://github.com/Afloat16/pypose/tree/da555b597df94de3f03edc07dd156e9a80549d30/.audit/epnp-principal-offset-reuse)。
 
-PyPose #543 在 CPU Torch 2.5.1、2.6.0 各通过 427 项完整测试（18 跳过）及 27 项原版稠密 QP 对照；独立的一阶/二阶梯度对照通过。完整 LQR 调用在指定较长时域工作负载中的耗时中位数降低 1.9%–4.2%。[验证记录](https://github.com/Afloat16/pypose/tree/7dcfbd5cb585030cf8a51c91033c3d8f9af8c07e/.audit/lqr-backward-value-reuse)。
+[claude-mem #6276](https://github.com/thedotmack/claude-mem/pull/6276) 最新 head dd1e8d1 的官方主 CI 8 个 jobs 和 Windows 全部成功，已实际转为 Open / 非 Draft。[REA #11815](https://github.com/morluto/rea/pull/11815) 官方检查已成功，仍为 Draft，保留仓库规定的 Ready 条件。
 
-REA #11815 将 DfuSe/UF2 的长诊断消息生产量限制到实际展示量，真实读取器的目标压力用例分别节省 36.46 MiB / 12.0 MiB 峰值内存；完整输出相同，其他测例的无收益或小幅增幅保留在记录中。claude-mem #6276 修复 mem-search 技能 frontmatter 的 YAML 解析错误，解析后的描述与正文不变。
+PyPose #543 在 CPU Torch 2.5.1、2.6.0 各通过 427 项完整测试（18 跳过）及 27 项原版稠密 QP 对照；独立的一阶/二阶梯度对照通过。其当前 head 的四个官方状态也全部成功。完整 LQR 调用在指定较长时域工作负载中的耗时中位数降低 1.9%–4.2%。[验证记录](https://github.com/Afloat16/pypose/tree/7dcfbd5cb585030cf8a51c91033c3d8f9af8c07e/.audit/lqr-backward-value-reuse)。
+
+REA #11815 将 DfuSe/UF2 的长诊断消息生产量限制到实际展示量，真实读取器的目标压力用例分别节省 36.46 MiB / 12.0 MiB 峰值内存；完整输出相同，其他测例的无收益或小幅增幅保留在记录中。claude-mem #6276 修复 mem-search 技能 frontmatter 的 YAML 解析错误；最终版本保留单行描述并调整冒号标点，同时兼容已有浏览器目录解析器，原生 YAML 与真实安装目录测试均通过。
 
 最新合并：[ECC #3951](https://github.com/affaan-m/ECC/pull/3951)、[#3952](https://github.com/affaan-m/ECC/pull/3952)、[#3953](https://github.com/affaan-m/ECC/pull/3953)，[Unstructured #4782](https://github.com/Unstructured-IO/unstructured/pull/4782)、[#4786](https://github.com/Unstructured-IO/unstructured/pull/4786)，[Geomstats #2238](https://github.com/geomstats/geomstats/pull/2238)。
 
@@ -46,7 +48,7 @@ claude-mem #6230 的新测试提交三套官方检查已成功；#6231 的新 he
 | [mikedh/trimesh](https://github.com/mikedh/trimesh) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | [kornia/kornia](https://github.com/kornia/kornia) | 20 | 2 | 2 | 0 | 0 | 0 | 2 | 18 |
 | [leggedrobotics/rsl_rl](https://github.com/leggedrobotics/rsl_rl) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
-| [pypose/pypose](https://github.com/pypose/pypose) | 20 | 12 | 12 | 0 | 0 | 0 | 0 | 8 |
+| [pypose/pypose](https://github.com/pypose/pypose) | 20 | 13 | 13 | 0 | 0 | 0 | 0 | 7 |
 | [Toni-SM/skrl](https://github.com/Toni-SM/skrl) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [KevinMusgrave/pytorch-metric-learning](https://github.com/KevinMusgrave/pytorch-metric-learning) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [Denys88/rl_games](https://github.com/Denys88/rl_games) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
@@ -59,7 +61,7 @@ claude-mem #6230 的新测试提交三套官方检查已成功；#6231 的新 he
 | [storytold/craft-anything](https://github.com/storytold/craft-anything) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [JetBrains/thinkrail](https://github.com/JetBrains/thinkrail) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
-| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 4 | 3 | 1 | 0 | 0 | 0 | 17 |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 4 | 4 | 0 | 0 | 0 | 0 | 16 |
 | [carla-simulator/carla](https://github.com/carla-simulator/carla) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [ranxianglei/billion-context](https://github.com/ranxianglei/billion-context) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [milind-soni/OpenMausBot](https://github.com/milind-soni/OpenMausBot) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
