@@ -1,14 +1,20 @@
 # 开源改进任务进度
 
-更新时间：2026-11-17 14:45:03（北京时间）
+更新时间：2026-11-17 15:03:06（北京时间）
 
-任务仍在进行。当前已实际创建 **320 条 PR**：**290 条 Open / 非 Draft、3 条 Draft、18 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **18**。
+任务仍在进行。当前已实际创建 **323 条 PR**：**291 条 Open / 非 Draft、5 条 Draft、18 条 Merged、9 条 Closed / 未合并**。实际新增合并数为 **18**。
 
-原提交计划为 730 项，Ready / Merged 覆盖 **308 / 730**，原计划尚缺 **422**。ECC 当前另有 10 条账号开放 PR，已满并发上限，其中 7 项原计划缺口按用户限额例外暂停；应用当前并发限额后尚缺 **415**。本轮实际 merged 为 **18**，另有 **28 项 Prepared** 尚未创建上游 PR。
+原提交计划为 730 项，Ready / Merged 覆盖 **309 / 730**，原计划尚缺 **421**。ECC 当前另有 10 条账号开放 PR，已满并发上限，其中 7 项原计划缺口按用户限额例外暂停；应用当前并发限额后尚缺 **414**。另有 **28 项 Prepared** 尚未创建上游 PR。
+
+本次新增：[PyPose #543](https://github.com/pypose/pypose/pull/543) 已为 Open / 非 Draft；[claude-mem #6276](https://github.com/thedotmack/claude-mem/pull/6276) 和 [REA #11815](https://github.com/morluto/rea/pull/11815) 已实际创建为 Draft，分别等待官方验证及仓库规定的 Ready 条件。
+
+PyPose #543 在 CPU Torch 2.5.1、2.6.0 各通过 427 项完整测试（18 跳过）及 27 项原版稠密 QP 对照；独立的一阶/二阶梯度对照通过。完整 LQR 调用在指定较长时域工作负载中的耗时中位数降低 1.9%–4.2%。[验证记录](https://github.com/Afloat16/pypose/tree/7dcfbd5cb585030cf8a51c91033c3d8f9af8c07e/.audit/lqr-backward-value-reuse)。
+
+REA #11815 将 DfuSe/UF2 的长诊断消息生产量限制到实际展示量，真实读取器的目标压力用例分别节省 36.46 MiB / 12.0 MiB 峰值内存；完整输出相同，其他测例的无收益或小幅增幅保留在记录中。claude-mem #6276 修复 mem-search 技能 frontmatter 的 YAML 解析错误，解析后的描述与正文不变。
 
 最新合并：[ECC #3951](https://github.com/affaan-m/ECC/pull/3951)、[#3952](https://github.com/affaan-m/ECC/pull/3952)、[#3953](https://github.com/affaan-m/ECC/pull/3953)，[Unstructured #4782](https://github.com/Unstructured-IO/unstructured/pull/4782)、[#4786](https://github.com/Unstructured-IO/unstructured/pull/4786)，[Geomstats #2238](https://github.com/geomstats/geomstats/pull/2238)。
 
-claude-mem #6230、#6231 在原 head 官方 CI 全绿后补充了审查要求的测试，新的测试提交正在验证；#6232 的原始官方成功日志已完整保存。
+claude-mem #6230 的新测试提交三套官方检查已成功；#6231 的新 head 仍有 sync-hub 超时失败，其余已记录检查成功。一次原渠道重跑请求返回 403，未重复尝试或改用其他渠道。
 
 ## 最新实质结果
 
@@ -40,20 +46,20 @@ claude-mem #6230、#6231 在原 head 官方 CI 全绿后补充了审查要求的
 | [mikedh/trimesh](https://github.com/mikedh/trimesh) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | [kornia/kornia](https://github.com/kornia/kornia) | 20 | 2 | 2 | 0 | 0 | 0 | 2 | 18 |
 | [leggedrobotics/rsl_rl](https://github.com/leggedrobotics/rsl_rl) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
-| [pypose/pypose](https://github.com/pypose/pypose) | 20 | 11 | 11 | 0 | 0 | 0 | 0 | 9 |
+| [pypose/pypose](https://github.com/pypose/pypose) | 20 | 12 | 12 | 0 | 0 | 0 | 0 | 8 |
 | [Toni-SM/skrl](https://github.com/Toni-SM/skrl) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [KevinMusgrave/pytorch-metric-learning](https://github.com/KevinMusgrave/pytorch-metric-learning) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [Denys88/rl_games](https://github.com/Denys88/rl_games) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
 | [petercorke/robotics-toolbox-python](https://github.com/petercorke/robotics-toolbox-python) | 20 | 0 | 0 | 0 | 0 | 0 | 1 | 20 |
 | [openMVG/openMVG](https://github.com/openMVG/openMVG) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
-| [morluto/rea](https://github.com/morluto/rea) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
+| [morluto/rea](https://github.com/morluto/rea) | 20 | 1 | 0 | 1 | 0 | 0 | 0 | 20 |
 | [zhaoxuya520/reverse-skill](https://github.com/zhaoxuya520/reverse-skill) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [elalish/manifold](https://github.com/elalish/manifold) | 20 | 8 | 8 | 0 | 0 | 0 | 1 | 12 |
 | [colmap/colmap](https://github.com/colmap/colmap) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [storytold/craft-anything](https://github.com/storytold/craft-anything) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [JetBrains/thinkrail](https://github.com/JetBrains/thinkrail) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
-| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 3 | 3 | 0 | 0 | 0 | 0 | 17 |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | 20 | 4 | 3 | 1 | 0 | 0 | 0 | 17 |
 | [carla-simulator/carla](https://github.com/carla-simulator/carla) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [ranxianglei/billion-context](https://github.com/ranxianglei/billion-context) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |
 | [milind-soni/OpenMausBot](https://github.com/milind-soni/OpenMausBot) | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 20 |

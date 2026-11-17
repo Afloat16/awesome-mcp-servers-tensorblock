@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-17T06:26:00Z",
+  "as_of": "2026-11-17T07:01:26.256Z",
   "prs": [
     {
       "repo": "geoopt/geoopt",
@@ -4886,6 +4886,42 @@
       },
       "merge_commit_sha": "57df779cd67a6e496310650ea622d719cfc24a23",
       "last_verified_at": "2026-11-17T06:26:00Z"
+    },
+    {
+      "repo": "pypose/pypose",
+      "number": 543,
+      "url": "https://github.com/pypose/pypose/pull/543",
+      "title": "Reuse value-function work in LQR backward recursion",
+      "head": "878e15c29bd3a92d4dfca635f1cf2a31ca473e18",
+      "head_ref": "Afloat16/lqr-backward-value-reuse-20261117",
+      "base": "298e9f0862cb228b0e8851b2616e682ccdca6a32",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "created_at": "2026-11-17T06:58:12Z",
+      "updated_at": "2026-11-17T06:58:12Z",
+      "merged_at": null,
+      "body": "## Problem\n\nThe LQR backward recursion evaluates `Kt.mT @ Quu` twice for each value update. It also constructs `V` and `v` at `t == 0`, although there is no remaining backward step to consume them.\n\n## Change\n\nReuse the projection within each required value update and skip the unused final update. The two Cholesky solves and the Riccati expressions retain their existing evaluation order. This changes only backward-pass work; the forward-rollout change in #541 remains separate.\n\nFixes #542.\n\n## Validation\n\n- Add 27 independent dense-QP comparisons: float32/float64, batch sizes 1 and 3, horizons 1/2/5, zero/nonzero initial control trajectories, plus gradients through a positive-definite cost factor, linear costs and initial state. These also pass on unchanged main.\n- Full repository suite: **427 passed, 18 skipped** on each of CPU Torch **2.5.1** and **2.6.0**.\n- Eight additional public-call dtype/shape comparisons per Torch version return bit-identical states, controls and costs. Raw quadratic-cost, linear-cost and initial-state gradients agree within dtype tolerances.\n- An independent 16-case CPU comparison also covers gradients through dynamics and warm starts, and Hessian-vector products. Gradients are tolerance-equivalent, not necessarily bit-identical.\n\nThe [two-version validation run](https://github.com/Afloat16/pypose/actions/runs/44034793759) checks the exact production source at `878e15c29bd3a92d4dfca635f1cf2a31ca473e18`, runs the suite, and records all paired timings and profiler results.\n\n## Measured work reduction\n\nCPU profiler counts for the complete public LQR call:\n\n| Batch / horizon / state / control dimensions | Before `aten::bmm` | After |\n| --- | ---: | ---: |\n| 1 / 1 / 3 / 2 | 16 | 8 |\n| 3 / 2 / 3 / 2 | 38 | 29 |\n| 8 / 32 / 12 / 6 | 698 | 659 |\n| 4 / 24 / 64 / 32 | 522 | 491 |\n\nOn the single-thread Ubuntu runners, seven alternating baseline/candidate timing rounds give median public-call latency reductions of **1.9–4.2%** for the two longer-horizon workloads, **8.6–9.2%** for horizon two, and **17.7–18.5%** for horizon one, across float32/float64 and both Torch versions. These are measurements for those CPU workloads, not a GPU or general latency guarantee.\n\nThe history check covers 343 upstream PR heads, 69 existing account branch heads and all 116 distinct versions of the LQR source across 203 commits; no equivalent value-update reuse or final-update omission was found.\n",
+      "changed_files": 2,
+      "commits": 1,
+      "checked_at": "2026-11-17T07:01:26.256Z",
+      "validation": {
+        "production_commit": "878e15c29bd3a92d4dfca635f1cf2a31ca473e18",
+        "two_version_run": "https://github.com/Afloat16/pypose/actions/runs/44034793759",
+        "full_suite_each": {
+          "passed": 427,
+          "skipped": 18
+        },
+        "baseline_dense_qp_cases": 27,
+        "independent_gradient_and_hvp_cases": 16,
+        "source_history_blobs": 116,
+        "upstream_pr_heads": 343,
+        "existing_fork_branches": 69,
+        "evidence_commit": "7dcfbd5cb585030cf8a51c91033c3d8f9af8c07e",
+        "evidence_repository": "Afloat16/pypose",
+        "evidence_path": ".audit/lqr-backward-value-reuse/manifest.json",
+        "official_current_head_checks": []
+      }
     }
   ],
   "prepared_submissions": [

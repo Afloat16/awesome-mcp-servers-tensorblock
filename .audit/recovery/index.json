@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-17T06:45:03.427089+00:00",
+  "updated_at": "2026-11-17T07:03:06.322158+00:00",
   "account": "Afloat16",
   "completion_status": "in_progress",
   "counts": {
-    "actual": 320,
-    "ready_open": 290,
-    "draft": 3,
+    "actual": 323,
+    "ready_open": 291,
+    "draft": 5,
     "merged": 18,
     "closed_unmerged": 9,
     "prepared_not_created": 28,
     "target": 730,
-    "remaining_ready_or_merged": 422,
-    "open_total": 293,
-    "effective_ready_or_merged": 308,
+    "remaining_ready_or_merged": 421,
+    "open_total": 296,
+    "effective_ready_or_merged": 309,
     "remaining_merged_to_target": 712,
     "remaining_deferred_for_cap": 7,
-    "remaining_ready_or_merged_after_cap_exemptions": 415
+    "remaining_ready_or_merged_after_cap_exemptions": 414
   },
   "scope": {
     "eligible_repositories": 40,
@@ -222,14 +222,14 @@
         "repository": "pypose/pypose",
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
-        "actual": 11,
-        "ready": 11,
+        "actual": 12,
+        "ready": 12,
         "draft": 0,
         "merged": 0,
         "closed_unmerged": 0,
-        "effective": 11,
+        "effective": 12,
         "prepared_not_created": 0,
-        "remaining_to_target": 9
+        "remaining_to_target": 8
       },
       {
         "repository": "Toni-SM/skrl",
@@ -300,9 +300,9 @@
         "repository": "morluto/rea",
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
-        "actual": 0,
+        "actual": 1,
         "ready": 0,
-        "draft": 0,
+        "draft": 1,
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 0,
@@ -391,9 +391,9 @@
         "repository": "thedotmack/claude-mem",
         "target_new_ready_or_merged": 20,
         "cap_exemption": null,
-        "actual": 3,
+        "actual": 4,
         "ready": 3,
-        "draft": 0,
+        "draft": 1,
         "merged": 0,
         "closed_unmerged": 0,
         "effective": 3,
@@ -609,18 +609,18 @@
     {
       "owner": "open_pr_audit",
       "repository": "Afloat16/rea",
-      "commit": "e259f13b0fb0a40acdc2847ded8e8b1d53b3ea0c",
+      "commit": "93ffd555e51cf406aeb30ce65bfd68ed10e0c717",
       "path": "contribution-validation/open-pr-audit-portfolio-20261117.json",
       "count": 88,
-      "url": "https://raw.githubusercontent.com/Afloat16/rea/e259f13b0fb0a40acdc2847ded8e8b1d53b3ea0c/contribution-validation/open-pr-audit-portfolio-20261117.json"
+      "url": "https://raw.githubusercontent.com/Afloat16/rea/93ffd555e51cf406aeb30ce65bfd68ed10e0c717/contribution-validation/open-pr-audit-portfolio-20261117.json"
     },
     {
       "owner": "repository_rules",
       "repository": "Afloat16/Edge0",
-      "commit": "37edde3e9640c59ecf2f0935d84fc2f52e4fc072",
+      "commit": "c59d04be3d5d48bc755ab4308187970abc99c860",
       "path": "repository-rules-portfolio.json",
       "count": 93,
-      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/37edde3e9640c59ecf2f0935d84fc2f52e4fc072/repository-rules-portfolio.json"
+      "url": "https://raw.githubusercontent.com/Afloat16/Edge0/c59d04be3d5d48bc755ab4308187970abc99c860/repository-rules-portfolio.json"
     }
   ],
   "prepared_relative_path": "prepared-submissions.json",
